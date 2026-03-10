@@ -1,4 +1,4 @@
-# Proyecto Final: Platforma de Moda y Red Social
+# Proyecto Final: Plataforma de Moda y Red Social
 
 Este repositorio contiene la documentación inicial del proyecto desarrollado por **Robin** y **Fabio**.
 
