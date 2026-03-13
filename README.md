@@ -26,7 +26,41 @@ A continuación se detallan las funcionalidades principales que tendrá la aplic
 ---
 
 ## 3. Mockup gráfico
-*(Sección en desarrollo)* Siguiendo las instrucciones, incluiremos aquí los wireframes directamente en el README una vez finalizados los bocetos.
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0643ede9-42c6-4559-a4ef-bb302a137a04" width="30%" />
+  <img src="https://github.com/user-attachments/assets/66818ebd-f54a-4581-8149-a0c3374644e9" width="30%" />
+  <img src="https://github.com/user-attachments/assets/18560098-da2d-49d1-93e0-9287f2c011d6" width="30%" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/d7f6c47d-fe7f-405e-a7a7-bfd84bb4d2a2" width="30%" />
+  <img src="https://github.com/user-attachments/assets/21ace1df-94cc-4263-8016-88e0fb6a6b3c" width="30%" />
+  <img src="https://github.com/user-attachments/assets/10988262-817d-4b00-a32f-3b16cf2884b3" width="30%"/>
+</p>
+
+<p align="center">
+   <img src="https://github.com/user-attachments/assets/ef16fc40-b352-4a1a-939a-63cc85570930" width="30%"/>
+   <img src="https://github.com/user-attachments/assets/f7ecd7df-c47f-429b-af35-a511a8694904" width="30%"/>
+   <img src="https://github.com/user-attachments/assets/a48c34b3-532a-4fdc-8ba7-18f19ed780a0" width="30%"/>
+</p>
+
+<p align="center">
+   <img src="https://github.com/user-attachments/assets/b2f5b331-27aa-4632-a511-b1c7558b8bdb" width="30%"/>
+   <img src="https://github.com/user-attachments/assets/8cab6011-936a-49b4-b06e-3b1260091c41" width="30%"/>
+   <img src="https://github.com/user-attachments/assets/a8bb334f-5f58-4744-b1ae-80ecd4064c50" width="30%"/>
+</p>
+
+<p align="center">
+   <img src="https://github.com/user-attachments/assets/a9565dd4-a2d1-4609-bbd2-3b3134bba180" width="30%"/>
+   <img src="https://github.com/user-attachments/assets/a52535df-242f-4232-aca7-16d002264a95" width="30%"/>
+   <img src="https://github.com/user-attachments/assets/5e8628de-c358-4e58-8061-4e263b3724de" width="30%"/>
+   <img src="https://github.com/user-attachments/assets/aebe91cc-e0f1-400d-9b60-c341de790462" width="30%"/>
+</p>
+
+
+
+
 
 ---
 
