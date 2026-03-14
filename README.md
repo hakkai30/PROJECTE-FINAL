@@ -58,9 +58,23 @@ A continuación se detallan las funcionalidades principales que tendrá la aplic
    <img src="https://github.com/user-attachments/assets/aebe91cc-e0f1-400d-9b60-c341de790462" width="30%"/>
 </p>
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/16e43a52-f230-4e84-80ae-6a00746522d5" width="30%"/>
+  <img src="https://github.com/user-attachments/assets/30778cce-716b-4b82-8892-328142718682" width="30%"/>
+  <img src="https://github.com/user-attachments/assets/ad619d46-dc5c-4884-a2b0-b50a71dd461a" width="30%"/>
+</p>
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/de7d4256-2dbc-43de-a68e-1ca2d672189a" width="30%"/>
+  <img src="https://github.com/user-attachments/assets/4575d5a7-1b5d-40f5-9262-ea5c63456e8c" width="30%"/>
+  <img src="https://github.com/user-attachments/assets/1efa28d0-9ed4-41b4-9e17-84b139468735" width="30%"/>
+</p>
 
-
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/596f94ec-220d-4b9e-b4e0-1605118ffcc7" width="30%"/>
+  <img src="https://github.com/user-attachments/assets/5ca23273-9f17-49e7-83cd-41857751ae82" width="30%"/>
+  <img src="https://github.com/user-attachments/assets/4a4ae4a0-1850-4080-b665-b765c2bef87a" width="30%"/>
+</p>
 
 ---
 
