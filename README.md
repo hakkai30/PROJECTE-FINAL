@@ -88,3 +88,54 @@ La aplicación se estructurará siguiendo un modelo de arquitectura cliente-serv
     * **OpenAI API:** Para la inteligencia del chatbot de ayuda.
 
 ---
+
+---
+
+## 1r Seguimiento del Proyecto
+
+### Estructura del Proyecto
+- El proyecto está organizado en carpetas como `src/` para el código fuente, `components/` para componentes reutilizables, `pages/` para las vistas principales, y `data/` para datos simulados (mock data).
+- El archivo `index.html` sirve como punto de entrada para la aplicación, donde el elemento `<div id="root"></div>` es el contenedor donde React renderiza la interfaz.
+
+### Configuración del Proyecto
+- Se utilizó **Vite** como herramienta de construcción para configurar el entorno de desarrollo rápido y eficiente. Esto se define en el archivo `vite.config.js`.
+- En el archivo `package.json`, se configuraron scripts como `dev` para iniciar el servidor de desarrollo y `build` para generar una versión optimizada.
+
+### Componentización
+- Se crearon componentes reutilizables como `GlobalHeader` y `GlobalFooter` para mantener consistencia en el diseño.
+- También se implementaron componentes específicos como `WindowOverlay` para efectos visuales.
+
+### Páginas Principales
+- **LandingPage:** Página de inicio con un diseño brutalista.
+- **CategoryPage:** Muestra categorías de productos.
+- **ProductsPage:** Lista productos con opciones de filtro y ordenamiento.
+- **CartPage:** Permite gestionar el carrito de compras.
+- **SocialFeedPage:** Una red social donde los usuarios pueden interactuar con publicaciones.
+
+### Estilos
+- Se definieron estilos personalizados en `style.css`, utilizando variables CSS para colores y sombras, y aplicando un diseño responsive con media queries.
+
+### Datos Simulados
+- Se crearon datos simulados en `mockData.js` para productos y publicaciones sociales, lo que permite probar la funcionalidad sin depender de una base de datos.
+
+### Funcionalidades
+- Se implementó navegación entre páginas usando un estado (`currentPage`) en el componente principal `App`.
+- Se añadieron funcionalidades como agregar y eliminar productos del carrito, y un sistema de "me gusta" en el feed social.
+
+### Contenido del archivo `index.html`
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ROB THE FAB - Aplicacion web construida con React.">
+  <meta name="theme-color" content="#111111">
+  <title>ROB THE FAB</title>
+</head>
+<body>
+  <div id="root"></div>
+  <noscript>Necesitas habilitar JavaScript para usar esta aplicacion.</noscript>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
