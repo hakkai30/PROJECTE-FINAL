@@ -16,7 +16,8 @@ const SocialFeedPage = ({ changePage }) => {
         </button>
         <div style={{ borderBottom: "2px solid black", margin: "1rem 0" }}></div>
         <button className="sidebar-link">ROB_THE_FAB</button>
-        <button className="sidebar-link">MISSATGES (3)</button>
+        <button className="sidebar-link">MISSATGES</button>
+        <button className="sidebar-link">FORUM</button>
         <button className="sidebar-link">DESCOBREIX</button>
         <button className="sidebar-link">LOOKS DESATS</button>
         <button className="sidebar-link" style={{ marginTop: "auto", color: "gray" }}>

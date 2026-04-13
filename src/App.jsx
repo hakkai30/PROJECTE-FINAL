@@ -4,6 +4,7 @@ import CategoryPage from "./pages/CategoryPage";
 import ProductsPage from "./pages/ProductsPage";
 import CartPage from "./pages/CartPage";
 import SocialFeedPage from "./pages/SocialFeedPage";
+import { ChatbotWidget } from "./components/Layout";
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState("landing");
@@ -40,6 +41,8 @@ const App = () => {
         />
       )}
       {currentPage === "socials" && <SocialFeedPage changePage={setCurrentPage} />}
+
+      {currentPage !== "landing" && <ChatbotWidget />}
     </div>
   );
 };
