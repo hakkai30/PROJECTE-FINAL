@@ -83,7 +83,7 @@ La aplicación se estructurará siguiendo un modelo de arquitectura cliente-serv
 
 * **Frontend (Interfaz):** Desarrollado con **React.js** para garantizar una experiencia de usuario fluida y reactiva.
 * **Backend (Lógica):** Utilizaremos **Node.js** con el framework **Express** para gestionar las rutas de la API y la lógica de negocio.
-* **Base de Datos:** Estamos evaluando el uso de **MySQL** (Relacional) o **MongoDB** (NoSQL) para el almacenamiento de perfiles y transacciones.
+* **Base de Datos:** Utilizaremos PostgreSQL que es el que podría ser más compatible con node y react
 * **Servicios Externos (APIs):** * **Moda News API:** Para el contenido de actualidad.
     * **OpenAI API:** Para la inteligencia del chatbot de ayuda.
 
