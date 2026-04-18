@@ -1,0 +1,271 @@
+/* =========================================
+   THEME MODES
+========================================= */
+:root[data-theme="light"] {
+  --bg-landing: #bdbdbd;
+  --brand-primary: #141414;
+  --brand-accent: #c73922;
+}
+
+:root[data-theme="dark"] {
+  --bg-landing: #1d1f24;
+  --brand-primary: #f2f2f2;
+  --brand-accent: #66a3ff;
+  --ink-1: #f3f3f3;
+  --ink-2: #d9dee7;
+  --ink-3: #b2bbc8;
+  --surface-0: #121316;
+  --surface-1: #17191d;
+  --surface-2: #20242a;
+  color-scheme: dark;
+}
+
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] .category-page,
+:root[data-theme="dark"] .social-layout,
+:root[data-theme="dark"] .messages-layout,
+:root[data-theme="dark"] .auth-screen {
+  background: var(--surface-0);
+  color: var(--ink-1);
+}
+
+:root[data-theme="dark"] .main-header,
+:root[data-theme="dark"] .main-app-footer,
+:root[data-theme="dark"] .social-sidebar,
+:root[data-theme="dark"] .messages-threads-panel,
+:root[data-theme="dark"] .messages-chat-panel,
+:root[data-theme="dark"] .quick-view-modal,
+:root[data-theme="dark"] .bottom-sheet-panel,
+:root[data-theme="dark"] .settings-card,
+:root[data-theme="dark"] .theme-option-card,
+:root[data-theme="dark"] .search-result-item,
+:root[data-theme="dark"] .product-card,
+:root[data-theme="dark"] .social-post,
+:root[data-theme="dark"] .thread-item,
+:root[data-theme="dark"] .chatbot-window,
+:root[data-theme="dark"] .cart-total-section,
+:root[data-theme="dark"] .chatbot-messages,
+:root[data-theme="dark"] .search-fullscreen-overlay,
+:root[data-theme="dark"] .auth-card {
+  background: var(--surface-1);
+  color: var(--ink-1);
+  border-color: #2f333a;
+  box-shadow: none;
+}
+
+:root[data-theme="dark"] .product-img,
+:root[data-theme="dark"] .post-img,
+:root[data-theme="dark"] .quick-view-img,
+:root[data-theme="dark"] .product-detail-img,
+:root[data-theme="dark"] .window-frame,
+:root[data-theme="dark"] .thread-item.active,
+:root[data-theme="dark"] .theme-option-card.active {
+  background: var(--surface-2);
+  border-color: #3a4049;
+}
+
+:root[data-theme="dark"] .main-header,
+:root[data-theme="dark"] .shop-toolbar,
+:root[data-theme="dark"] .chat-topbar,
+:root[data-theme="dark"] .chat-compose,
+:root[data-theme="dark"] .post-header,
+:root[data-theme="dark"] .post-actions,
+:root[data-theme="dark"] .cart-item,
+:root[data-theme="dark"] .product-detail-meta,
+:root[data-theme="dark"] .main-app-footer {
+  border-color: #2f333a;
+}
+
+:root[data-theme="dark"] .add-btn,
+:root[data-theme="dark"] .checkout-btn,
+:root[data-theme="dark"] .chat-compose button,
+:root[data-theme="dark"] .auth-submit-btn,
+:root[data-theme="dark"] .chatbot-input button,
+:root[data-theme="dark"] .clear-all-filters-chip,
+:root[data-theme="dark"] .theme-option-card.active,
+:root[data-theme="dark"] .settings-menu-btn:hover,
+:root[data-theme="dark"] .theme-toggle-btn:hover,
+:root[data-theme="dark"] .filter-bottom-btn:hover,
+:root[data-theme="dark"] .suggestion-tags button:hover,
+:root[data-theme="dark"] .nav-btn-brutalist:hover {
+  background: #f2f2f2 !important;
+  color: #111 !important;
+  border-color: #f2f2f2 !important;
+}
+
+:root[data-theme="dark"] .toolbar-btn,
+:root[data-theme="dark"] .burger-menu-btn,
+:root[data-theme="dark"] .header-actions button,
+:root[data-theme="dark"] .theme-toggle-btn,
+:root[data-theme="dark"] .settings-menu-btn,
+:root[data-theme="dark"] .active-filter-chip,
+:root[data-theme="dark"] .quick-view-wishlist,
+:root[data-theme="dark"] .filter-bottom-btn,
+:root[data-theme="dark"] .search-result-item,
+:root[data-theme="dark"] .suggestion-tags button,
+:root[data-theme="dark"] .threads-search-input,
+:root[data-theme="dark"] .chat-compose input,
+:root[data-theme="dark"] .search-content input,
+:root[data-theme="dark"] .auth-form input,
+:root[data-theme="dark"] .auth-mode-switch {
+  background: transparent;
+  color: var(--ink-1);
+  border-color: #464d57;
+}
+
+:root[data-theme="dark"] .collection-kicker,
+:root[data-theme="dark"] .product-brand,
+:root[data-theme="dark"] .search-result-item small,
+:root[data-theme="dark"] .thread-meta span,
+:root[data-theme="dark"] .sidebar-user-chip,
+:root[data-theme="dark"] .bottom-col h3,
+:root[data-theme="dark"] .settings-card p,
+:root[data-theme="dark"] .theme-option-card span,
+:root[data-theme="dark"] .item-brand,
+:root[data-theme="dark"] .item-meta,
+:root[data-theme="dark"] .search-no-results,
+:root[data-theme="dark"] .collection-results,
+:root[data-theme="dark"] .auth-description,
+:root[data-theme="dark"] .auth-footnote {
+  color: var(--ink-3);
+}
+
+:root[data-theme="dark"] .msg-bubble,
+:root[data-theme="dark"] .chat-bubble.ai,
+:root[data-theme="dark"] .chat-bubble.user,
+:root[data-theme="dark"] .msg-bubble.me,
+:root[data-theme="dark"] .chatbot-header,
+:root[data-theme="dark"] .search-result-item.active {
+  border-color: #46505e;
+}
+
+:root[data-theme="dark"] .msg-bubble.me,
+:root[data-theme="dark"] .chat-bubble.user {
+  background: #2a3038;
+  color: #f2f2f2;
+}
+
+:root[data-theme="dark"] .glitch-visual-text .glitch-text,
+:root[data-theme="dark"] .logo-reflection {
+  -webkit-text-stroke-color: #f2f2f2;
+}
+
+:root[data-theme="dark"] .landing-page-brutalist {
+  background:
+    radial-gradient(circle at 12% 16%, rgba(255, 255, 255, 0.06) 0%, transparent 30%),
+    radial-gradient(circle at 80% 78%, rgba(130, 130, 130, 0.13) 0%, transparent 36%),
+    linear-gradient(145deg, #141414 0%, #191919 50%, #1f1f1f 100%);
+}
+
+:root[data-theme="dark"] .landing-kicker,
+:root[data-theme="dark"] .landing-tagline,
+:root[data-theme="dark"] .glitch-visual-text .glitch-text,
+:root[data-theme="dark"] .main-logo-glitch-text {
+  color: #efefef;
+}
+
+:root[data-theme="dark"] .landing-nav-footer-brutalist {
+  background: rgba(22, 22, 22, 0.84);
+  border-top-color: rgba(239, 239, 239, 0.24);
+}
+
+:root[data-theme="dark"] .nav-btn-container.border-right {
+  border-right-color: rgba(239, 239, 239, 0.18);
+}
+
+:root[data-theme="dark"] .window-frame {
+  background: rgba(48, 48, 48, 0.45);
+  border-color: rgba(228, 228, 228, 0.28);
+}
+
+:root[data-theme="dark"] .window-header {
+  background: linear-gradient(180deg, #1f4e9b, #1b4588);
+  border-bottom-color: rgba(255, 255, 255, 0.18);
+}
+
+:root[data-theme="dark"] .window-body {
+  background: linear-gradient(180deg, rgba(34, 34, 34, 0.92), rgba(24, 24, 24, 0.92));
+}
+
+:root[data-theme="dark"] .window-url,
+:root[data-theme="dark"] .window-preview {
+  background: rgba(36, 36, 36, 0.88);
+  border-color: rgba(224, 224, 224, 0.16);
+  color: rgba(238, 238, 238, 0.65);
+}
+
+:root[data-theme="dark"] .window-preview-lines span {
+  background: rgba(245, 245, 245, 0.24);
+}
+
+:root[data-theme="dark"] .window-label,
+:root[data-theme="dark"] .window-status {
+  color: rgba(242, 242, 242, 0.8);
+}
+
+:root[data-theme="dark"] .window-action {
+  border-left-color: rgba(255, 255, 255, 0.14);
+}
+
+:root[data-theme="dark"] .main-logo-glitch-text,
+:root[data-theme="dark"] .glitch-visual-text,
+:root[data-theme="dark"] .sidebar-link,
+:root[data-theme="dark"] .logo-center-header,
+:root[data-theme="dark"] .cart-title,
+:root[data-theme="dark"] .collection-title,
+:root[data-theme="dark"] .category-title,
+:root[data-theme="dark"] .product-price,
+:root[data-theme="dark"] .item-name,
+:root[data-theme="dark"] .chat-topbar h3 {
+  color: var(--ink-1);
+}
+
+:root[data-theme="dark"] .search-content input::placeholder {
+  color: #aeb7c4;
+}
+
+:root[data-theme="dark"] .threads-empty-state,
+:root[data-theme="dark"] .search-no-results,
+:root[data-theme="dark"] .settings-card p,
+:root[data-theme="dark"] .theme-option-card span,
+:root[data-theme="dark"] .auth-kicker,
+:root[data-theme="dark"] .filter-price-readout,
+:root[data-theme="dark"] .item-meta {
+  color: var(--ink-2);
+}
+
+:root[data-theme="dark"] .auth-mode-switch button.active {
+  background: #f2f2f2;
+  color: #111;
+}
+
+:root[data-theme="dark"] .auth-feedback {
+  background: rgba(199, 57, 34, 0.15);
+  color: #ff9d8d;
+  border-color: #9a3b2c;
+}
+
+:root[data-theme="dark"] .app-toast {
+  background: #f2f2f2;
+  color: #111;
+  border-color: #f2f2f2;
+}
+
+:root[data-theme="dark"] button:focus-visible,
+:root[data-theme="dark"] input:focus-visible,
+:root[data-theme="dark"] .sort-option-btn:focus-visible,
+:root[data-theme="dark"] .thread-item:focus-visible,
+:root[data-theme="dark"] .search-result-item:focus-visible {
+  outline-color: #66a3ff;
+}
+
+@media (max-width: 768px) {
+  .settings-layout {
+    padding: 1.2rem 1rem 2rem;
+  }
+
+  .theme-options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

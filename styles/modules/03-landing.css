@@ -1,0 +1,315 @@
+/* =========================================
+ NUEVA PORTADA BRUTALISTA (LANDING PAGE)
+========================================= */
+.landing-page-brutalist { 
+  display: flex; 
+  flex-direction: column; 
+  height: 100vh; 
+  background: #ffffff;
+  overflow: hidden; 
+  position: relative;
+}
+
+.landing-page-brutalist::before {
+  content: none;
+}
+
+.landing-page-brutalist::after {
+  content: none;
+}
+
+/* Efecto Superior (W F A) */
+.glitch-visual-container {
+  padding: 2.25rem 3rem 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+}
+.landing-kicker {
+  margin: 0 0 0.95rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(15, 15, 15, 0.7);
+}
+.glitch-visual-text {
+  font-size: clamp(1rem, 2.2vw, 1.55rem);
+  font-weight: 900;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+}
+.glitch-visual-text .glitch-text {
+  color: rgba(15, 15, 15, 0.84);
+  -webkit-text-stroke: 0;
+  animation: drift 12s ease-in-out infinite;
+}
+
+/* Logo Central Gigante */
+.main-logo-container {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+}
+.main-logo-glitch-text {
+  font-size: clamp(4rem, 10.5vw, 8.1rem);
+  font-weight: 900;
+  margin: 0;
+  letter-spacing: -0.045em;
+  line-height: 0.88;
+  color: #121212;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.36);
+}
+.landing-tagline {
+  margin: 1rem 0 0;
+  max-width: 650px;
+  text-align: center;
+  font-size: clamp(0.88rem, 1.4vw, 1.05rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(18, 18, 18, 0.74);
+}
+
+/* Contenedor invisible para que floten las ventanas */
+.windows-absolute-wrapper {
+  position: absolute;
+  top: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1100px;
+  height: 320px;
+  pointer-events: none; /* Deja pasar los clics a lo de abajo */
+  z-index: 1;
+}
+
+/* Estilos de las ventanitas individuales */
+.window-frame {
+  pointer-events: auto;
+  position: absolute;
+  width: 214px;
+  height: 196px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(17, 17, 17, 0.3);
+  display: flex;
+  flex-direction: column;
+  border-radius: 9px;
+  box-shadow: 0 20px 38px rgba(12, 12, 12, 0.18), 0 3px 8px rgba(12, 12, 12, 0.12);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+.window-1 { top: 10px; left: 14px; z-index: 1; animation: floatA 8.2s ease-in-out infinite; }
+.window-2 { top: 76px; left: 176px; z-index: 2; animation: floatB 9.5s ease-in-out infinite; }
+.window-3 { top: 16px; right: 42px; position: absolute; animation: floatC 8.8s ease-in-out infinite; }
+
+.window-header {
+  height: 31px;
+  background: linear-gradient(180deg, #2e63b7, #2457ab);
+  border-bottom: 1px solid rgba(8, 28, 64, 0.48);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0 0 10px;
+}
+
+.window-actions {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.window-label {
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.window-action {
+  width: 30px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.76rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.window-action-close {
+  width: 36px;
+  border-left-color: rgba(255, 255, 255, 0.2);
+  font-size: 0.9rem;
+}
+
+.window-action-close:hover {
+  background: #e81123;
+  color: #ffffff;
+}
+
+.window-action-close:active {
+  filter: brightness(0.9);
+}
+
+.window-action-close {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.window-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  gap: 8px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(245, 245, 245, 0.95));
+}
+
+.window-url {
+  border: 1px solid rgba(17, 17, 17, 0.14);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.95);
+  color: rgba(20, 20, 20, 0.55);
+  font-size: 0.52rem;
+  letter-spacing: 0.03em;
+  padding: 3px 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.window-preview {
+  flex: 1;
+  border: 1px solid rgba(17, 17, 17, 0.14);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.86);
+  padding: 6px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+
+.window-preview-hero {
+  height: 62px;
+  border-radius: 4px;
+  background:
+    linear-gradient(140deg, rgba(40, 40, 40, 0.16), rgba(245, 245, 245, 0.7)),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.06),
+      rgba(0, 0, 0, 0.06) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+}
+
+.window-preview-lines {
+  display: grid;
+  gap: 4px;
+}
+
+.window-preview-lines span {
+  display: block;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(15, 15, 15, 0.17);
+}
+
+.window-preview-lines span:nth-child(1) { width: 82%; }
+.window-preview-lines span:nth-child(2) { width: 62%; }
+.window-preview-lines span:nth-child(3) { width: 74%; }
+
+.window-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(16, 16, 16, 0.72);
+}
+
+.window-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #30d158;
+  box-shadow: 0 0 0 3px rgba(48, 209, 88, 0.14);
+}
+
+/* Botones Gigantes Inferiores */
+.landing-nav-footer-brutalist {
+  display: flex;
+  margin-top: auto;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(16, 16, 16, 0.45);
+  background: rgba(250, 250, 250, 0.82);
+  backdrop-filter: blur(7px);
+  position: relative;
+  z-index: 3;
+}
+.nav-btn-container {
+  flex: 1;
+  display: flex;
+}
+.nav-btn-container.border-right {
+  border-right: 1px solid rgba(16, 16, 16, 0.35);
+}
+.nav-btn-brutalist {
+  width: 100%;
+  padding: 1.6rem 0;
+  text-align: center;
+  font-size: clamp(1.35rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: #101010;
+  letter-spacing: 0.18em;
+  transition: background-color 0.22s ease, color 0.22s ease, transform 0.2s ease, letter-spacing 0.22s ease;
+}
+.nav-btn-brutalist:hover {
+  background: rgba(255, 255, 255, 0.65);
+  transform: translateY(-1px);
+  letter-spacing: 0.22em;
+}
+
+.nav-btn-container:first-child .nav-btn-brutalist:hover {
+  color: #060606;
+}
+
+.nav-btn-container:last-child .nav-btn-brutalist:hover {
+  color: #060606;
+}
+
+@keyframes floatA {
+  0%,
+  100% { transform: translateY(0px) rotate(-0.6deg); }
+  50% { transform: translateY(-8px) rotate(0.4deg); }
+}
+
+@keyframes floatB {
+  0%,
+  100% { transform: translateY(0px) rotate(0.4deg); }
+  50% { transform: translateY(-10px) rotate(-0.3deg); }
+}
+
+@keyframes floatC {
+  0%,
+  100% { transform: translateY(0px) rotate(-0.3deg); }
+  50% { transform: translateY(-7px) rotate(0.5deg); }
+}
+
+@keyframes drift {
+  0%,
+  100% { transform: translateX(0); }
+  50% { transform: translateX(8px); }
+}
+

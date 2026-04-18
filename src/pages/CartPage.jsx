@@ -1,45 +1,69 @@
 import { GlobalFooter, GlobalHeader } from "../components/Layout";
+import { localizeProduct } from "../data/i18n";
 
-const CartPage = ({ changePage, cartItems, cartCount, removeFromCart }) => {
+const CartPage = ({
+  changePage,
+  cartItems,
+  cartCount,
+  wishlistCount,
+  removeFromCart,
+  onOpenProductDetail,
+  theme,
+  onToggleTheme,
+  language,
+  t,
+}) => {
   const total = cartItems.reduce((sum, item) => sum + item.price, 0);
 
   return (
     <div className="category-page">
-      <GlobalHeader changePage={changePage} cartCount={cartCount} />
+      <GlobalHeader
+        changePage={changePage}
+        cartCount={cartCount}
+        wishlistCount={wishlistCount}
+        onOpenProductDetail={onOpenProductDetail}
+        theme={theme}
+        onToggleTheme={onToggleTheme}
+        language={language}
+        t={t}
+      />
       <div className="cart-container">
-        <h2 className="cart-title">LA TEVA BOSSA ({cartCount})</h2>
+        <h2 className="cart-title">{t("cart.title", "YOUR BAG")} ({cartCount})</h2>
 
         {cartItems.length === 0 ? (
           <div style={{ textAlign: "center", padding: "4rem 0", fontSize: "1.5rem" }}>
-            La teva bossa esta buida. <br />
+            {t("cart.empty", "Your bag is empty.")} <br />
             <br />
             <button
               className="toolbar-btn"
               onClick={() => changePage("products")}
             >
-              CONTINUA COMPRANT
+              {t("cart.continue", "CONTINUE SHOPPING")}
             </button>
           </div>
         ) : (
           <div>
             {cartItems.map((item, index) => (
+              (() => {
+                const localizedItem = localizeProduct(item, language);
+                return (
               <div key={index} className="cart-item">
                 <div className="cart-item-details">
                   <img
-                    src={item.img}
-                    alt={item.name}
+                    src={localizedItem.img}
+                    alt={localizedItem.name}
                     className="cart-item-img"
                     style={{ objectFit: "cover" }}
                   />
                   <div>
-                    <p className="item-brand">{item.brand}</p>
-                    <h3 className="item-name">{item.name}</h3>
-                    <p className="item-meta">Talla: M | Qtat: 1</p>
+                    <p className="item-brand">{localizedItem.brand}</p>
+                    <h3 className="item-name">{localizedItem.name}</h3>
+                    <p className="item-meta">{t("cart.size", "Size")}: M | {t("cart.quantity", "Qty.")}: 1</p>
                     <button
                       className="remove-btn"
                       onClick={() => removeFromCart(index)}
                     >
-                      Elimina
+                      {t("cart.remove", "Remove")}
                     </button>
                   </div>
                 </div>
@@ -47,19 +71,21 @@ const CartPage = ({ changePage, cartItems, cartCount, removeFromCart }) => {
                   {item.price.toFixed(2)}€
                 </div>
               </div>
+                );
+              })()
             ))}
 
             <div className="cart-total-section">
-              <h2>TOTAL: {total.toFixed(2)}€</h2>
+              <h2>{t("cart.total", "TOTAL")}: {total.toFixed(2)}€</h2>
               <p style={{ color: "#666", marginBottom: "2rem" }}>
-                Impostos inclosos. Despeses d'enviament calculades al final.
+                {t("cart.taxNotice", "Taxes included. Shipping costs calculated at checkout.")}
               </p>
-              <button className="checkout-btn">PASSA AL PAGAMENT</button>
+              <button className="checkout-btn">{t("cart.checkout", "PROCEED TO CHECKOUT")}</button>
             </div>
           </div>
         )}
       </div>
-      <GlobalFooter />
+      <GlobalFooter t={t} />
     </div>
   );
 };

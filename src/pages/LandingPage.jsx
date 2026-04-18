@@ -1,6 +1,6 @@
 import { WindowOverlay } from "../components/Layout";
 
-const LandingPage = ({ changePage }) => (
+const LandingPage = ({ changePage, t }) => (
   <div className="landing-page-brutalist">
     <div className="windows-absolute-wrapper">
       <WindowOverlay label="W" offsetClass="window-1" />
@@ -9,21 +9,19 @@ const LandingPage = ({ changePage }) => (
     </div>
 
     <div className="glitch-visual-container">
+      <p className="landing-kicker">WFA / 2026 COLLECTION</p>
       <div className="glitch-visual-text">
-        <div className="glitch-text" data-text="W F A">
-          W F A
-        </div>
-      </div>
-      <div className="glitch-visual-text reflection">
-        <div className="glitch-text" data-text="W F A">
-          W F A
+        <div className="glitch-text" data-text="ROB THE FAB">
+          ROB THE FAB
         </div>
       </div>
     </div>
 
     <div className="main-logo-container">
       <h1 className="main-logo-glitch-text">ROB THE FAB</h1>
-      <h1 className="main-logo-glitch-text logo-reflection">ROB THE FAB</h1>
+      <p className="landing-tagline">
+        {t("landing.tagline", "Wear the Story. Share the Change.")}
+      </p>
     </div>
 
     <footer className="landing-nav-footer-brutalist">
@@ -33,7 +31,7 @@ const LandingPage = ({ changePage }) => (
           className="nav-btn-brutalist glitch-text"
           data-text="SHOP"
         >
-          SHOP
+          {t("landing.shop", "SHOP")}
         </button>
       </div>
       <div className="nav-btn-container">
@@ -42,7 +40,7 @@ const LandingPage = ({ changePage }) => (
           className="nav-btn-brutalist glitch-text"
           data-text="SOCIALS"
         >
-          SOCIALS
+          {t("landing.socials", "SOCIALS")}
         </button>
       </div>
     </footer>

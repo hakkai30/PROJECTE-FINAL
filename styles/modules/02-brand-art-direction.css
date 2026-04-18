@@ -1,0 +1,235 @@
+/* =========================================
+   MICROINTERACTIONS PHASE 5
+========================================= */
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-1: 120ms;
+  --dur-2: 220ms;
+  --dur-3: 360ms;
+}
+
+.product-card,
+.social-post,
+.thread-item,
+.search-result-item,
+.theme-option-card,
+.settings-card,
+.wishlist-card,
+.category-large-btn,
+.quick-view-modal,
+.bottom-sheet-panel,
+.chatbot-window,
+.auth-card {
+  transition:
+    transform var(--dur-2) var(--ease-out-expo),
+    box-shadow var(--dur-2) var(--ease-out-expo),
+    border-color var(--dur-2) var(--ease-out-expo),
+    background-color var(--dur-2) var(--ease-out-expo);
+}
+
+.product-img,
+.quick-view-img,
+.product-detail-img,
+.post-img,
+.search-result-thumb {
+  transition: transform var(--dur-3) var(--ease-out-expo), filter var(--dur-2) ease;
+}
+
+.product-card:hover .product-img,
+.social-post:hover .post-img,
+.search-result-item:hover .search-result-thumb {
+  transform: scale(1.02);
+}
+
+.quick-view-modal:hover .quick-view-img,
+.product-detail-layout:hover .product-detail-img {
+  transform: scale(1.015);
+}
+
+.add-btn,
+.checkout-btn,
+.auth-submit-btn,
+.chat-compose button,
+.chatbot-input button,
+.toolbar-btn,
+.filter-bottom-btn,
+.theme-toggle-btn,
+.settings-menu-btn,
+.quick-view-wishlist,
+.suggestion-tags button,
+.sidebar-link,
+.bottom-action-btn,
+.shop-look-btn {
+  transition:
+    transform var(--dur-1) var(--ease-soft-spring),
+    box-shadow var(--dur-2) var(--ease-out-expo),
+    background-color var(--dur-2) var(--ease-out-expo),
+    color var(--dur-2) var(--ease-out-expo),
+    border-color var(--dur-2) var(--ease-out-expo);
+}
+
+.add-btn:hover,
+.checkout-btn:hover,
+.auth-submit-btn:hover,
+.chat-compose button:hover,
+.chatbot-input button:hover,
+.toolbar-btn:hover,
+.filter-bottom-btn:hover,
+.theme-toggle-btn:hover,
+.settings-menu-btn:hover,
+.quick-view-wishlist:hover,
+.suggestion-tags button:hover,
+.bottom-action-btn:hover,
+.shop-look-btn:hover {
+  transform: translateY(-2px);
+}
+
+.add-btn:active,
+.checkout-btn:active,
+.auth-submit-btn:active,
+.chat-compose button:active,
+.chatbot-input button:active,
+.toolbar-btn:active,
+.filter-bottom-btn:active,
+.theme-toggle-btn:active,
+.settings-menu-btn:active,
+.quick-view-wishlist:active,
+.suggestion-tags button:active,
+.bottom-action-btn:active,
+.shop-look-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.sidebar-link {
+  position: relative;
+}
+
+.sidebar-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 2px;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-2) var(--ease-out-expo);
+  opacity: 0.75;
+}
+
+.sidebar-link:hover::after,
+.sidebar-link-active::after {
+  transform: scaleX(1);
+}
+
+.quick-view-overlay,
+.bottom-sheet-overlay,
+.search-fullscreen-overlay,
+.sidebar-overlay {
+  animation: fadeOverlay var(--dur-2) ease both;
+}
+
+.quick-view-modal,
+.bottom-sheet-panel,
+.chatbot-window,
+.auth-card,
+.settings-card {
+  animation: popIn var(--dur-3) var(--ease-out-expo) both;
+}
+
+.msg-bubble {
+  animation: messageIn 280ms var(--ease-out-expo) both;
+}
+
+.typing-indicator span {
+  animation-timing-function: var(--ease-soft-spring);
+}
+
+.thread-unread-badge {
+  animation: badgePulse 2.2s ease infinite;
+}
+
+.app-toast {
+  animation: toastSlideUp 220ms var(--ease-soft-spring) both;
+}
+
+.chatbot-floating-bubble {
+  transition:
+    transform var(--dur-2) var(--ease-soft-spring),
+    box-shadow var(--dur-2) var(--ease-out-expo),
+    background-color var(--dur-2) var(--ease-out-expo),
+    color var(--dur-2) var(--ease-out-expo);
+}
+
+.chatbot-floating-bubble:hover {
+  transform: translateY(-3px) scale(1.03);
+}
+
+@keyframes fadeOverlay {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes badgePulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@media (max-width: 768px) {
+  .product-card:hover .product-img,
+  .social-post:hover .post-img,
+  .search-result-item:hover .search-result-thumb,
+  .quick-view-modal:hover .quick-view-img,
+  .product-detail-layout:hover .product-detail-img {
+    transform: none;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: white; 
+  color: black;
+  overflow-x: hidden;
+}
+button { background: none; border: none; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+button:active { transform: translate(2px, 2px); box-shadow: none !important; }
+

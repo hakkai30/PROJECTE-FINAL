@@ -122,6 +122,88 @@ La aplicación se estructurará siguiendo un modelo de arquitectura cliente-serv
 - Se implementó navegación entre páginas usando un estado (`currentPage`) en el componente principal `App`.
 - Se añadieron funcionalidades como agregar y eliminar productos del carrito, y un sistema de "me gusta" en el feed social.
 
+## Autenticacion Frontend Lista Para Backend
+
+Actualmente el proyecto ya tiene registro/login para proteger la parte social.
+
+Modos disponibles:
+- Modo local (actual): guarda usuarios y sesion en localStorage.
+- Modo remoto (preparado): usa peticiones HTTP a backend con fetch.
+
+Configuracion:
+- Crear archivo `.env` basado en `.env.example`.
+- Variables:
+  - `VITE_USE_REMOTE_AUTH=true` para activar backend.
+  - `VITE_AUTH_API_URL=http://localhost:3001` (o URL real de tu API).
+
+Contrato de endpoints esperado:
+- `POST /api/auth/register`
+  - Body: `{ "name": "Robin", "email": "robin@mail.com", "password": "123456" }`
+  - Respuesta OK: `{ "user": { "name": "Robin", "email": "robin@mail.com" } }`
+- `POST /api/auth/login`
+  - Body: `{ "email": "robin@mail.com", "password": "123456" }`
+  - Respuesta OK: `{ "user": { "name": "Robin", "email": "robin@mail.com" } }`
+- `POST /api/auth/logout`
+  - Sin body obligatorio.
+
+Si `VITE_USE_REMOTE_AUTH=false` o no hay `VITE_AUTH_API_URL`, el sistema usa modo local automaticamente.
+
+### Levantar Front + Backend Auth en local
+
+1. Instalar dependencias
+  - `npm install`
+2. Ejecutar frontend y backend a la vez
+  - `npm run dev:full`
+3. O ejecutar por separado
+  - Terminal 1: `npm run dev`
+  - Terminal 2: `npm run dev:server`
+
+El backend de auth se levanta en `http://localhost:3001` por defecto.
+La configuracion local del frontend esta en `.env.local` para usar autenticacion remota.
+
+## Guia Rapida de Estilos (CSS Modular)
+
+Ahora los estilos globales se cargan desde [style.css](style.css) como indice de modulos en [styles/modules](styles/modules).
+
+Orden y responsabilidad principal:
+
+1. [styles/modules/00-foundations.css](styles/modules/00-foundations.css): reset, variables base y tokens.
+2. [styles/modules/01-layout-atmosphere.css](styles/modules/01-layout-atmosphere.css): estructuras comunes y atmósfera general.
+3. [styles/modules/02-brand-art-direction.css](styles/modules/02-brand-art-direction.css): dirección visual de marca.
+4. [styles/modules/03-landing.css](styles/modules/03-landing.css): landing + ventanas emergentes.
+5. [styles/modules/04-structure.css](styles/modules/04-structure.css): estructura global heredada.
+6. [styles/modules/05-shop-social.css](styles/modules/05-shop-social.css): shop, product cards y social feed.
+7. [styles/modules/06-ui-refinements.css](styles/modules/06-ui-refinements.css): refinados de UI (detalles de interacción).
+8. [styles/modules/07-dark-theme.css](styles/modules/07-dark-theme.css): overrides de modo oscuro.
+9. [styles/modules/08-responsive-accessibility.css](styles/modules/08-responsive-accessibility.css): responsive y accesibilidad.
+10. [styles/modules/09-messages.css](styles/modules/09-messages.css): experiencia de mensajes/chat.
+11. [styles/modules/10-auth.css](styles/modules/10-auth.css): login/registro.
+12. [styles/modules/11-search.css](styles/modules/11-search.css): buscador global.
+13. [styles/modules/12-chatbot.css](styles/modules/12-chatbot.css): widget de chatbot.
+14. [styles/modules/13-brand-polish.css](styles/modules/13-brand-polish.css): pase de pulido visual de marca.
+15. [styles/modules/14-global-polish.css](styles/modules/14-global-polish.css): pulido global transversal.
+16. [styles/modules/15-global-consistency.css](styles/modules/15-global-consistency.css): sistema final de consistencia (botones, inputs, chips).
+
+Nota:
+1. Mantener el orden de imports en [style.css](style.css), porque define la cascada final.
+2. Convencion de prefijos de clases: [styles/STYLE_CONVENTIONS.md](styles/STYLE_CONVENTIONS.md).
+
+## Convencion de Nombres CSS
+
+Para escalar sin conflictos, aplica prefijos por dominio cuando crees clases nuevas:
+
+1. `landing-`: portada.
+2. `shop-` y `product-`: catalogo y detalle.
+3. `social-`: feed social.
+4. `messages-` y `thread-`: chat/mensajeria.
+5. `auth-`: login/registro.
+6. `settings-`: ajustes.
+7. `search-`: buscador global.
+8. `chatbot-`: widget de asistente.
+9. `is-` y `has-`: estados de UI.
+
+Guia completa y ejemplos: [styles/STYLE_CONVENTIONS.md](styles/STYLE_CONVENTIONS.md).
+
 ### Contenido del archivo `index.html`
 ```html
 <!DOCTYPE html>

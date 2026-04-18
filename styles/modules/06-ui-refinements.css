@@ -1,0 +1,81 @@
+/* =========================================
+   SETTINGS PAGE
+========================================= */
+.settings-layout {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2.5rem 3rem 4rem;
+}
+
+.settings-card {
+  margin-top: 1.2rem;
+  border: 1px solid #1a1a1a;
+  background: #fff;
+  padding: 1.2rem;
+}
+
+.settings-card h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  letter-spacing: 0.06em;
+}
+
+.settings-card p {
+  margin: 0.5rem 0 1rem;
+  color: #666;
+}
+
+.theme-options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+  gap: 0.9rem;
+}
+
+.settings-return-btn {
+  margin-top: 2.6rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content;
+  min-width: min(280px, 100%);
+  text-align: center;
+}
+
+.language-options-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.theme-option-card {
+  border: 1px solid #cfcfcf;
+  background: #fff;
+  padding: 1rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.theme-option-card strong {
+  letter-spacing: 0.08em;
+  font-size: 0.9rem;
+}
+
+.theme-option-card span {
+  font-size: 0.82rem;
+  color: #666;
+}
+
+.theme-option-card small {
+  margin-top: 0.35rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  color: #0d8d41;
+}
+
+.theme-option-card.active {
+  border-color: #111;
+  background: #f2f2f2;
+}
+

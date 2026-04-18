@@ -1,0 +1,255 @@
+/* =========================================
+   GLOBAL POLISH PASS 2
+========================================= */
+:root {
+  --radius-lg: 18px;
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --shadow-soft-hover: 0 16px 34px rgba(0, 0, 0, 0.12);
+}
+
+body {
+  line-height: 1.45;
+}
+
+.main-header,
+.shop-toolbar,
+.messages-threads-panel,
+.messages-chat-panel,
+.social-sidebar,
+.auth-card,
+.settings-card,
+.cart-total-section,
+.quick-view-modal,
+.bottom-sheet-panel,
+.search-fullscreen-overlay {
+  border-radius: var(--radius-md);
+}
+
+.main-header {
+  padding: 0.95rem 1.45rem;
+}
+
+.logo-center-header {
+  letter-spacing: 0.02em;
+}
+
+.header-actions {
+  gap: 0.8rem;
+}
+
+.header-actions button,
+.theme-toggle-btn,
+.settings-menu-btn,
+.toolbar-btn,
+.filter-bottom-btn,
+.add-btn,
+.checkout-btn,
+.chat-compose button,
+.auth-submit-btn,
+.auth-back-btn {
+  min-height: 40px;
+  letter-spacing: 0.1em;
+}
+
+.toolbar-btn,
+.filter-bottom-btn,
+.add-btn,
+.checkout-btn,
+.chat-compose button,
+.auth-submit-btn {
+  box-shadow: var(--shadow-soft);
+}
+
+.toolbar-btn:hover,
+.filter-bottom-btn:hover,
+.add-btn:hover,
+.checkout-btn:hover,
+.chat-compose button:hover,
+.auth-submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft-hover);
+}
+
+.category-large-btn,
+.product-card,
+.social-post,
+.thread-item,
+.search-result-item,
+.auth-card,
+.settings-card,
+.wishlist-card,
+.quick-view-modal,
+.bottom-sheet-panel,
+.chatbot-window {
+  border-radius: var(--radius-lg);
+}
+
+.product-card,
+.social-post,
+.thread-item,
+.search-result-item,
+.settings-card,
+.wishlist-card {
+  box-shadow: var(--shadow-soft);
+}
+
+.thread-item,
+.search-result-item,
+.theme-option-card,
+.active-filter-chip,
+.clear-all-filters-chip,
+.quick-view-wishlist,
+.auth-form input,
+.threads-search-input,
+.chat-compose input,
+.search-content input {
+  border-radius: 12px;
+}
+
+.search-content input {
+  font-size: clamp(1.75rem, 4.8vw, 3.5rem);
+  border-bottom-width: 3px;
+}
+
+.social-sidebar,
+.messages-threads-panel,
+.chat-stream,
+.chatbot-messages {
+  scrollbar-width: thin;
+  scrollbar-color: #bdbdbd transparent;
+}
+
+.sidebar-link {
+  font-size: clamp(1rem, 1.7vw, 1.35rem);
+  line-height: 1.15;
+}
+
+.sidebar-user-chip,
+.thread-meta span,
+.thread-item small,
+.search-result-item small,
+.message-state,
+.auth-kicker,
+.auth-footnote {
+  font-size: 0.74rem;
+}
+
+.product-name,
+.item-name,
+.chat-topbar h3,
+.auth-card h1 {
+  line-height: 1.2;
+}
+
+.chat-stream {
+  gap: 0.9rem;
+}
+
+.msg-bubble {
+  border-radius: 12px;
+}
+
+.msg-bubble.me {
+  border-top-right-radius: 4px;
+}
+
+.typing-indicator {
+  border-radius: 12px;
+}
+
+.auth-form {
+  gap: 0.85rem;
+}
+
+.auth-form input {
+  padding: 0.82rem 0.84rem;
+}
+
+.auth-feedback {
+  border-radius: 10px;
+}
+
+.app-toast {
+  border-radius: 12px;
+  box-shadow: var(--shadow-soft-hover);
+}
+
+@media (max-width: 1024px) {
+  .social-feed {
+    padding: 2rem 1rem;
+  }
+
+  .social-post {
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-header {
+    border-radius: 0;
+    padding: 0.8rem 0.9rem;
+  }
+
+  .header-actions {
+    gap: 0.45rem;
+  }
+
+  .header-actions button,
+  .theme-toggle-btn,
+  .settings-menu-btn,
+  .toolbar-btn,
+  .filter-bottom-btn,
+  .add-btn,
+  .checkout-btn,
+  .chat-compose button,
+  .auth-submit-btn {
+    min-height: 42px;
+    font-size: 0.76rem;
+    letter-spacing: 0.09em;
+  }
+
+  .social-sidebar {
+    gap: 0.55rem;
+    padding: 1rem;
+    border-radius: 0;
+  }
+
+  .sidebar-link {
+    font-size: 0.92rem;
+  }
+
+  .sidebar-user-chip {
+    width: 100%;
+    margin-top: 0.25rem;
+  }
+
+  .product-card,
+  .social-post,
+  .thread-item,
+  .search-result-item,
+  .auth-card,
+  .settings-card,
+  .quick-view-modal,
+  .bottom-sheet-panel,
+  .chatbot-window,
+  .cart-total-section {
+    border-radius: 14px;
+  }
+
+  .auth-screen {
+    padding: 1rem 0.75rem;
+  }
+
+  .auth-card {
+    width: 100%;
+  }
+
+  .chatbot-window {
+    right: 0.8rem;
+    left: 0.8rem;
+    width: auto;
+    height: 68vh;
+    max-height: 560px;
+  }
+}
+

@@ -1,0 +1,9 @@
+[
+  {
+    "id": 1776483593004,
+    "name": "Robin",
+    "email": "robin@test.com",
+    "passwordHash": "$2b$10$a6tkPJZzi6yPqGV89veMy.QHTqr868CmfV3hROPLgmrS719KdgFG2",
+    "createdAt": "2026-04-18T03:39:53.004Z"
+  }
+]

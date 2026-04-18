@@ -1,26 +1,104 @@
-import { useState } from "react";
-import { X, Search, Menu, ShoppingBag, MessageSquare, Send } from "lucide-react";
+import { useEffect, useState } from "react";
+import { X, Search, Menu, ShoppingBag, MessageSquare, Send, Palette } from "lucide-react";
+import { MOCK_PRODUCTS } from "../data/mockData";
+import { LANGUAGE_OPTIONS, getLanguageLabel } from "../data/i18n";
+import { localizeProduct } from "../data/i18n";
 
 export const WindowOverlay = ({ label, offsetClass }) => {
   const [isVisible, setIsVisible] = useState(true);
+  const closeWindow = () => setIsVisible(false);
+
   if (!isVisible) return null;
 
   return (
     <div className={`window-frame ${offsetClass}`}>
       <div className="window-header">
-        <span className="window-label">{label}</span>
-        <button className="window-close" onClick={() => setIsVisible(false)}><X size={12}/></button>
+        <span className="window-label">LOOK {label}</span>
+        <div className="window-actions">
+          <button type="button" className="window-action" onClick={closeWindow} aria-label="Close window">
+            &minus;
+          </button>
+          <button type="button" className="window-action" onClick={closeWindow} aria-label="Close window">
+            □
+          </button>
+          <button type="button" className="window-action window-action-close" onClick={closeWindow} aria-label="Close window">
+            ×
+          </button>
+        </div>
       </div>
       <div className="window-body">
-        <span className="window-content-x">X</span>
+        <div className="window-url">robthefab.local/look/{label.toLowerCase()}</div>
+        <div className="window-preview">
+          <div className="window-preview-hero" />
+          <div className="window-preview-lines">
+            <span />
+            <span />
+            <span />
+          </div>
+        </div>
+        <div className="window-status">
+          <span className="window-status-dot" />
+          LIVE
+        </div>
       </div>
     </div>
   );
 };
 
-export const GlobalHeader = ({ changePage, cartCount }) => {
+export const LanguageSwitcher = ({ language, onChangeLanguage, t }) => {
+  return (
+    <div className="language-switcher" aria-label={t("language.label", "Language")}> 
+      <span>{t("language.label", "Language")}</span>
+      <select value={language} onChange={(event) => onChangeLanguage(event.target.value)}>
+        {LANGUAGE_OPTIONS.map((option) => (
+          <option key={option.code} value={option.code}>
+            {getLanguageLabel(option.code)}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
+
+export const GlobalHeader = ({
+  changePage,
+  cartCount,
+  wishlistCount = 0,
+  onOpenProductDetail = null,
+  language = "ca",
+  t,
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeResultIndex, setActiveResultIndex] = useState(-1);
+
+  const normalizedTerm = searchTerm.trim().toLowerCase();
+  const searchResults = normalizedTerm
+    ? MOCK_PRODUCTS.filter(
+        (product) =>
+          localizeProduct(product, language).name.toLowerCase().includes(normalizedTerm) ||
+          product.brand.toLowerCase().includes(normalizedTerm) ||
+          product.category.toLowerCase().includes(normalizedTerm)
+      ).slice(0, 6)
+    : [];
+
+  const quickSearches = ["Jaqueta", "Bandolera", "Cadena", "Home"];
+
+  useEffect(() => {
+    setActiveResultIndex(-1);
+  }, [searchTerm, isSearchOpen]);
+
+  const handleResultOpen = (product) => {
+    if (onOpenProductDetail) {
+      onOpenProductDetail(product);
+    } else {
+      changePage(product.category);
+    }
+    setIsSearchOpen(false);
+    setSearchTerm("");
+    setIsMenuOpen(false);
+  };
 
   return (
     <>
@@ -31,7 +109,7 @@ export const GlobalHeader = ({ changePage, cartCount }) => {
             onClick={() => setIsMenuOpen(true)}
             style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
           >
-            <Menu size={16} /> MENU
+            <Menu size={16} /> {t("header.menu", "MENU")}
           </button>
           
           {/* Menú lateral (Sidebar) */}
@@ -41,36 +119,38 @@ export const GlobalHeader = ({ changePage, cartCount }) => {
                 
                 <div className="sidebar-header">
                   <button onClick={() => setIsMenuOpen(false)}>
-                    <X size={16} /> CLOSE
+                    <X size={16} /> {t("header.close", "CLOSE")}
                   </button>
                   <button onClick={() => { setIsMenuOpen(false); setIsSearchOpen(true); }}>
-                    <Search size={16} /> SEARCH
+                    <Search size={16} /> {t("header.search", "SEARCH")}
                   </button>
                 </div>
 
                 <div className="sidebar-nav-group">
-                  <button onClick={() => { setIsMenuOpen(false); changePage("products"); }}>WOMEN</button>
-                  <button onClick={() => { setIsMenuOpen(false); changePage("products"); }}>MEN</button>
-                  <button onClick={() => { setIsMenuOpen(false); changePage("products"); }}>KIDS</button>
-                  <button onClick={() => { setIsMenuOpen(false); changePage("products"); }}>BAGS</button>
-                  <button onClick={() => { setIsMenuOpen(false); changePage("products"); }}>ACCESSORIES</button>
-                  <button onClick={() => { setIsMenuOpen(false); changePage("products"); }}>HOME</button>
-                  <button onClick={() => { setIsMenuOpen(false); changePage("products"); }}>ECO-AWARE</button>
+                  <button onClick={() => { setIsMenuOpen(false); changePage("landing"); }}>{t("nav.home", "HOME")}</button>
+                  <button onClick={() => { setIsMenuOpen(false); changePage("men"); }}>{t("nav.men", "MEN")}</button>
+                  <button onClick={() => { setIsMenuOpen(false); changePage("women"); }}>{t("nav.women", "WOMEN")}</button>
+                  <button onClick={() => { setIsMenuOpen(false); changePage("kids"); }}>{t("nav.kids", "KIDS")}</button>
+                  <button onClick={() => { setIsMenuOpen(false); changePage("bags"); }}>{t("nav.bags", "BAGS")}</button>
+                  <button onClick={() => { setIsMenuOpen(false); changePage("accessories"); }}>{t("nav.accessories", "ACCESSORIES")}</button>
+                  <button onClick={() => { setIsMenuOpen(false); changePage("home"); }}>{t("nav.homeDecor", "HOME")}</button>
                 </div>
 
-                <div className="sidebar-nav-group">
-                  <button>RUNWAY SHOWS</button>
-                  <button>PRODUCT GUIDE</button>
-                  <button>INTERVIEWS</button>
-                  <button>LAMYLAND</button>
-                  <button>FURNITURE</button>
-                  <button>EXHIBITIONS</button>
-                  <button>STORES</button>
+                <div className="sidebar-nav-group">  
+                  <button onClick={() => { setIsMenuOpen(false); changePage("socials"); }}>{t("nav.socials", "SOCIAL FEED")}</button>
                 </div>
 
                 <div className="sidebar-nav-group bottom-group">
-                  <button>WISHLIST [ 0 ]</button>
-                  <button>SPAIN / EUR</button>
+                  <button onClick={() => { setIsMenuOpen(false); changePage("wishlist"); }}>
+                    {t("nav.wishlist", "WISHLIST")} [ {wishlistCount} ]
+                  </button>
+                  <button
+                    className="settings-menu-btn"
+                    onClick={() => { setIsMenuOpen(false); changePage("settings"); }}
+                  >
+                    <Palette size={14} /> {t("nav.settings", "SETTINGS")}
+                  </button>
+                  <button>{t("header.currency", "SPAIN / EUR")}</button>
                 </div>
               </div>
             </div>
@@ -83,10 +163,13 @@ export const GlobalHeader = ({ changePage, cartCount }) => {
         
         <div className="header-actions">
           <button onClick={() => setIsSearchOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Search size={16} /> SEARCH
+            <Search size={16} /> {t("header.search", "SEARCH")}
+          </button>
+          <button onClick={() => changePage("wishlist")} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            {t("nav.wishlist", "WISHLIST")} ({wishlistCount})
           </button>
           <button onClick={() => changePage("cart")} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <ShoppingBag size={16} /> BAG ({cartCount})
+            <ShoppingBag size={16} /> {t("header.bag", "BAG")} ({cartCount})
           </button>
         </div>
       </header>
@@ -94,19 +177,80 @@ export const GlobalHeader = ({ changePage, cartCount }) => {
       {/* OVERLAY DE BÚSQUEDA A PANTALLA COMPLETA */}
       {isSearchOpen && (
         <div className="search-fullscreen-overlay">
-          <button className="close-search-btn" onClick={() => setIsSearchOpen(false)}>
+          <button
+            className="close-search-btn"
+            onClick={() => {
+              setIsSearchOpen(false);
+              setSearchTerm("");
+            }}
+          >
             <X size={32} />
           </button>
           <div className="search-content">
-            <input type="text" placeholder="TYPE TO SEARCH..." autoFocus />
-            <div className="search-suggestions">
-              <p>POPULAR SEARCHES</p>
-              <div className="suggestion-tags">
-                <button>Oversized Jackets</button>
-                <button>Silver Chains</button>
-                <button>SS24 Collection</button>
+            <input
+              type="text"
+              placeholder={t("header.typeToSearch", "TYPE TO SEARCH...")}
+              autoFocus
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "ArrowDown" && searchResults.length > 0) {
+                  e.preventDefault();
+                  setActiveResultIndex((prev) =>
+                    prev < searchResults.length - 1 ? prev + 1 : 0
+                  );
+                }
+
+                if (e.key === "ArrowUp" && searchResults.length > 0) {
+                  e.preventDefault();
+                  setActiveResultIndex((prev) =>
+                    prev <= 0 ? searchResults.length - 1 : prev - 1
+                  );
+                }
+
+                if (e.key === "Enter" && searchResults.length > 0) {
+                  const indexToOpen = activeResultIndex >= 0 ? activeResultIndex : 0;
+                  handleResultOpen(searchResults[indexToOpen]);
+                }
+              }}
+            />
+
+            {!normalizedTerm && (
+              <div className="search-suggestions">
+                <p>{t("header.popularSearches", "POPULAR SEARCHES")}</p>
+                <div className="suggestion-tags">
+                  {quickSearches.map((term) => (
+                    <button key={term} onClick={() => setSearchTerm(term)}>
+                      {term}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+
+            {normalizedTerm && (
+              <div className="search-results-list">
+                {searchResults.map((product, index) => (
+                  <button
+                    key={product.id}
+                    className={`search-result-item ${index === activeResultIndex ? "active" : ""}`}
+                    onClick={() => handleResultOpen(product)}
+                    onMouseEnter={() => setActiveResultIndex(index)}
+                  >
+                    <img src={product.img} alt={localizeProduct(product, language).name} className="search-result-thumb" />
+                    <div className="search-result-texts">
+                      <span>{localizeProduct(product, language).name}</span>
+                      <small>
+                        {product.brand} / {product.category.toUpperCase()} / {product.price.toFixed(2)}€
+                      </small>
+                    </div>
+                  </button>
+                ))}
+                {searchResults.length === 0 && (
+                  <p className="search-no-results">{t("header.noResults", "No results found for this search.")}</p>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -114,44 +258,41 @@ export const GlobalHeader = ({ changePage, cartCount }) => {
   );
 };
 
-export const GlobalFooter = () => (
+export const GlobalFooter = ({ t }) => (
   <footer className="main-app-footer">
     <div className="footer-column">
-      <h3>GUIA DE COMPRA</h3>
+      <h3>{t("footer.guideTitle", "SHOPPING GUIDE")}</h3>
       <ul>
-        <li>Cancel·lació i Devolució</li>
-        <li>Mètodes de Pagament</li>
-        <li>Informació d'Enviament</li>
-        <li>FAQs</li>
-        <li>Contacte</li>
+        {t("footer.guide", []).map((item) => (
+          <li key={item}>{item}</li>
+        ))}
       </ul>
     </div>
     <div className="footer-column">
-      <h3>MEMBRES</h3>
+      <h3>{t("footer.membersTitle", "MEMBERS")}</h3>
       <ul>
-        <li>El meu compte</li>
-        <li>Estat de la Comanda</li>
-        <li>Punts de Recompensa</li>
-        <li>Registre de Membre</li>
+        {t("footer.members", []).map((item) => (
+          <li key={item}>{item}</li>
+        ))}
       </ul>
     </div>
     <div className="footer-column">
-      <h3>SOBRE NOSALTRES</h3>
+      <h3>{t("footer.aboutTitle", "ABOUT US")}</h3>
       <ul>
-        <li>La història de ROB THE FAB</li>
-        <li>Carreres</li>
-        <li>Sostenibilitat</li>
+        {t("footer.about", []).map((item) => (
+          <li key={item}>{item}</li>
+        ))}
       </ul>
     </div>
   </footer>
 );
 
 // COMPONENTE DEL AGENTE DE IA
-export const ChatbotWidget = () => {
+export const ChatbotWidget = ({ t = (_key, fallback) => fallback || "" }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([
-    { sender: "ai", text: "Hola! Sóc l'assistent IA de ROB THE FAB. Et puc ajudar a trobar peces, guiar-te amb les talles o recomanar-te outfits sencers. Què busques avui?" }
+    { sender: "ai", text: t("chatbot.greeting", "Hello!") }
   ]);
   const [isTyping, setIsTyping] = useState(false);
 
@@ -185,7 +326,7 @@ export const ChatbotWidget = () => {
           <div className="chatbot-header">
             <div className="chatbot-title">
               <span className="online-dot"></span>
-              ROB AI STYLIST
+              {t("chatbot.title", "ROB AI STYLIST")}
             </div>
             <button onClick={() => setIsOpen(false)}><X size={18} /></button>
           </div>
@@ -206,7 +347,7 @@ export const ChatbotWidget = () => {
           <div className="chatbot-input">
             <input 
               type="text" 
-              placeholder="Pregunta sobre col·leccions, enviaments..." 
+              placeholder={t("chatbot.placeholder", "Ask about collections, shipping...")} 
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}

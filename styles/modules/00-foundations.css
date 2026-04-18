@@ -1,0 +1,334 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap");
+
+/* =========================================
+   VARIABLES GLOBALES Y RESET
+========================================= */
+:root {
+  --bg-landing: #B3B3B3; 
+  --window-blue: #0A16E6; 
+  --border-black: #000000;
+  --accent-hot: #c73922;
+  --accent-cold: #1f77ff;
+  --font-family: 'Gotham Book', sans-serif;
+  --gray-light: #F5F5F5;
+  --shadow-brutalist: 4px 4px 0px var(--border-black);
+}
+
+/* =========================================
+   BRAND POLISH PASS 3
+========================================= */
+:root {
+  --font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+  --font-display: "Archivo Black", "Arial Black", sans-serif;
+  --atmo-cold: rgba(31, 119, 255, 0.16);
+  --atmo-hot: rgba(199, 57, 34, 0.14);
+  --surface-unified-bg: rgba(255, 255, 255, 0.9);
+  --surface-unified-border: rgba(16, 16, 16, 0.2);
+  --surface-unified-shadow: 0 14px 30px rgba(12, 12, 12, 0.1);
+  --surface-unified-radius: 14px;
+  --control-unified-bg: rgba(255, 255, 255, 0.92);
+  --control-unified-border: rgba(16, 16, 16, 0.24);
+}
+
+body {
+  font-family: var(--font-family);
+}
+
+.logo-center-header,
+.main-logo-glitch-text,
+.category-title,
+.collection-title,
+.cart-title,
+.product-detail-info h1,
+.messages-threads-panel h2,
+.auth-card h1 {
+  font-family: var(--font-display);
+}
+
+.landing-page-brutalist,
+.category-page,
+.social-layout,
+.messages-layout,
+.settings-layout,
+.auth-screen {
+  position: relative;
+  isolation: isolate;
+}
+
+.category-page::after,
+.social-layout::after,
+.messages-layout::after,
+.settings-layout::after,
+.auth-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 8% 10%, var(--atmo-cold) 0%, transparent 32%),
+    radial-gradient(circle at 88% 86%, var(--atmo-hot) 0%, transparent 34%);
+}
+
+.main-header,
+.shop-toolbar,
+.social-sidebar,
+.messages-threads-panel,
+.messages-chat-panel,
+.auth-card,
+.settings-card,
+.cart-total-section,
+.quick-view-modal,
+.bottom-sheet-panel,
+.search-result-item,
+.thread-item,
+.product-card,
+.social-post,
+.wishlist-card {
+  backdrop-filter: blur(5px);
+}
+
+.shop-toolbar,
+.social-sidebar,
+.messages-threads-panel,
+.messages-chat-panel,
+.auth-card,
+.settings-card,
+.cart-total-section,
+.quick-view-modal,
+.bottom-sheet-panel,
+.search-result-item,
+.thread-item,
+.product-card,
+.social-post,
+.wishlist-card,
+.filter-sidebar,
+.chatbot-window,
+.chatbot-messages,
+.search-content,
+.product-detail-layout,
+.cart-container,
+.messages-main {
+  background: var(--surface-unified-bg);
+  border: 1px solid var(--surface-unified-border);
+  border-radius: var(--surface-unified-radius);
+  box-shadow: var(--surface-unified-shadow);
+}
+
+.header-actions button,
+.toolbar-btn,
+.add-btn,
+.checkout-btn,
+.chat-compose button,
+.auth-submit-btn,
+.theme-toggle-btn,
+.settings-menu-btn,
+.filter-bottom-btn,
+.quick-view-wishlist,
+.suggestion-tags button,
+.bottom-action-btn,
+.settings-return-btn,
+.window-action {
+  background: var(--control-unified-bg);
+  border: 1px solid var(--control-unified-border);
+  border-radius: 10px;
+}
+
+.header-actions button:hover,
+.toolbar-btn:hover,
+.add-btn:hover,
+.checkout-btn:hover,
+.chat-compose button:hover,
+.auth-submit-btn:hover,
+.theme-toggle-btn:hover,
+.settings-menu-btn:hover,
+.filter-bottom-btn:hover,
+.quick-view-wishlist:hover,
+.suggestion-tags button:hover,
+.bottom-action-btn:hover,
+.settings-return-btn:hover {
+  background: #ffffff;
+}
+
+.header-actions button,
+.toolbar-btn,
+.add-btn,
+.checkout-btn,
+.chat-compose button,
+.auth-submit-btn,
+.theme-toggle-btn,
+.settings-menu-btn,
+.filter-bottom-btn,
+.quick-view-wishlist,
+.suggestion-tags button,
+.sidebar-link,
+.bottom-action-btn {
+  font-weight: 700;
+}
+
+.main-header,
+.shop-toolbar,
+.auth-card,
+.settings-card,
+.quick-view-modal,
+.bottom-sheet-panel,
+.search-content,
+.messages-main,
+.social-feed,
+.cart-container,
+.product-detail-layout {
+  animation: revealUp 420ms ease both;
+}
+
+.products-grid .product-card,
+.social-feed .social-post,
+.messages-threads-panel .thread-item,
+.search-results-list .search-result-item {
+  opacity: 0;
+  animation: revealUp 480ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.products-grid .product-card:nth-child(1),
+.social-feed .social-post:nth-child(1),
+.messages-threads-panel .thread-item:nth-child(1),
+.search-results-list .search-result-item:nth-child(1) {
+  animation-delay: 40ms;
+}
+
+.products-grid .product-card:nth-child(2),
+.social-feed .social-post:nth-child(2),
+.messages-threads-panel .thread-item:nth-child(2),
+.search-results-list .search-result-item:nth-child(2) {
+  animation-delay: 90ms;
+}
+
+.products-grid .product-card:nth-child(3),
+.social-feed .social-post:nth-child(3),
+.messages-threads-panel .thread-item:nth-child(3),
+.search-results-list .search-result-item:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+.products-grid .product-card:nth-child(4),
+.social-feed .social-post:nth-child(4),
+.messages-threads-panel .thread-item:nth-child(4),
+.search-results-list .search-result-item:nth-child(4) {
+  animation-delay: 190ms;
+}
+
+.products-grid .product-card:nth-child(n + 5),
+.social-feed .social-post:nth-child(n + 5),
+.messages-threads-panel .thread-item:nth-child(n + 5),
+.search-results-list .search-result-item:nth-child(n + 5) {
+  animation-delay: 240ms;
+}
+
+.category-large-btn,
+.product-card,
+.thread-item,
+.search-result-item,
+.social-post,
+.quick-view-modal,
+.auth-card,
+.settings-card,
+.wishlist-card {
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease;
+}
+
+.category-large-btn:hover,
+.thread-item:hover,
+.search-result-item:hover,
+.social-post:hover,
+.settings-card:hover,
+.wishlist-card:hover {
+  transform: translateY(-2px);
+}
+
+.search-content input,
+.auth-form input,
+.chat-compose input,
+.threads-search-input,
+.chatbot-input input {
+  font-family: var(--font-family);
+  letter-spacing: 0.01em;
+}
+
+.chat-topbar h3,
+.thread-meta strong,
+.product-name,
+.item-name,
+.auth-card h1,
+.collection-title,
+.category-title {
+  text-wrap: balance;
+}
+
+::selection {
+  background: rgba(199, 57, 34, 0.24);
+  color: #101010;
+}
+
+:root[data-theme="dark"] {
+  --atmo-cold: rgba(102, 163, 255, 0.2);
+  --atmo-hot: rgba(199, 57, 34, 0.2);
+  --surface-unified-bg: rgba(28, 28, 30, 0.9);
+  --surface-unified-border: rgba(238, 238, 238, 0.16);
+  --surface-unified-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+  --control-unified-bg: rgba(38, 38, 40, 0.96);
+  --control-unified-border: rgba(238, 238, 238, 0.2);
+}
+
+:root[data-theme="dark"] .category-page::after,
+:root[data-theme="dark"] .social-layout::after,
+:root[data-theme="dark"] .messages-layout::after,
+:root[data-theme="dark"] .settings-layout::after,
+:root[data-theme="dark"] .auth-screen::after {
+  opacity: 0.9;
+}
+
+:root[data-theme="dark"] ::selection {
+  background: rgba(102, 163, 255, 0.35);
+  color: #f2f2f2;
+}
+
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-center-header,
+  .category-title,
+  .collection-title,
+  .cart-title,
+  .product-detail-info h1,
+  .messages-threads-panel h2,
+  .auth-card h1 {
+    letter-spacing: 0.03em;
+  }
+
+  .main-header,
+  .shop-toolbar,
+  .social-sidebar,
+  .messages-threads-panel,
+  .messages-chat-panel,
+  .auth-card,
+  .settings-card,
+  .cart-total-section,
+  .quick-view-modal,
+  .bottom-sheet-panel {
+    backdrop-filter: none;
+  }
+}
+

@@ -1,0 +1,228 @@
+/* =========================================
+   AUTH PAGE
+========================================= */
+/* Prefix guidance for new classes: `auth-` */
+.auth-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 82% 18%, rgba(10, 22, 230, 0.12) 0%, transparent 34%),
+    radial-gradient(circle at 20% 78%, rgba(199, 57, 34, 0.16) 0%, transparent 34%),
+    #f4f4f4;
+  padding: 2rem 1rem;
+}
+
+.auth-card {
+  width: min(520px, 100%);
+  border: 2px solid #111;
+  background: #fff;
+  padding: 1.4rem;
+  box-shadow: 7px 7px 0 #111;
+}
+
+.language-switcher,
+.auth-language-switcher {
+  position: fixed;
+  z-index: 2600;
+  top: 1rem;
+  right: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid rgba(17, 17, 17, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.language-switcher span,
+.auth-language-switcher span {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #666;
+}
+
+.language-switcher select,
+.auth-language-switcher select {
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #111;
+  outline: none;
+}
+
+.auth-language-switcher {
+  position: absolute;
+  top: -0.7rem;
+  right: 0.9rem;
+}
+
+.auth-kicker {
+  margin: 0;
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  color: #666;
+}
+
+.auth-card h1 {
+  margin: 0.5rem 0 0.75rem;
+  font-size: clamp(1.45rem, 2.8vw, 1.9rem);
+  line-height: 1.05;
+}
+
+.auth-description {
+  margin: 0;
+  color: #444;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.auth-mode-switch {
+  margin-top: 1.2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid #111;
+}
+
+.auth-mode-switch button {
+  border-radius: 0;
+  border: none;
+  border-right: 1px solid #111;
+  padding: 0.72rem 0.6rem;
+  letter-spacing: 0.14em;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.auth-mode-switch button:last-child {
+  border-right: none;
+}
+
+.auth-mode-switch button.active {
+  background: #111;
+  color: #fff;
+}
+
+.auth-form {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.72rem;
+}
+
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.38rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.auth-form input {
+  border: 1px solid #bcbcbc;
+  padding: 0.76rem 0.78rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.auth-feedback {
+  margin: 0;
+  border: 1px solid #c73922;
+  background: #fff2f0;
+  color: #8d2111;
+  padding: 0.62rem 0.7rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+.auth-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.auth-footnote {
+  margin: 0.95rem 0 0;
+  color: #666;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+}
+
+.auth-back-btn {
+  margin-top: 0.65rem;
+  color: #111;
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+  .auth-card {
+    padding: 1.1rem;
+    box-shadow: 4px 4px 0 #111;
+  }
+
+  .language-switcher,
+  .auth-language-switcher {
+    top: auto;
+    bottom: 1rem;
+    right: 0.75rem;
+    left: 0.75rem;
+    justify-content: space-between;
+    border-radius: 16px;
+  }
+
+  .auth-description {
+    font-size: 0.86rem;
+  }
+
+  .theme-options-grid,
+  .language-options-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .settings-return-btn {
+    margin-top: 1.8rem;
+    min-width: min(100%, 280px);
+  }
+}
+
+@media (max-width: 1024px) {
+  .messages-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .messages-threads-panel {
+    border-right: none;
+    border-bottom: 1px solid #d8d8d8;
+    max-height: 38vh;
+  }
+}
+
+@media (max-width: 768px) {
+  .messages-chat-panel {
+    min-height: 60vh;
+  }
+
+  .chat-stream {
+    padding: 0.9rem;
+  }
+
+  .chat-compose {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-compose button {
+    width: 100%;
+  }
+}
+

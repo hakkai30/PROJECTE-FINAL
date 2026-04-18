@@ -1,0 +1,122 @@
+/* =========================================
+   SIDEBAR MENU (REEMPLAZO DEL DROPDOWN)
+========================================= */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+}
+
+.sidebar-menu {
+  width: min(350px, 85vw);
+  height: 100%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 2.5rem;
+  box-shadow: 2px 0 15px rgba(0,0,0,0.15);
+  overflow-y: auto;
+  animation: slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  cursor: default;
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4rem;
+}
+
+.sidebar-header button {
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  font-weight: bold;
+  padding: 0;
+  color: black;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  box-shadow: none;
+}
+
+.sidebar-header button:hover {
+  opacity: 0.5;
+  background: transparent;
+  color: black;
+  transform: none;
+}
+
+.sidebar-nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-bottom: 3.5rem;
+}
+
+.sidebar-nav-group button {
+  text-align: left;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  padding: 0;
+  color: black;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  font-weight: normal;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar-nav-group button:hover {
+  opacity: 0.5;
+  background: transparent;
+  color: black;
+  transform: none;
+}
+
+.settings-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  border: 1px solid #111 !important;
+  border-radius: 999px;
+  padding: 0.38rem 0.62rem !important;
+  width: fit-content;
+}
+
+.settings-menu-btn:hover {
+  opacity: 1 !important;
+  background: #111 !important;
+  color: #fff !important;
+}
+
+.theme-toggle-btn {
+  border: 1px solid #111;
+  border-radius: 999px;
+  padding: 0.36rem 0.62rem;
+}
+
+.theme-toggle-btn:hover {
+  text-decoration: none !important;
+  background: #111;
+  color: #fff;
+}
+
+.sidebar-nav-group.bottom-group {
+  margin-top: auto;
+  margin-bottom: 0;
+}
+

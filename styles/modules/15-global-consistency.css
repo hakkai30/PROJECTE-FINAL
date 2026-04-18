@@ -1,0 +1,95 @@
+/* =========================================
+   GLOBAL CONSISTENCY OVERRIDE
+========================================= */
+:root {
+  --ui-control-height: 42px;
+  --ui-control-radius: 11px;
+  --ui-control-pad-x: 0.95rem;
+  --ui-control-pad-y: 0.62rem;
+  --ui-control-letter: 0.09em;
+}
+
+.header-actions button,
+.theme-toggle-btn,
+.settings-menu-btn,
+.toolbar-btn,
+.filter-bottom-btn,
+.add-btn,
+.checkout-btn,
+.chat-compose button,
+.auth-submit-btn,
+.auth-back-btn,
+.quick-view-wishlist,
+.suggestion-tags button,
+.settings-return-btn,
+.bottom-action-btn {
+  min-height: var(--ui-control-height);
+  border-radius: var(--ui-control-radius);
+  padding: var(--ui-control-pad-y) var(--ui-control-pad-x);
+  letter-spacing: var(--ui-control-letter);
+  line-height: 1;
+}
+
+.threads-search-input,
+.auth-form input,
+.chat-compose input,
+.chatbot-input input {
+  min-height: var(--ui-control-height);
+  border-radius: var(--ui-control-radius);
+  padding: 0.65rem 0.85rem;
+}
+
+.active-filter-chip,
+.clear-all-filters-chip,
+.theme-option-card span,
+.window-status {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+/* Keep Windows popup controls distinct from global button sizing */
+.window-action {
+  min-height: 100%;
+  height: 100%;
+  width: 30px;
+  padding: 0;
+  border-radius: 0;
+}
+
+.window-action.window-action-close {
+  width: 36px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --ui-control-height: 40px;
+    --ui-control-pad-x: 0.78rem;
+    --ui-control-pad-y: 0.56rem;
+    --ui-control-letter: 0.075em;
+  }
+
+  .header-actions button,
+  .theme-toggle-btn,
+  .settings-menu-btn,
+  .toolbar-btn,
+  .filter-bottom-btn,
+  .add-btn,
+  .checkout-btn,
+  .chat-compose button,
+  .auth-submit-btn,
+  .quick-view-wishlist,
+  .suggestion-tags button,
+  .settings-return-btn,
+  .bottom-action-btn {
+    font-size: 0.78rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
