@@ -83,7 +83,7 @@ La aplicación se estructurará siguiendo un modelo de arquitectura cliente-serv
 
 * **Frontend (Interfaz):** Desarrollado con **React.js** para garantizar una experiencia de usuario fluida y reactiva.
 * **Backend (Lógica):** Utilizaremos **Node.js** con el framework **Express** para gestionar las rutas de la API y la lógica de negocio.
-* **Base de Datos:** Utilizaremos PostgreSQL que es el que podría ser más compatible con node y react
+* **Base de Datos:** **MongoDB** usando **Mongoose** (estructura ya preparada en el backend).
 * **Servicios Externos (APIs):** * **Moda News API:** Para el contenido de actualidad.
     * **OpenAI API:** Para la inteligencia del chatbot de ayuda.
 
@@ -134,7 +134,7 @@ Configuracion:
 - Crear archivo `.env` basado en `.env.example`.
 - Variables:
   - `VITE_USE_REMOTE_AUTH=true` para activar backend.
-  - `VITE_AUTH_API_URL=http://localhost:3001` (o URL real de tu API).
+  - `VITE_AUTH_API_URL=http://localhost:3000` (o URL real de tu API).
 
 Contrato de endpoints esperado:
 - `POST /api/auth/register`
@@ -158,8 +158,36 @@ Si `VITE_USE_REMOTE_AUTH=false` o no hay `VITE_AUTH_API_URL`, el sistema usa mod
   - Terminal 1: `npm run dev`
   - Terminal 2: `npm run dev:server`
 
-El backend de auth se levanta en `http://localhost:3001` por defecto.
+El backend se levanta en `http://localhost:3000` por defecto.
 La configuracion local del frontend esta en `.env.local` para usar autenticacion remota.
+
+## Backend Actual (Modo Temporal Sin Mongo)
+
+Estado actual:
+1. El backend ya esta estructurado en MVC dentro de `server/`:
+  - `server/models`
+  - `server/controllers`
+  - `server/routes`
+  - `server/middleware`
+2. Aunque los modelos de Mongoose estan creados, ahora mismo el feed usa datos temporales en memoria para avanzar sin base de datos.
+
+Endpoints activos de posts (temporales):
+1. `GET /api/posts`: devuelve el feed desde un array en memoria.
+2. `POST /api/posts`: crea una publicacion y la inserta en ese array en memoria.
+
+Importante:
+1. Si `MONGO_URI` no esta configurada, el servidor NO crashea.
+2. El servidor arranca igualmente y muestra un warning indicando que esta en modo temporal en memoria.
+
+## Preparado Para MongoDB (Siguiente Paso)
+
+Cuando quieras activar persistencia real:
+1. Define en tu `.env`:
+  - `MONGO_URI`
+  - `MONGO_DB_NAME` (opcional)
+  - `JWT_SECRET`
+2. Mantienes el mismo comando de backend: `npm run dev:server`.
+3. Cambias los controladores temporales de posts a consultas con Mongoose (la estructura ya esta preparada).
 
 ## Guia Rapida de Estilos (CSS Modular)
 
