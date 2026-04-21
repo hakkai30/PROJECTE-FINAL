@@ -47,7 +47,7 @@ const CartPage = ({
               (() => {
                 const localizedItem = localizeProduct(item, language);
                 return (
-              <div key={index} className="cart-item">
+              <div key={`${item.id}-${index}`} className="cart-item">
                 <div className="cart-item-details">
                   <img
                     src={localizedItem.img}

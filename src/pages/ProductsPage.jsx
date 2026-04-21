@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Heart } from "lucide-react";
 import { GlobalFooter, GlobalHeader } from "../components/Layout";
 import { MOCK_PRODUCTS } from "../data/mockData";
 import { localizeProduct } from "../data/i18n";
@@ -160,12 +161,27 @@ const ProductsPage = ({
           >
             <button
               className={`wishlist-card-btn ${wishlistIds.includes(product.id) ? "active" : ""}`}
+              aria-label={
+                wishlistIds.includes(product.id)
+                  ? t("products.wishlist.remove", "Remove from wishlist")
+                  : t("products.wishlist.add", "Add to wishlist")
+              }
+              title={
+                wishlistIds.includes(product.id)
+                  ? t("products.wishlist.remove", "Remove from wishlist")
+                  : t("products.wishlist.add", "Add to wishlist")
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleWishlist(product);
               }}
             >
-              {wishlistIds.includes(product.id) ? "❤" : "♡"}
+              <Heart
+                size={16}
+                fill={wishlistIds.includes(product.id) ? "currentColor" : "none"}
+                strokeWidth={2.2}
+                aria-hidden="true"
+              />
             </button>
             <div className="product-img">
               <img

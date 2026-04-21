@@ -43,8 +43,16 @@ const SettingsPage = ({
       />
 
       <main className="settings-layout">
-        <p className="collection-kicker">{t("settings.preferences", "PREFERENCES")}</p>
-        <h1 className="collection-title">{t("settings.title", "SETTINGS")}</h1>
+        <section className="settings-hero">
+          <p className="collection-kicker">{t("settings.preferences", "PREFERENCES")}</p>
+          <h1 className="collection-title">{t("settings.title", "SETTINGS")}</h1>
+          <p className="settings-intro">
+            {t(
+              "settings.intro",
+              "Adjust the visual style and interface language to match how you want to browse."
+            )}
+          </p>
+        </section>
 
         <section className="settings-card">
           <h2>{t("settings.visualTheme", "Visual Theme")}</h2>
@@ -58,6 +66,7 @@ const SettingsPage = ({
               return (
                 <button
                   key={item.key}
+                  type="button"
                   className={`theme-option-card ${isActive ? "active" : ""}`}
                   onClick={() => setTheme(item.key)}
                 >
@@ -80,6 +89,7 @@ const SettingsPage = ({
               return (
                 <button
                   key={option.code}
+                  type="button"
                   className={`theme-option-card ${isActive ? "active" : ""}`}
                   onClick={() => setLanguage(option.code)}
                 >
@@ -92,7 +102,9 @@ const SettingsPage = ({
           </div>
         </section>
 
-        <button className="toolbar-btn settings-return-btn" onClick={() => changePage("shop")}>{t("settings.returnToShop", "BACK TO SHOP")}</button>
+        <button type="button" className="toolbar-btn settings-return-btn" onClick={() => changePage("shop")}>
+          {t("settings.returnToShop", "BACK TO SHOP")}
+        </button>
       </main>
 
       <GlobalFooter t={t} />

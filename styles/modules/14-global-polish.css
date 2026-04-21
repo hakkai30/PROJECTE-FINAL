@@ -30,7 +30,26 @@ body {
 }
 
 .logo-center-header {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
   letter-spacing: 0.02em;
+  text-align: center;
+  line-height: 1;
+}
+
+.logo-center-title {
+  font-size: clamp(1.3rem, 2vw, 1.85rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.logo-center-subtitle {
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  opacity: 0.72;
 }
 
 .header-actions {
@@ -206,6 +225,15 @@ body {
     min-height: 42px;
     font-size: 0.76rem;
     letter-spacing: 0.09em;
+
+  .header-icon-btn {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .header-icon-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-soft-hover);
+  }
   }
 
   .social-sidebar {

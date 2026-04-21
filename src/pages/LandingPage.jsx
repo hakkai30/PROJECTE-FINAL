@@ -2,7 +2,7 @@ import { WindowOverlay } from "../components/Layout";
 
 const LandingPage = ({ changePage, t }) => (
   <div className="landing-page-brutalist">
-    <div className="windows-absolute-wrapper">
+    <div className="windows-absolute-wrapper" aria-hidden="true">
       <WindowOverlay label="W" offsetClass="window-1" />
       <WindowOverlay label="F" offsetClass="window-2" />
       <WindowOverlay label="A" offsetClass="window-3" />
@@ -27,6 +27,7 @@ const LandingPage = ({ changePage, t }) => (
     <footer className="landing-nav-footer-brutalist">
       <div className="nav-btn-container border-right">
         <button
+          type="button"
           onClick={() => changePage("shop")}
           className="nav-btn-brutalist glitch-text"
           data-text="SHOP"
@@ -36,6 +37,7 @@ const LandingPage = ({ changePage, t }) => (
       </div>
       <div className="nav-btn-container">
         <button
+          type="button"
           onClick={() => changePage("socials")}
           className="nav-btn-brutalist glitch-text"
           data-text="SOCIALS"

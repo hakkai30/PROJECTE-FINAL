@@ -34,11 +34,13 @@ const CategoryPage = ({
       <main className="category-content-area">
         <p className="category-kicker">{t("category.kicker", "COLLECTIONS")}</p>
         <h1 className="category-title">{t("category.title", "ROB THE FAB")}</h1>
-        <h1 className="category-title gray-text">{t("category.title", "ROB THE FAB")}</h1>
+        <p className="category-title gray-text" aria-hidden="true">
+          {t("category.title", "ROB THE FAB")}
+        </p>
         <div className="category-buttons-grid">
           {categories.map((cat) => (
             <button
-              key={cat.label}
+              key={cat.page}
               onClick={() => changePage(cat.page)}
               className="category-large-btn"
             >
@@ -48,9 +50,6 @@ const CategoryPage = ({
         </div>
       </main>
       <GlobalFooter t={t} />
-      <button className="chatbot-floating-bubble" title="Need Help?">
-        💬
-      </button>
     </div>
   );
 };

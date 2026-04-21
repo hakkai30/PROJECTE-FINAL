@@ -209,8 +209,16 @@ body {
   background: rgba(255, 255, 255, 0.95);
   width: 30px;
   height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 0.92rem;
+  line-height: 1;
   z-index: 2;
+}
+
+.wishlist-card-btn svg {
+  display: block;
 }
 
 .wishlist-card-btn.active {
@@ -508,9 +516,88 @@ body {
   border-right: 1px solid #ddd;
 }
 
+.sidebar-divider {
+  border-bottom: 2px solid #111;
+  margin: 1rem 0;
+}
+
+.sidebar-settings-link {
+  margin-top: auto;
+  color: #7a7a7a;
+}
+
 .sidebar-link {
   font-size: 1.05rem;
   letter-spacing: 0.06em;
+}
+
+.social-feed-header {
+  width: min(860px, 100%);
+  margin: 0 auto 1.1rem;
+  padding: 0 0.4rem;
+}
+
+.social-feed-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.social-feed-title {
+  margin: 0;
+  font-size: clamp(1.2rem, 2.4vw, 1.7rem);
+  letter-spacing: 0.12em;
+}
+
+.social-feed-subtitle {
+  margin: 0.45rem 0 0;
+  color: #666;
+  letter-spacing: 0.04em;
+  font-size: 0.9rem;
+}
+
+.social-feed-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.social-filter-chip {
+  border: 1px solid #bdbdbd;
+  background: #fff;
+  color: #222;
+  padding: 0.34rem 0.68rem;
+  border-radius: 999px;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+}
+
+.social-filter-chip.active {
+  border-color: #111;
+  background: #111;
+  color: #fff;
+}
+
+.social-feed-stat {
+  border: 1px dashed #c9c9c9;
+  border-radius: 999px;
+  padding: 0.28rem 0.62rem;
+  font-size: 0.63rem;
+  letter-spacing: 0.12em;
+  color: #666;
+}
+
+.social-feed-count-chip {
+  border: 1px solid #111;
+  border-radius: 999px;
+  background: #fff;
+  color: #111;
+  padding: 0.38rem 0.68rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
 }
 
 .social-post {
@@ -555,6 +642,109 @@ body {
 
   .bottom-sheet-actions {
     gap: 1.5rem;
+  }
+}
+
+.post-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.post-actions .icon-action-btn {
+  color: #111;
+}
+
+.post-actions .icon-action-btn.active {
+  color: #b32828;
+}
+
+.post-actions button svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.post-actions .shop-look-btn {
+  margin-left: auto;
+  background: black;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+}
+
+.post-actions .save-look-btn {
+  border: 1px solid #111;
+  background: #fff;
+  color: #111;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+}
+
+.post-actions .save-look-btn.active {
+  background: #111;
+  color: #fff;
+}
+
+.social-post-caption {
+  padding: 0 1.5rem 1.5rem;
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
+.post-user-handle {
+  letter-spacing: 0.08em;
+}
+
+.saved-looks-empty {
+  width: min(760px, 100%);
+  border: 1px solid #111;
+  background: #fff;
+  padding: 1.5rem;
+  margin: 2rem auto;
+}
+
+.saved-looks-empty h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+}
+
+.saved-looks-empty p {
+  margin: 0.7rem 0 1rem;
+  color: #666;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 768px) {
+  .social-feed-header {
+    margin-bottom: 0.9rem;
+    padding: 0;
+  }
+
+  .social-feed-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.55rem;
+  }
+
+  .social-feed-count-chip {
+    align-self: flex-start;
+  }
+
+  .social-feed-toolbar {
+    gap: 0.42rem;
+  }
+
+  .social-feed-stat {
+    font-size: 0.58rem;
+    padding: 0.24rem 0.52rem;
+  }
+
+  .social-post-caption {
+    font-size: 0.95rem;
+    padding: 0 1rem 1.1rem;
   }
 }
 

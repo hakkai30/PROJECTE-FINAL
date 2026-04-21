@@ -13,10 +13,11 @@ import WishlistPage from "./pages/WishlistPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import SettingsPage from "./pages/SettingsPage";
 import SocialFeedPage from "./pages/SocialFeedPage";
+import SavedLooksPage from "./pages/SavedLooksPage";
 import MessagesPage from "./pages/MessagesPage";
 import AuthPage from "./pages/AuthPage";
 import { ChatbotWidget } from "./components/Layout";
-import { MOCK_PRODUCTS } from "./data/mockData";
+import { MOCK_POSTS, MOCK_PRODUCTS } from "./data/mockData";
 import { authService } from "./services/authService";
 import { createTranslator, DEFAULT_LANGUAGE } from "./data/i18n";
 
@@ -36,10 +37,11 @@ const VALID_PAGES = new Set([
   "product-detail",
   "auth",
   "socials",
+  "saved-looks",
   "messages",
 ]);
 
-const PROTECTED_PAGES = new Set(["socials", "messages"]);
+const PROTECTED_PAGES = new Set(["socials", "saved-looks", "messages"]);
 
 const VALID_THEMES = new Set(["auto", "light", "dark"]);
 const VALID_LANGUAGES = new Set(["ca", "es", "en", "fr"]);
@@ -75,6 +77,14 @@ const App = () => {
   const [wishlistIds, setWishlistIds] = useState(() => {
     try {
       const saved = localStorage.getItem("rtf_wishlist_ids");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [savedLookIds, setSavedLookIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem("rtf_saved_look_ids");
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
@@ -139,6 +149,14 @@ const App = () => {
       prev.includes(product.id)
         ? prev.filter((id) => id !== product.id)
         : [...prev, product.id]
+    );
+  };
+
+  const toggleSavedLook = (postId) => {
+    setSavedLookIds((prev) =>
+      prev.includes(postId)
+        ? prev.filter((id) => id !== postId)
+        : [...prev, postId]
     );
   };
 
@@ -232,6 +250,10 @@ const App = () => {
   }, [wishlistIds]);
 
   useEffect(() => {
+    localStorage.setItem("rtf_saved_look_ids", JSON.stringify(savedLookIds));
+  }, [savedLookIds]);
+
+  useEffect(() => {
     localStorage.setItem("rtf_cart_items", JSON.stringify(cartItems));
   }, [cartItems]);
 
@@ -266,6 +288,11 @@ const App = () => {
     .filter(Boolean);
   const selectedProduct =
     MOCK_PRODUCTS.find((product) => product.id === selectedProductId) || null;
+  const savedLooks = savedLookIds
+    .slice()
+    .reverse()
+    .map((id) => MOCK_POSTS.find((post) => post.id === id))
+    .filter(Boolean);
 
   useEffect(() => {
     if (currentPage === "product-detail" && !selectedProduct) {
@@ -476,6 +503,20 @@ const App = () => {
           changePage={setCurrentPage}
           currentUser={currentUser}
           onLogout={handleLogout}
+          savedLookIds={savedLookIds}
+          onToggleSavedLook={toggleSavedLook}
+          language={language}
+          t={t}
+        />
+      )}
+      {currentPage === "saved-looks" && (
+        <SavedLooksPage
+          changePage={setCurrentPage}
+          currentUser={currentUser}
+          onLogout={handleLogout}
+          savedLooks={savedLooks}
+          savedLookIds={savedLookIds}
+          onToggleSavedLook={toggleSavedLook}
           language={language}
           t={t}
         />

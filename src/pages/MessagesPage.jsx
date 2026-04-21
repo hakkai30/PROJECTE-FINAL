@@ -300,26 +300,29 @@ const MessagesPage = ({ changePage, currentUser, onLogout, language = "ca", t })
   return (
     <div className="social-layout messages-layout">
       <div className="social-sidebar">
-        <button className="sidebar-link" onClick={() => changePage("landing")}>
+        <button type="button" className="sidebar-link" onClick={() => changePage("landing")}>
           {t("messages.home", "HOME")}
         </button>
-        <button className="sidebar-link" onClick={() => changePage("shop")}>
+        <button type="button" className="sidebar-link" onClick={() => changePage("shop")}>
           {t("nav.shop", "SHOP")}
         </button>
-        <div style={{ borderBottom: "2px solid black", margin: "1rem 0" }}></div>
-        <button className="sidebar-link" onClick={() => changePage("socials")}>
+        <div className="sidebar-divider" aria-hidden="true"></div>
+        <button type="button" className="sidebar-link" onClick={() => changePage("socials")}>
           {t("social.sidebar.brand", "ROB_THE_FAB")}
         </button>
-        <button className="sidebar-link sidebar-link-active">{t("social.sidebar.messages", "MESSAGES")}</button>
-        <button className="sidebar-link">{t("social.sidebar.discover", "DISCOVER")}</button>
-        <button className="sidebar-link">{t("social.sidebar.savedLooks", "SAVED LOOKS")}</button>
+        <button type="button" className="sidebar-link sidebar-link-active" onClick={() => changePage("messages")}>
+          {t("social.sidebar.messages", "MESSAGES")}
+        </button>
+        <button type="button" className="sidebar-link" onClick={() => changePage("saved-looks")}>
+          {t("social.sidebar.savedLooks", "SAVED LOOKS")}
+        </button>
         <p className="sidebar-user-chip">@{currentUser?.name || "USER"}</p>
-        <button className="sidebar-link sidebar-logout" onClick={onLogout}>
+        <button type="button" className="sidebar-link sidebar-logout" onClick={onLogout}>
           {t("social.sidebar.logout", "LOG OUT")}
         </button>
         <button
-          className="sidebar-link"
-          style={{ marginTop: "auto", color: "gray" }}
+          type="button"
+          className="sidebar-link sidebar-settings-link"
           onClick={() => changePage("settings")}
         >
           {t("social.sidebar.settings", "SETTINGS")}
