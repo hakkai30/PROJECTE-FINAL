@@ -21,7 +21,12 @@ let posts = [
   },
 ];
 
+export const getPostsSnapshot = () => {
+  return Array.isArray(posts) ? [...posts] : [];
+};
+
 const createPostId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+const createCommentId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
 export const createPost = async (req, res) => {
   try {
@@ -97,5 +102,68 @@ export const toggleLikePost = async (req, res) => {
     });
   } catch {
     return res.status(500).json({ error: "Server error while toggling like." });
+  }
+};
+
+export const addCommentToPost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { text, user = "USER" } = req.body || {};
+
+    if (!text?.trim()) {
+      return res.status(400).json({ error: "Comment text is required." });
+    }
+
+    const post = posts.find((item) => item.id === id);
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found." });
+    }
+
+    const comment = {
+      id: createCommentId(),
+      user: String(user || "USER").trim() || "USER",
+      text: String(text).trim(),
+      createdAt: new Date().toISOString(),
+    };
+
+    post.comments = Array.isArray(post.comments) ? [...post.comments, comment] : [comment];
+    post.updatedAt = new Date().toISOString();
+
+    return res.status(201).json({
+      comment,
+      post,
+    });
+  } catch {
+    return res.status(500).json({ error: "Server error while adding comment." });
+  }
+};
+
+export const deleteCommentFromPost = async (req, res) => {
+  try {
+    const { id, commentId } = req.params;
+
+    const post = posts.find((item) => item.id === id);
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found." });
+    }
+
+    const currentComments = Array.isArray(post.comments) ? post.comments : [];
+    const nextComments = currentComments.filter((comment) => comment.id !== commentId);
+
+    if (nextComments.length === currentComments.length) {
+      return res.status(404).json({ error: "Comment not found." });
+    }
+
+    post.comments = nextComments;
+    post.updatedAt = new Date().toISOString();
+
+    return res.json({
+      ok: true,
+      post,
+    });
+  } catch {
+    return res.status(500).json({ error: "Server error while deleting comment." });
   }
 };

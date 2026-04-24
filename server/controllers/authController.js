@@ -19,12 +19,12 @@ const toPublicUser = (user) => ({
   name: user.name,
   email: user.email,
   bio: user.bio || "",
-  avatar: user.avatar || "",
+  avatar: user.avatar || user.image || "",
 });
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password, bio = "" } = req.body || {};
+    const { name, email, password, bio = "", avatar = "" } = req.body || {};
 
     if (!name?.trim() || !email?.trim() || !password) {
       return res.status(400).json({ error: "Name, email and password are required." });
@@ -48,6 +48,8 @@ export const register = async (req, res) => {
       email: normalizedEmail,
       password: hashedPassword,
       bio: String(bio || "").trim(),
+      avatar: String(avatar || "").trim(),
+      image: String(avatar || "").trim(),
     });
 
     const token = createToken(user);
@@ -94,4 +96,32 @@ export const login = async (req, res) => {
 
 export const logout = async (_req, res) => {
   return res.json({ ok: true });
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = String(req.user?.id || "");
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const { bio = "", avatar = "" } = req.body || {};
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    user.bio = String(bio || "").trim();
+    user.avatar = String(avatar || "").trim();
+    user.image = user.avatar;
+
+    await user.save();
+
+    return res.json({
+      user: toPublicUser(user),
+    });
+  } catch {
+    return res.status(500).json({ error: "Server error during profile update." });
+  }
 };

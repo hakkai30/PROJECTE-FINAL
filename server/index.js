@@ -3,7 +3,9 @@ import dotenv from "dotenv";
 import express from "express";
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import messageRoutes from "./routes/messageRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
+import socialRoutes from "./routes/socialRoutes.js";
 
 dotenv.config();
 
@@ -32,6 +34,8 @@ app.get("/api/health", (_req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/social", socialRoutes);
 
 app.use((err, _req, res, _next) => {
   if (err?.message?.startsWith("CORS blocked")) {

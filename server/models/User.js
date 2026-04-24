@@ -28,10 +28,23 @@ const userSchema = new mongoose.Schema(
       maxlength: 240,
       trim: true,
     },
+    avatar: {
+      type: String,
+      default: "",
+      trim: true,
+    },
     image: {
       type: String,
       default: "",
       trim: true,
+    },
+    followerHandles: {
+      type: [String],
+      default: [],
+    },
+    followingHandles: {
+      type: [String],
+      default: [],
     },
   },
   {

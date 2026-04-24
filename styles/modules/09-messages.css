@@ -156,6 +156,16 @@
   color: #8d8d8d;
 }
 
+.messages-error-banner {
+  margin: 0;
+  padding: 0.55rem 1.5rem;
+  border-bottom: 1px solid #f0d1d1;
+  background: #fff4f4;
+  color: #8f2222;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
 .chat-stream {
   padding: 1.2rem 1.5rem;
   overflow-y: auto;

@@ -1,121 +1,122 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Bookmark, Heart, MessageCircle, ShoppingCart } from "lucide-react";
 import { localizePost } from "../data/i18n";
-
-const POSTS_API_URL = "http://localhost:3000/api/posts";
 
 const SocialFeedPage = ({
   changePage,
   currentUser,
   onLogout,
+  posts = [],
+  likedPostIds = [],
+  onToggleLikePost,
+  onAddComment,
+  onDeleteComment,
+  onCreatePost,
+  onOpenProfile,
+  isLoadingPosts = false,
+  isPosting = false,
+  feedError = "",
   savedLookIds = [],
   onToggleSavedLook,
+  onMessageAuthor,
   language = "ca",
   t,
 }) => {
-  const [posts, setPosts] = useState([]);
-  const [likedPostIds, setLikedPostIds] = useState([]);
+    const formatRelativeTime = (isoDate) => {
+      const timestamp = Date.parse(isoDate || "");
+      if (Number.isNaN(timestamp)) return "";
+
+      const diffMs = Date.now() - timestamp;
+      const diffMinutes = Math.max(0, Math.floor(diffMs / 60000));
+
+      if (diffMinutes < 1) return t("social.comments.now", "just now");
+      if (diffMinutes < 60) return `${diffMinutes}m`;
+
+      const diffHours = Math.floor(diffMinutes / 60);
+      if (diffHours < 24) return `${diffHours}h`;
+
+      const diffDays = Math.floor(diffHours / 24);
+      if (diffDays < 7) return `${diffDays}d`;
+
+      const diffWeeks = Math.floor(diffDays / 7);
+      if (diffWeeks < 5) return `${diffWeeks}w`;
+
+      return new Date(timestamp).toLocaleDateString();
+    };
+
+    const canDeleteComment = (comment) => {
+      const currentName = String(currentUser?.name || "").trim().toLowerCase();
+      const commentUser = String(comment?.user || "").trim().toLowerCase();
+      return Boolean(currentName) && currentName === commentUser;
+    };
+
   const [activeView, setActiveView] = useState("all");
   const [postText, setPostText] = useState("");
   const [postImage, setPostImage] = useState("");
-  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
-  const [isPosting, setIsPosting] = useState(false);
-  const [feedError, setFeedError] = useState("");
+  const [openCommentPostIds, setOpenCommentPostIds] = useState([]);
+  const [commentDrafts, setCommentDrafts] = useState({});
+  const [submittingCommentIds, setSubmittingCommentIds] = useState([]);
   const savedLooksCount = savedLookIds.length;
   const totalLikes = posts.reduce((acc, post) => acc + post.likes, 0);
   const visiblePosts =
     activeView === "saved"
-      ? posts.filter((post) => savedLookIds.includes(post.id))
+      ? posts.filter((post) => savedLookIds.includes(String(post.id)))
       : posts;
-
-  const handleLike = (id) => {
-    const isLiked = likedPostIds.includes(id);
-
-    setPosts((prev) =>
-      prev.map((p) => {
-        if (p.id !== id) return p;
-        const nextLikes = isLiked ? Math.max(0, p.likes - 1) : p.likes + 1;
-        return { ...p, likes: nextLikes };
-      })
-    );
-
-    setLikedPostIds((prev) =>
-      isLiked ? prev.filter((postId) => postId !== id) : [...prev, id]
-    );
-  };
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchPosts = async () => {
-      setIsLoadingPosts(true);
-      setFeedError("");
-
-      try {
-        const response = await fetch(POSTS_API_URL);
-        const body = await response.json();
-
-        if (!response.ok) {
-          throw new Error(body?.error || "Could not load posts.");
-        }
-
-        if (isMounted) {
-          setPosts(Array.isArray(body?.posts) ? body.posts : []);
-        }
-      } catch (error) {
-        if (isMounted) {
-          setFeedError(error.message || "Could not load posts.");
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoadingPosts(false);
-        }
-      }
-    };
-
-    fetchPosts();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   const handleCreatePost = async (event) => {
     event.preventDefault();
     if (isPosting) return;
     if (!postText.trim()) return;
 
-    setIsPosting(true);
-    setFeedError("");
-
     try {
-      const response = await fetch(POSTS_API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          text: postText,
-          imageUrl: postImage,
-          user: currentUser?.name || "USER",
-        }),
+      await onCreatePost?.({
+        text: postText,
+        imageUrl: postImage,
       });
-
-      const body = await response.json();
-      if (!response.ok) {
-        throw new Error(body?.error || "Could not create post.");
-      }
-
-      if (body?.post) {
-        setPosts((prev) => [body.post, ...prev]);
-      }
 
       setPostText("");
       setPostImage("");
-    } catch (error) {
-      setFeedError(error.message || "Could not create post.");
+    } catch {
+      // Error is handled in shared parent state.
+    }
+  };
+
+  const toggleCommentsPanel = (postId) => {
+    const normalizedId = String(postId);
+    setOpenCommentPostIds((prev) =>
+      prev.includes(normalizedId)
+        ? prev.filter((id) => id !== normalizedId)
+        : [...prev, normalizedId]
+    );
+  };
+
+  const updateCommentDraft = (postId, value) => {
+    const normalizedId = String(postId);
+    setCommentDrafts((prev) => ({
+      ...prev,
+      [normalizedId]: value,
+    }));
+  };
+
+  const handleSubmitComment = async (event, postId) => {
+    event.preventDefault();
+    const normalizedId = String(postId);
+    const draft = String(commentDrafts[normalizedId] || "").trim();
+    if (!draft) return;
+    if (submittingCommentIds.includes(normalizedId)) return;
+
+    setSubmittingCommentIds((prev) => [...prev, normalizedId]);
+
+    try {
+      await onAddComment?.(postId, draft);
+      setCommentDrafts((prev) => ({
+        ...prev,
+        [normalizedId]: "",
+      }));
+    } catch {
+      // Error is handled in shared parent state.
     } finally {
-      setIsPosting(false);
+      setSubmittingCommentIds((prev) => prev.filter((id) => id !== normalizedId));
     }
   };
 
@@ -138,7 +139,19 @@ const SocialFeedPage = ({
         <button type="button" className="sidebar-link" onClick={() => changePage("saved-looks")}>
           {t("social.sidebar.savedLooks", "SAVED LOOKS")}
         </button>
-        <p className="sidebar-user-chip">@{currentUser?.name || "USER"}</p>
+        <button
+          type="button"
+          className="sidebar-user-chip sidebar-user-chip-btn"
+          onClick={() => onOpenProfile?.({
+            user: currentUser?.name,
+            name: currentUser?.name ? `@${currentUser.name}` : "@USER",
+            bio: currentUser?.bio || "",
+            avatar: currentUser?.avatar || "",
+            email: currentUser?.email || "",
+          })}
+        >
+          @{currentUser?.name || "USER"}
+        </button>
         <button type="button" className="sidebar-link sidebar-logout" onClick={onLogout}>
           {t("social.sidebar.logout", "LOG OUT")}
         </button>
@@ -245,13 +258,26 @@ const SocialFeedPage = ({
 
         {visiblePosts.map((post) => {
           const localizedPost = localizePost(post, language);
-          const isSaved = savedLookIds.includes(post.id);
-          const isLiked = likedPostIds.includes(post.id);
+          const isSaved = savedLookIds.includes(String(post.id));
+          const isLiked = likedPostIds.includes(String(post.id));
+          const commentsCount = Array.isArray(post.comments) ? post.comments.length : 0;
+          const normalizedPostId = String(post.id);
+          const isCommentsOpen = openCommentPostIds.includes(normalizedPostId);
+          const commentDraft = commentDrafts[normalizedPostId] || "";
+          const isSubmittingComment = submittingCommentIds.includes(normalizedPostId);
+
           return (
             <div key={post.id} className="social-post">
               <div className="post-header">
                 <div className="user-avatar"></div>
-                <span className="post-user-handle">@{post.user}</span>
+                <button
+                  type="button"
+                  className="post-user-handle post-user-handle-btn"
+                  onClick={() => onOpenProfile?.(post)}
+                  aria-label={t("social.actions.viewProfile", "VIEW PROFILE")}
+                >
+                  @{post.user}
+                </button>
               </div>
               <img
                 src={localizedPost.img}
@@ -262,16 +288,31 @@ const SocialFeedPage = ({
                 <button
                   type="button"
                   className={`icon-action-btn ${isLiked ? "active" : ""}`}
-                  onClick={() => handleLike(post.id)}
+                  onClick={() => onToggleLikePost?.(post.id)}
                   aria-pressed={isLiked}
                   aria-label={t("social.actions.like", "LIKE POST")}
                 >
                   <Heart size={16} fill={isLiked ? "currentColor" : "none"} strokeWidth={2.2} aria-hidden="true" />
                   {post.likes}
                 </button>
-                <button type="button" className="icon-action-btn" aria-label={t("social.actions.comment", "COMMENT")}>
+                <button
+                  type="button"
+                  className="icon-action-btn"
+                  aria-label={t("social.actions.comment", "COMMENT")}
+                  aria-expanded={isCommentsOpen}
+                  onClick={() => toggleCommentsPanel(post.id)}
+                >
                   <MessageCircle size={16} aria-hidden="true" />
-                  {t("social.actions.comment", "COMMENT")}
+                  {t("social.actions.comment", "COMMENT")} ({commentsCount})
+                </button>
+                <button
+                  type="button"
+                  className="icon-action-btn"
+                  aria-label={t("social.actions.messageAuthor", "MESSAGE AUTHOR")}
+                  onClick={() => onMessageAuthor?.(post)}
+                >
+                  <MessageCircle size={16} aria-hidden="true" />
+                  {t("social.actions.messageAuthor", "MESSAGE")}
                 </button>
                 <button type="button" className="shop-look-btn" aria-label={t("social.actions.shopLook", "SHOP THIS LOOK")}>
                   <ShoppingCart size={16} aria-hidden="true" />
@@ -297,6 +338,74 @@ const SocialFeedPage = ({
               <div className="social-post-caption">
                 <strong>{post.user}</strong> {localizedPost.desc}
               </div>
+
+              {isCommentsOpen && (
+                <div className="social-comments-panel">
+                  <div className="social-comments-list" aria-live="polite">
+                    {commentsCount === 0 && (
+                      <p className="social-comments-empty">
+                        {t("social.comments.empty", "No comments yet. Be the first one.")}
+                      </p>
+                    )}
+
+                    {Array.isArray(post.comments) && post.comments.map((comment) => (
+                      <div
+                        key={comment.id || `${normalizedPostId}-${comment.user}-${comment.text}`}
+                        className="social-comment-item"
+                      >
+                        <div className="social-comment-meta">
+                          <button
+                            type="button"
+                            className="social-comment-user social-comment-user-btn"
+                            onClick={() => onOpenProfile?.({ user: comment.user })}
+                            aria-label={t("social.actions.viewProfile", "VIEW PROFILE")}
+                          >
+                            @{comment.user || "USER"}
+                          </button>
+                          <span className="social-comment-time">{formatRelativeTime(comment.createdAt)}</span>
+                        </div>
+                        <p className="social-comment-text">{comment.text}</p>
+
+                        {canDeleteComment(comment) && (
+                          <button
+                            type="button"
+                            className="social-comment-delete"
+                            onClick={async () => {
+                              try {
+                                await onDeleteComment?.(post.id, comment.id);
+                              } catch {
+                                // Error is handled in shared parent state.
+                              }
+                            }}
+                          >
+                            {t("social.comments.delete", "DELETE")}
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <form className="social-comment-form" onSubmit={(event) => handleSubmitComment(event, post.id)}>
+                    <input
+                      type="text"
+                      className="social-comment-input"
+                      value={commentDraft}
+                      onChange={(event) => updateCommentDraft(post.id, event.target.value)}
+                      placeholder={t("social.feed.commentPrompt", "Write your comment")}
+                      aria-label={t("social.feed.commentPrompt", "Write your comment")}
+                    />
+                    <button
+                      type="submit"
+                      className="social-comment-submit"
+                      disabled={isSubmittingComment || !commentDraft.trim()}
+                    >
+                      {isSubmittingComment
+                        ? t("social.comments.sending", "SENDING...")
+                        : t("social.comments.send", "SEND")}
+                    </button>
+                  </form>
+                </div>
+              )}
             </div>
           );
         })}
