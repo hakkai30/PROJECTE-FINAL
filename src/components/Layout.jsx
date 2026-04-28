@@ -58,6 +58,7 @@ export const GlobalHeader = ({
   changePage,
   cartCount,
   wishlistCount = 0,
+  currentUser = null,
   onOpenProductDetail = null,
   language = "ca",
   t,
@@ -138,13 +139,20 @@ export const GlobalHeader = ({
                 </div>
 
                 <div className="sidebar-nav-group">  
-                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("socials"); }}>{t("nav.socials", "SOCIAL FEED")}</button>
+                  {currentUser && (
+                    <button type="button" onClick={() => { setIsMenuOpen(false); changePage("socials"); }}>{t("nav.socials", "SOCIAL FEED")}</button>
+                  )}
                 </div>
 
                 <div className="sidebar-nav-group bottom-group">
                   <button type="button" onClick={() => { setIsMenuOpen(false); changePage("wishlist"); }}>
                     {t("nav.wishlist", "WISHLIST")} [ {wishlistCount} ]
                   </button>
+                  {currentUser && (
+                    <button type="button" onClick={() => { setIsMenuOpen(false); changePage("user-profile"); }}>
+                      {t("nav.profile", "MY PROFILE")}
+                    </button>
+                  )}
                   <button
                     type="button"
                     className="settings-menu-btn"

@@ -27,7 +27,8 @@
 :root[data-theme="dark"] .cart-total-section,
 :root[data-theme="dark"] .chatbot-messages,
 :root[data-theme="dark"] .search-fullscreen-overlay,
-:root[data-theme="dark"] .auth-card {
+:root[data-theme="dark"] .auth-card,
+:root[data-theme="dark"] .auth-welcome-card {
   background: var(--surface-1);
   color: var(--ink-1);
   border-color: var(--dark-border-strong);
@@ -410,6 +411,15 @@
   background: rgba(199, 57, 34, 0.15);
   color: #ff9d8d;
   border-color: #9a3b2c;
+}
+
+:root[data-theme="dark"] .auth-option-btn {
+  border-color: var(--dark-border-strong);
+  background: var(--surface-2);
+}
+
+:root[data-theme="dark"] .auth-option-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 :root[data-theme="dark"] .app-toast {

@@ -16,11 +16,13 @@ import SocialFeedPage from "./pages/SocialFeedPage";
 import SavedLooksPage from "./pages/SavedLooksPage";
 import MessagesPage from "./pages/MessagesPage";
 import AuthPage from "./pages/AuthPage";
+import UserProfilePage from "./pages/UserProfilePage";
 import { ChatbotWidget } from "./components/Layout";
 import { MOCK_PRODUCTS } from "./data/mockData";
 import { authService } from "./services/authService";
 import { postService } from "./services/postService";
 import { socialService } from "./services/socialService";
+import { userProductService } from "./services/userProductService";
 import { createTranslator, DEFAULT_LANGUAGE, localizePost } from "./data/i18n";
 
 const AVATAR_STYLES = [
@@ -90,9 +92,10 @@ const VALID_PAGES = new Set([
   "socials",
   "saved-looks",
   "messages",
+  "user-profile",
 ]);
 
-const PROTECTED_PAGES = new Set(["socials", "saved-looks", "messages"]);
+const PROTECTED_PAGES = new Set(["socials", "saved-looks", "messages", "user-profile"]);
 
 const VALID_THEMES = new Set(["auto", "light", "dark"]);
 const VALID_LANGUAGES = new Set(["ca", "es", "en", "fr"]);
@@ -110,10 +113,32 @@ const normalizeLanguage = (value) => {
 const App = () => {
   const [currentPage, setCurrentPage] = useState(() => {
     try {
+      // El usuario comienza en la página de autenticación
       const savedPage = localStorage.getItem("rtf_current_page");
-      return savedPage && VALID_PAGES.has(savedPage) ? savedPage : "landing";
-    } catch {
+      const currentUser = authService.loadCurrentUser();
+      const isGuest = localStorage.getItem("rtf_is_guest") === "true";
+      
+      // Si no está autenticado y no es invitado, mostrar auth
+      if (!currentUser && !isGuest) {
+        return "auth";
+      }
+      
+      // Si tiene página guardada y es válida, ir allí
+      if (savedPage && VALID_PAGES.has(savedPage)) {
+        return savedPage;
+      }
+      
       return "landing";
+    } catch {
+      return "auth";
+    }
+  });
+  
+  const [isGuest, setIsGuest] = useState(() => {
+    try {
+      return localStorage.getItem("rtf_is_guest") === "true";
+    } catch {
+      return false;
     }
   });
   const [cartItems, setCartItems] = useState(() => {
@@ -146,6 +171,8 @@ const App = () => {
   const [isLoadingSocialPosts, setIsLoadingSocialPosts] = useState(true);
   const [socialFeedError, setSocialFeedError] = useState("");
   const [isCreatingSocialPost, setIsCreatingSocialPost] = useState(false);
+  const [userProducts, setUserProducts] = useState([]);
+  const [isLoadingUserProducts, setIsLoadingUserProducts] = useState(true);
   const [pendingContact, setPendingContact] = useState(null);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [followedHandles, setFollowedHandles] = useState(() => {
@@ -203,7 +230,7 @@ const App = () => {
   const [profileAvatarStyle, setProfileAvatarStyle] = useState(AVATAR_STYLES[0].id);
   const [profileEditError, setProfileEditError] = useState("");
   const [isSavingProfile, setIsSavingProfile] = useState(false);
-  const [pendingProtectedPage, setPendingProtectedPage] = useState("socials");
+  const [pendingProtectedPage, setPendingProtectedPage] = useState("shop");
   const t = createTranslator(language);
 
   const addToCart = (product) => {
@@ -289,6 +316,19 @@ const App = () => {
       setSocialFeedError(error.message || "Could not load posts.");
     } finally {
       setIsLoadingSocialPosts(false);
+    }
+  };
+
+  const loadUserProducts = async () => {
+    setIsLoadingUserProducts(true);
+
+    try {
+      const products = await userProductService.getAllUserProducts();
+      setUserProducts(products);
+    } catch (error) {
+      console.error("Could not load user products:", error);
+    } finally {
+      setIsLoadingUserProducts(false);
     }
   };
 
@@ -604,8 +644,8 @@ const App = () => {
   const completeProtectedAccess = () => {
     const targetPage = PROTECTED_PAGES.has(pendingProtectedPage)
       ? pendingProtectedPage
-      : "socials";
-    setPendingProtectedPage("socials");
+      : "shop";
+    setPendingProtectedPage("shop");
     setCurrentPage(targetPage);
   };
 
@@ -648,7 +688,15 @@ const App = () => {
   const handleLogout = async () => {
     await authService.logout();
     setCurrentUser(null);
-    setPendingProtectedPage("socials");
+    setIsGuest(false);
+    localStorage.removeItem("rtf_is_guest");
+    setPendingProtectedPage("shop");
+    setCurrentPage("auth");
+  };
+
+  const handleContinueAsGuest = () => {
+    setIsGuest(true);
+    localStorage.setItem("rtf_is_guest", "true");
     setCurrentPage("landing");
   };
 
@@ -694,6 +742,14 @@ const App = () => {
   }, [currentPage]);
 
   useEffect(() => {
+    if (isGuest) {
+      localStorage.setItem("rtf_is_guest", "true");
+    } else {
+      localStorage.removeItem("rtf_is_guest");
+    }
+  }, [isGuest]);
+
+  useEffect(() => {
     localStorage.setItem("rtf_theme", theme);
     const resolvedTheme = theme === "auto" ? systemTheme : theme;
     document.documentElement.setAttribute("data-theme", resolvedTheme);
@@ -731,17 +787,21 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    loadUserProducts();
+  }, []);
+
+  useEffect(() => {
     if (currentPage === "product-detail" && !selectedProduct) {
       setCurrentPage("shop");
     }
   }, [currentPage, selectedProduct]);
 
   useEffect(() => {
-    if (PROTECTED_PAGES.has(currentPage) && !currentUser) {
+    if (PROTECTED_PAGES.has(currentPage) && (!currentUser || isGuest)) {
       setPendingProtectedPage(currentPage);
       setCurrentPage("auth");
     }
-  }, [currentPage, currentUser]);
+  }, [currentPage, currentUser, isGuest]);
 
   return (
     <div>
@@ -771,6 +831,8 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
+          currentUser={currentUser}
+          userProducts={userProducts}
           language={language}
           t={t}
         />
@@ -786,6 +848,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
+          currentUser={currentUser}
           language={language}
           t={t}
         />
@@ -801,6 +864,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
+          currentUser={currentUser}
           language={language}
           t={t}
         />
@@ -816,6 +880,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
+          currentUser={currentUser}
           language={language}
           t={t}
         />
@@ -831,6 +896,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
+          currentUser={currentUser}
           language={language}
           t={t}
         />
@@ -846,6 +912,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
+          currentUser={currentUser}
           language={language}
           t={t}
         />
@@ -912,6 +979,7 @@ const App = () => {
           changePage={setCurrentPage}
           onLogin={handleLogin}
           onRegister={handleRegister}
+          onContinueAsGuest={handleContinueAsGuest}
           pendingPage={pendingProtectedPage}
           language={language}
           setLanguage={changeLanguage}
@@ -983,6 +1051,18 @@ const App = () => {
           onOpenProfile={openProfile}
           pendingContact={pendingContact}
           onClearPendingContact={clearPendingContact}
+          language={language}
+          t={t}
+        />
+      )}
+      {currentPage === "user-profile" && currentUser && (
+        <UserProfilePage
+          changePage={setCurrentPage}
+          cartCount={cartItems.length}
+          wishlistCount={wishlistCount}
+          currentUser={currentUser}
+          theme={theme}
+          onToggleTheme={toggleTheme}
           language={language}
           t={t}
         />

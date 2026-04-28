@@ -6,6 +6,7 @@ import authRoutes from "./routes/authRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import socialRoutes from "./routes/socialRoutes.js";
+import userProductRoutes from "./routes/userProductRoutes.js";
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/social", socialRoutes);
+app.use("/api/user-products", userProductRoutes);
 
 app.use((err, _req, res, _next) => {
   if (err?.message?.startsWith("CORS blocked")) {

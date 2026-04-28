@@ -17,6 +17,8 @@ const ProductsPage = ({
   collectionKicker = "NEW SEASON",
   collectionTitle = "READY TO WEAR",
   categoryKey = "all",
+  currentUser = null,
+  userProducts = [],
   language,
   t,
 }) => {
@@ -28,11 +30,28 @@ const ProductsPage = ({
   const [selectedSize, setSelectedSize] = useState("all");
   const [maxPrice, setMaxPrice] = useState(0);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const [showUserProducts, setShowUserProducts] = useState(true);
+
+  // Combina productos de tienda con productos de usuarios
+  const combinedBaseProducts = useMemo(() => {
+    const mockProds = MOCK_PRODUCTS;
+    const userProds = (userProducts || []).map((prod) => ({
+      ...prod,
+      id: prod.id,
+      brand: "COMMUNITY",
+      color: prod.gender || "neutral",
+      img: prod.image || "",
+      category: prod.category || "clothing",
+      isUserProduct: true,
+      seller: prod.seller,
+    }));
+    return showUserProducts ? [...mockProds, ...userProds] : mockProds;
+  }, [userProducts, showUserProducts]);
 
   const baseProducts =
     categoryKey === "all"
-      ? MOCK_PRODUCTS
-      : MOCK_PRODUCTS.filter((product) => product.category === categoryKey);
+      ? combinedBaseProducts
+      : combinedBaseProducts.filter((product) => product.category === categoryKey);
 
   const categoryMaxPrice = useMemo(() => {
     if (baseProducts.length === 0) return 0;
@@ -120,6 +139,7 @@ const ProductsPage = ({
         changePage={changePage}
         cartCount={cartCount}
         wishlistCount={wishlistCount}
+        currentUser={currentUser}
         onOpenProductDetail={onOpenProductDetail}
         theme={theme}
         onToggleTheme={onToggleTheme}
@@ -134,6 +154,19 @@ const ProductsPage = ({
         <p className="collection-kicker">{resolvedCollectionKicker}</p>
         <h2 className="collection-title">{resolvedCollectionTitle}</h2>
         <p className="collection-results">{sortedProducts.length} {t("products.results", "RESULTS")}</p>
+        
+        {userProducts.length > 0 && (
+          <div className="community-products-toggle">
+            <label>
+              <input
+                type="checkbox"
+                checked={showUserProducts}
+                onChange={(e) => setShowUserProducts(e.target.checked)}
+              />
+              <span>{t("products.showCommunity", "Show community items")} ({userProducts.length})</span>
+            </label>
+          </div>
+        )}
       </section>
 
       {activeFilterChips.length > 0 && (
