@@ -396,6 +396,7 @@ const TRANSLATIONS = {
       bags: "BOLSOS",
       accessories: "ACCESORIOS",
       homeDecor: "HOGAR",
+      news: "NOTICIAS MODA",
       socials: "SOCIAL FEED",
       wishlist: "WISHLIST",
       profile: "MI PERFIL",

@@ -247,7 +247,8 @@
 :root[data-theme="dark"] .landing-tagline,
 :root[data-theme="dark"] .glitch-visual-text .glitch-text,
 :root[data-theme="dark"] .main-logo-glitch-text {
-  color: var(--dark-landing-ink);
+  color: #ffffff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.8), 0 14px 34px rgba(0, 0, 0, 0.4);
 }
 
 :root[data-theme="dark"] .landing-intro {

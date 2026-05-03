@@ -63,7 +63,8 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  z-index: 2;
+  z-index: 20;
+  pointer-events: none;
   overflow: hidden;
 }
 .main-logo-glitch-text {
@@ -91,14 +92,12 @@
 /* Contenedor invisible para que floten las ventanas */
 .windows-absolute-wrapper {
   position: absolute;
-  top: 0.9rem;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 1560px;
-  height: 280px;
+  height: 100vh;
   pointer-events: none; /* Deja pasar los clics a lo de abajo */
-  z-index: 1;
+  z-index: 10;
 }
 
 /* Estilos de las ventanitas individuales */
@@ -116,9 +115,9 @@
   backdrop-filter: blur(12px);
   overflow: hidden;
 }
-.window-1 { top: 8px; left: 1.1%; z-index: 1; animation: floatA 8.2s ease-in-out infinite; transform: rotate(-2.2deg); }
-.window-2 { top: 28px; left: 50%; z-index: 2; animation: floatB 9.5s ease-in-out infinite; transform: translateX(-50%) rotate(0.5deg); }
-.window-3 { top: 8px; right: 1.1%; position: absolute; animation: floatC 8.8s ease-in-out infinite; transform: rotate(2.2deg); }
+.window-1 { top: 5%; left: 3%; z-index: 1; animation: floatA 8.2s ease-in-out infinite; transform: rotate(-2.2deg); }
+.window-2 { top: 5%; right: 3%; z-index: 2; animation: floatB 9.5s ease-in-out infinite; transform: rotate(4.5deg); }
+.window-3 { top: 58%; right: 6%; position: absolute; animation: floatC 8.8s ease-in-out infinite; transform: rotate(-3.2deg); }
 
 .window-header {
   height: 31px;
@@ -326,62 +325,21 @@
 }
 
 @media (max-width: 768px) {
-  .windows-absolute-wrapper {
-    height: 230px;
-  }
-
   .window-frame {
-    width: 164px;
-    height: 154px;
+    width: 150px;
+    height: 140px;
   }
-
-  .window-1 {
-    left: 0.8rem;
-  }
-
-  .window-2 {
-    top: 32px;
-  }
-
-  .window-3 {
-    right: 0.8rem;
-  }
-
+  .window-1 { top: 3%; left: 2%; }
+  .window-2 { top: 25%; right: 2%; }
+  .window-3 { top: 58%; left: 2%; }
   .window-preview-hero {
     height: 48px;
   }
-
 }
 
-@media (min-width: 1600px) {
-  .windows-absolute-wrapper {
-    max-width: 1680px;
-  }
-
-  .window-1 {
-    left: 0.4%;
-  }
-
-  .window-3 {
-    right: 0.4%;
-  }
-}
-
-@media (min-width: 1280px) and (max-width: 1599px) {
-  .windows-absolute-wrapper {
-    max-width: 1500px;
-  }
-
-  .window-1 {
-    left: 0.5%;
-  }
-
-  .window-2 {
-    top: 18px;
-  }
-
-  .window-3 {
-    right: 0.5%;
-  }
+@media (min-width: 1280px) {
+  .window-1 { top: 8%; left: 5%; }
+  .window-2 { top: 8%; right: 5%; }
+  .window-3 { top: 60%; right: 8%; }
 }
 

@@ -17,6 +17,7 @@ import SavedLooksPage from "./pages/SavedLooksPage";
 import MessagesPage from "./pages/MessagesPage";
 import AuthPage from "./pages/AuthPage";
 import UserProfilePage from "./pages/UserProfilePage";
+import NewsPage from "./pages/NewsPage";
 import { ChatbotWidget } from "./components/Layout";
 import { MOCK_PRODUCTS } from "./data/mockData";
 import { authService } from "./services/authService";
@@ -93,6 +94,7 @@ const VALID_PAGES = new Set([
   "saved-looks",
   "messages",
   "user-profile",
+  "news",
 ]);
 
 const PROTECTED_PAGES = new Set(["socials", "saved-looks", "messages", "user-profile"]);
@@ -118,9 +120,9 @@ const App = () => {
       const currentUser = authService.loadCurrentUser();
       const isGuest = localStorage.getItem("rtf_is_guest") === "true";
       
-      // Si no está autenticado y no es invitado, mostrar auth
+      // Si no está autenticado y no es invitado, mostrar landing primero (a petición del usuario)
       if (!currentUser && !isGuest) {
-        return "auth";
+        return "landing";
       }
       
       // Si tiene página guardada y es válida, ir allí
@@ -130,7 +132,7 @@ const App = () => {
       
       return "landing";
     } catch {
-      return "auth";
+      return "landing";
     }
   });
   
@@ -971,6 +973,17 @@ const App = () => {
           onToggleTheme={toggleTheme}
           language={language}
           setLanguage={changeLanguage}
+          t={t}
+        />
+      )}
+      {currentPage === "news" && (
+        <NewsPage
+          changePage={setCurrentPage}
+          cartCount={cartItems.length}
+          wishlistCount={wishlistCount}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          language={language}
           t={t}
         />
       )}

@@ -4,37 +4,57 @@ import { MOCK_PRODUCTS } from "../data/mockData";
 import { LANGUAGE_OPTIONS, getLanguageLabel } from "../data/i18n";
 import { localizeProduct } from "../data/i18n";
 
-export const WindowOverlay = ({ label, offsetClass }) => {
+export const WindowOverlay = ({ label, offsetClass, article }) => {
   const [isVisible, setIsVisible] = useState(true);
-  const closeWindow = () => setIsVisible(false);
+  const closeWindow = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsVisible(false);
+  };
 
   if (!isVisible) return null;
 
   return (
-    <div className={`window-frame ${offsetClass}`}>
+    <div className={`window-frame ${offsetClass}`} style={{ pointerEvents: "auto" }}>
       <div className="window-header">
-        <span className="window-label">LOOK {label}</span>
+        <span className="window-label">{article ? "NEWS" : `LOOK ${label}`}</span>
         <div className="window-actions">
             <button type="button" className="window-action window-action-close" onClick={closeWindow} aria-label="Close window">
               ×
             </button>
         </div>
       </div>
-      <div className="window-body">
-        <div className="window-url">robthefab.local/look/{label.toLowerCase()}</div>
-        <div className="window-preview">
-          <div className="window-preview-hero" />
-          <div className="window-preview-lines">
-            <span />
-            <span />
-            <span />
+      {article ? (
+        <a href={article.url} target="_blank" rel="noopener noreferrer" className="window-body" style={{ textDecoration: "none", color: "inherit", display: "flex", flexDirection: "column", cursor: "pointer" }}>
+          <div className="window-url">{article.source.name.substring(0, 20)}</div>
+          <div className="window-preview" style={{ padding: 0, gap: 0, overflow: "hidden" }}>
+            <img src={article.image || "https://via.placeholder.com/150"} alt="" style={{ width: "100%", height: "80px", objectFit: "cover" }} />
+            <div style={{ padding: "4px", fontSize: "0.55rem", fontWeight: "bold", color: "#333" }}>
+              {article.title.length > 50 ? article.title.substring(0, 50) + "..." : article.title}
+            </div>
+          </div>
+          <div className="window-status">
+            <span className="window-status-dot" />
+            BREAKING
+          </div>
+        </a>
+      ) : (
+        <div className="window-body">
+          <div className="window-url">robthefab.local/look/{label.toLowerCase()}</div>
+          <div className="window-preview">
+            <div className="window-preview-hero" />
+            <div className="window-preview-lines">
+              <span />
+              <span />
+              <span />
+            </div>
+          </div>
+          <div className="window-status">
+            <span className="window-status-dot" />
+            LIVE
           </div>
         </div>
-        <div className="window-status">
-          <span className="window-status-dot" />
-          LIVE
-        </div>
-      </div>
+      )}
     </div>
   );
 };
@@ -136,21 +156,24 @@ export const GlobalHeader = ({
                   <button type="button" onClick={() => { setIsMenuOpen(false); changePage("bags"); }}>{t("nav.bags", "BAGS")}</button>
                   <button type="button" onClick={() => { setIsMenuOpen(false); changePage("accessories"); }}>{t("nav.accessories", "ACCESSORIES")}</button>
                   <button type="button" onClick={() => { setIsMenuOpen(false); changePage("home"); }}>{t("nav.homeDecor", "HOME")}</button>
+                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("news"); }}>{t("nav.news", "FASHION NEWS")}</button>
                 </div>
 
                 <div className="sidebar-nav-group">  
-                  {currentUser && (
-                    <button type="button" onClick={() => { setIsMenuOpen(false); changePage("socials"); }}>{t("nav.socials", "SOCIAL FEED")}</button>
-                  )}
+                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("socials"); }}>{t("nav.socials", "SOCIAL FEED")}</button>
                 </div>
 
                 <div className="sidebar-nav-group bottom-group">
                   <button type="button" onClick={() => { setIsMenuOpen(false); changePage("wishlist"); }}>
                     {t("nav.wishlist", "WISHLIST")} [ {wishlistCount} ]
                   </button>
-                  {currentUser && (
+                  {currentUser ? (
                     <button type="button" onClick={() => { setIsMenuOpen(false); changePage("user-profile"); }}>
                       {t("nav.profile", "MY PROFILE")}
+                    </button>
+                  ) : (
+                    <button type="button" onClick={() => { setIsMenuOpen(false); changePage("auth"); }}>
+                      {t("auth.submit.login", "SIGN IN")} / {t("auth.submit.register", "CREATE ACCOUNT")}
                     </button>
                   )}
                   <button
