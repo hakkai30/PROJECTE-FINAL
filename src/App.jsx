@@ -792,6 +792,26 @@ const App = () => {
     loadUserProducts();
   }, []);
 
+  // Restaurar sesión de Supabase al cargar la app
+  useEffect(() => {
+    authService.restoreSession().then((user) => {
+      if (user) {
+        setCurrentUser(user);
+      }
+    });
+
+    const subscription = authService.onAuthStateChange((user) => {
+      setCurrentUser(user);
+      if (!user) {
+        setCurrentPage("auth");
+      }
+    });
+
+    return () => {
+      subscription?.unsubscribe?.();
+    };
+  }, []);
+
   useEffect(() => {
     if (currentPage === "product-detail" && !selectedProduct) {
       setCurrentPage("shop");

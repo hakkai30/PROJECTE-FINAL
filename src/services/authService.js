@@ -39,6 +39,54 @@ export const authService = {
     return readJson(STORAGE_KEYS.currentUser, null);
   },
 
+  /** Recupera la sesión activa de Supabase y sincroniza el localStorage */
+  async restoreSession() {
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData?.session?.user) {
+        localStorage.removeItem(STORAGE_KEYS.currentUser);
+        return null;
+      }
+
+      const user = sessionData.session.user;
+
+      const { data: userRecord } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      const publicUser = toPublicUser(user, userRecord);
+      writeJson(STORAGE_KEYS.currentUser, publicUser);
+      return publicUser;
+    } catch {
+      return readJson(STORAGE_KEYS.currentUser, null);
+    }
+  },
+
+  /** Escucha cambios de sesión (login, logout, token refresh) */
+  onAuthStateChange(callback) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          const { data: userRecord } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+
+          const publicUser = toPublicUser(session.user, userRecord);
+          writeJson(STORAGE_KEYS.currentUser, publicUser);
+          callback(publicUser);
+        } else if (event === 'SIGNED_OUT') {
+          localStorage.removeItem(STORAGE_KEYS.currentUser);
+          callback(null);
+        }
+      }
+    );
+    return subscription;
+  },
+
   async register({ name, email, password, bio = "", avatar = "" }) {
     try {
       const { data, error } = await supabase.auth.signUp({
