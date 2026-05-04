@@ -161,6 +161,9 @@ export const GlobalHeader = ({
 
                 <div className="sidebar-nav-group">  
                   <button type="button" onClick={() => { setIsMenuOpen(false); changePage("socials"); }}>{t("nav.socials", "SOCIAL FEED")}</button>
+                  {currentUser && (
+                    <button type="button" onClick={() => { setIsMenuOpen(false); changePage("user-profile"); }}>{t("nav.myStore", "MY STORE / SELL")}</button>
+                  )}
                 </div>
 
                 <div className="sidebar-nav-group bottom-group">

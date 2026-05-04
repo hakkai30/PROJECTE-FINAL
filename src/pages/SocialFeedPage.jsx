@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Bookmark, Heart, MessageCircle, ShoppingCart } from "lucide-react";
+import { useRef, useState } from "react";
+import { Bookmark, Heart, ImagePlus, MessageCircle, ShoppingCart, X } from "lucide-react";
 import { localizePost } from "../data/i18n";
 
 const SocialFeedPage = ({
@@ -52,7 +52,9 @@ const SocialFeedPage = ({
 
   const [activeView, setActiveView] = useState("all");
   const [postText, setPostText] = useState("");
-  const [postImage, setPostImage] = useState("");
+  const [postImageFile, setPostImageFile] = useState(null);
+  const [postImagePreview, setPostImagePreview] = useState("");
+  const fileInputRef = useRef(null);
   const [openCommentPostIds, setOpenCommentPostIds] = useState([]);
   const [commentDrafts, setCommentDrafts] = useState({});
   const [submittingCommentIds, setSubmittingCommentIds] = useState([]);
@@ -63,6 +65,19 @@ const SocialFeedPage = ({
       ? posts.filter((post) => savedLookIds.includes(String(post.id)))
       : posts;
 
+  const handleImageSelect = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setPostImageFile(file);
+    setPostImagePreview(URL.createObjectURL(file));
+  };
+
+  const clearImage = () => {
+    setPostImageFile(null);
+    setPostImagePreview("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const handleCreatePost = async (event) => {
     event.preventDefault();
     if (isPosting) return;
@@ -71,11 +86,11 @@ const SocialFeedPage = ({
     try {
       await onCreatePost?.({
         text: postText,
-        imageUrl: postImage,
+        imageFile: postImageFile,
       });
 
       setPostText("");
-      setPostImage("");
+      clearImage();
     } catch {
       // Error is handled in shared parent state.
     }
@@ -186,13 +201,35 @@ const SocialFeedPage = ({
               aria-label={t("social.feed.postPlaceholder", "Write a new post...")}
             />
             <input
-              type="url"
-              className="threads-search-input"
-              value={postImage}
-              onChange={(event) => setPostImage(event.target.value)}
-              placeholder={t("social.feed.imagePlaceholder", "Optional image URL")}
-              aria-label={t("social.feed.imagePlaceholder", "Optional image URL")}
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageSelect}
+              style={{ display: "none" }}
+              id="post-image-upload"
             />
+            <button
+              type="button"
+              className="icon-action-btn"
+              onClick={() => fileInputRef.current?.click()}
+              aria-label={t("social.feed.addImage", "Add image")}
+            >
+              <ImagePlus size={18} aria-hidden="true" />
+              {postImageFile ? postImageFile.name.slice(0, 15) + "..." : t("social.feed.addImage", "ADD IMAGE")}
+            </button>
+            {postImagePreview && (
+              <div style={{ position: "relative", display: "inline-block" }}>
+                <img src={postImagePreview} alt="Preview" style={{ height: 48, borderRadius: 6, objectFit: "cover" }} />
+                <button
+                  type="button"
+                  onClick={clearImage}
+                  style={{ position: "absolute", top: -6, right: -6, background: "#333", border: "none", borderRadius: "50%", cursor: "pointer", padding: 2, lineHeight: 0 }}
+                  aria-label="Remove image"
+                >
+                  <X size={12} color="#fff" />
+                </button>
+              </div>
+            )}
             <button type="submit" className="shop-look-btn" disabled={isPosting || !postText.trim()}>
               {isPosting ? t("social.feed.posting", "POSTING...") : t("social.feed.publish", "PUBLISH")}
             </button>

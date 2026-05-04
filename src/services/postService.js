@@ -1,5 +1,24 @@
 import { supabase } from "../config/supabase";
 
+/** Sube una imagen a Supabase Storage y devuelve la URL pública */
+const uploadImage = async (file) => {
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+  const filePath = `posts/${fileName}`;
+
+  const { error } = await supabase.storage
+    .from('post-images')
+    .upload(filePath, file);
+
+  if (error) throw new Error(error.message);
+
+  const { data: urlData } = supabase.storage
+    .from('post-images')
+    .getPublicUrl(filePath);
+
+  return urlData.publicUrl;
+};
+
 export const postService = {
   async getFeedPosts() {
     const { data, error } = await supabase
@@ -14,10 +33,16 @@ export const postService = {
     return data || [];
   },
 
-  async createPost({ text, imageUrl = "", user = "USER" }) {
+  async createPost({ text, imageFile = null, imageUrl = "", user = "USER" }) {
+    // Si hay un archivo, subirlo primero
+    let finalImageUrl = imageUrl;
+    if (imageFile) {
+      finalImageUrl = await uploadImage(imageFile);
+    }
+
     const { data, error } = await supabase
       .from('posts')
-      .insert([{ description: text, img: imageUrl, user_email: user }])
+      .insert([{ description: text, img: finalImageUrl, user_email: user }])
       .select(`*, comments (*)`)
       .single();
 

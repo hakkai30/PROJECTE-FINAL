@@ -334,7 +334,7 @@ const App = () => {
     }
   };
 
-  const createSocialPost = async ({ text, imageUrl }) => {
+  const createSocialPost = async ({ text, imageFile }) => {
     if (isCreatingSocialPost) return;
     if (!text?.trim()) return;
 
@@ -344,8 +344,8 @@ const App = () => {
     try {
       const post = await postService.createPost({
         text,
-        imageUrl,
-        user: currentUser?.name || "USER",
+        imageFile,
+        user: currentUser?.email || "USER",
       });
 
       if (post) {
@@ -792,24 +792,13 @@ const App = () => {
     loadUserProducts();
   }, []);
 
-  // Restaurar sesión de Supabase al cargar la app
+  // Restaurar sesión de Supabase al cargar la app (solo al inicio)
   useEffect(() => {
     authService.restoreSession().then((user) => {
       if (user) {
         setCurrentUser(user);
       }
     });
-
-    const subscription = authService.onAuthStateChange((user) => {
-      setCurrentUser(user);
-      if (!user) {
-        setCurrentPage("auth");
-      }
-    });
-
-    return () => {
-      subscription?.unsubscribe?.();
-    };
   }, []);
 
   useEffect(() => {

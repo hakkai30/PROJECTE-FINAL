@@ -31,11 +31,10 @@ const toPublicUser = (supabaseUser, userRecord) => {
 
 export const authService = {
   getAuthToken() {
-    return null; // Supabase gestiona su propio token internamente
+    return null;
   },
 
   loadCurrentUser() {
-    // Devuelve el usuario de la cache local (para renders inmediatos)
     return readJson(STORAGE_KEYS.currentUser, null);
   },
 
@@ -64,45 +63,19 @@ export const authService = {
     }
   },
 
-  /** Escucha cambios de sesión (login, logout, token refresh) */
-  onAuthStateChange(callback) {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          const { data: userRecord } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-
-          const publicUser = toPublicUser(session.user, userRecord);
-          writeJson(STORAGE_KEYS.currentUser, publicUser);
-          callback(publicUser);
-        } else if (event === 'SIGNED_OUT') {
-          localStorage.removeItem(STORAGE_KEYS.currentUser);
-          callback(null);
-        }
-      }
-    );
-    return subscription;
-  },
-
   async register({ name, email, password, bio = "", avatar = "" }) {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            name,
-            bio,
-            avatar
-          }
+          data: { name, bio, avatar }
         }
       });
 
       if (error) throw error;
 
+      // Usar los datos que ya tenemos, sin consulta extra a la DB
       const publicUser = toPublicUser(data.user, { name, bio, avatar });
       writeJson(STORAGE_KEYS.currentUser, publicUser);
 
@@ -121,14 +94,8 @@ export const authService = {
 
       if (error) throw error;
 
-      // Obtener datos extra de nuestra tabla pública (como bio, avatar)
-      const { data: userRecord } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', data.user.id)
-        .single();
-
-      const publicUser = toPublicUser(data.user, userRecord);
+      // Usar metadata del usuario, sin consulta extra a la tabla users
+      const publicUser = toPublicUser(data.user, data.user.user_metadata);
       writeJson(STORAGE_KEYS.currentUser, publicUser);
 
       return { ok: true, user: publicUser };
@@ -144,7 +111,6 @@ export const authService = {
       
       const user = sessionData.session.user;
 
-      // Actualizar en la tabla pública
       const { error: dbError } = await supabase
         .from('users')
         .update({ bio, avatar })
@@ -152,19 +118,11 @@ export const authService = {
 
       if (dbError) throw dbError;
 
-      // Actualizar en la metadata de autenticación
       await supabase.auth.updateUser({
         data: { bio, avatar }
       });
 
-      // Obtener el registro actualizado
-      const { data: userRecord } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      const publicUser = toPublicUser(user, userRecord);
+      const publicUser = toPublicUser(user, { ...user.user_metadata, bio, avatar });
       writeJson(STORAGE_KEYS.currentUser, publicUser);
 
       return { ok: true, user: publicUser };
