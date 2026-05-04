@@ -1,39 +1,25 @@
-const USER_PRODUCTS_API_URL = (
-  import.meta.env.VITE_USER_PRODUCTS_API_URL || "http://localhost:3000"
-).trim();
-
-const getEndpointUrl = (path = "") => `${USER_PRODUCTS_API_URL}/api/user-products${path}`;
-
-const parseJsonBody = async (response) => {
-  return response.json().catch(() => ({}));
-};
-
-const toErrorMessage = (body, fallback) => body?.error || fallback;
+import { supabase } from "../config/supabase";
 
 export const userProductService = {
   async getAllUserProducts() {
-    const response = await fetch(getEndpointUrl());
-    const body = await parseJsonBody(response);
+    const { data, error } = await supabase
+      .from('user_products')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-    if (!response.ok) {
-      throw new Error(toErrorMessage(body, "Could not load user products."));
-    }
-
-    return Array.isArray(body?.products) ? body.products : [];
+    if (error) throw new Error(error.message);
+    return data || [];
   },
 
   async getUserProductsByEmail(sellerEmail) {
-    const encoded = encodeURIComponent(String(sellerEmail || "").trim());
-    const response = await fetch(getEndpointUrl(`/seller/${encoded}`));
-    const body = await parseJsonBody(response);
+    const { data, error } = await supabase
+      .from('user_products')
+      .select('*')
+      .eq('seller_email', sellerEmail)
+      .order('created_at', { ascending: false });
 
-    if (!response.ok) {
-      throw new Error(
-        toErrorMessage(body, "Could not load seller products.")
-      );
-    }
-
-    return Array.isArray(body?.products) ? body.products : [];
+    if (error) throw new Error(error.message);
+    return data || [];
   },
 
   async createUserProduct({
@@ -47,12 +33,9 @@ export const userProductService = {
     seller = "USER",
     sellerEmail = "user@example.com",
   }) {
-    const response = await fetch(getEndpointUrl(), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const { data, error } = await supabase
+      .from('user_products')
+      .insert([{
         name,
         description,
         gender,
@@ -61,50 +44,44 @@ export const userProductService = {
         sizes,
         category,
         seller,
-        sellerEmail,
-      }),
-    });
+        seller_email: sellerEmail
+      }])
+      .select()
+      .single();
 
-    const body = await parseJsonBody(response);
-
-    if (!response.ok) {
-      throw new Error(toErrorMessage(body, "Could not create product."));
-    }
-
-    return body?.product || null;
+    if (error) throw new Error(error.message);
+    return data;
   },
 
   async deleteUserProduct(productId) {
-    const response = await fetch(getEndpointUrl(`/${encodeURIComponent(String(productId))}`), {
-      method: "DELETE",
-    });
+    const { error } = await supabase
+      .from('user_products')
+      .delete()
+      .eq('id', productId);
 
-    const body = await parseJsonBody(response);
-
-    if (!response.ok) {
-      throw new Error(toErrorMessage(body, "Could not delete product."));
-    }
-
-    return body?.ok || false;
+    if (error) throw new Error(error.message);
+    return true;
   },
 
   async toggleUserProductLike(productId, { direction = "up" } = {}) {
-    const normalizedDirection = direction === "down" ? "down" : "up";
-    const response = await fetch(
-      getEndpointUrl(
-        `/${encodeURIComponent(String(productId))}/like?direction=${normalizedDirection}`
-      ),
-      {
-        method: "PATCH",
-      }
-    );
+    const increment = direction === "up" ? 1 : -1;
+    
+    const { data: product, error: fetchError } = await supabase
+      .from('user_products')
+      .select('likes')
+      .eq('id', productId)
+      .single();
 
-    const body = await parseJsonBody(response);
+    if (fetchError) throw new Error(fetchError.message);
 
-    if (!response.ok) {
-      throw new Error(toErrorMessage(body, "Could not update like."));
-    }
+    const { data, error } = await supabase
+      .from('user_products')
+      .update({ likes: Math.max(0, (product.likes || 0) + increment) })
+      .eq('id', productId)
+      .select()
+      .single();
 
-    return body?.product || null;
+    if (error) throw new Error(error.message);
+    return data;
   },
 };

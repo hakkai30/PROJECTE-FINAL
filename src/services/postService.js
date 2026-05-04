@@ -1,98 +1,88 @@
-const POSTS_API_URL = (import.meta.env.VITE_POSTS_API_URL || "http://localhost:3000").trim();
-
-const getEndpointUrl = (path = "") => `${POSTS_API_URL}/api/posts${path}`;
-
-const parseJsonBody = async (response) => {
-  return response.json().catch(() => ({}));
-};
-
-const toErrorMessage = (body, fallback) => body?.error || fallback;
+import { supabase } from "../config/supabase";
 
 export const postService = {
   async getFeedPosts() {
-    const response = await fetch(getEndpointUrl());
-    const body = await parseJsonBody(response);
+    const { data, error } = await supabase
+      .from('posts')
+      .select(`
+        *,
+        comments (*)
+      `)
+      .order('created_at', { ascending: false });
 
-    if (!response.ok) {
-      throw new Error(toErrorMessage(body, "Could not load posts."));
-    }
-
-    return Array.isArray(body?.posts) ? body.posts : [];
+    if (error) throw new Error(error.message);
+    return data || [];
   },
 
   async createPost({ text, imageUrl = "", user = "USER" }) {
-    const response = await fetch(getEndpointUrl(), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text, imageUrl, user }),
-    });
+    const { data, error } = await supabase
+      .from('posts')
+      .insert([{ description: text, img: imageUrl, user_email: user }])
+      .select(`*, comments (*)`)
+      .single();
 
-    const body = await parseJsonBody(response);
-
-    if (!response.ok) {
-      throw new Error(toErrorMessage(body, "Could not create post."));
-    }
-
-    return body?.post || null;
+    if (error) throw new Error(error.message);
+    return data;
   },
 
   async toggleLikePost(postId, { direction = "up" } = {}) {
-    const normalizedDirection = direction === "down" ? "down" : "up";
-    const response = await fetch(
-      getEndpointUrl(`/${encodeURIComponent(String(postId))}/like?direction=${normalizedDirection}`),
-      {
-        method: "PATCH",
-      }
-    );
+    const increment = direction === "up" ? 1 : -1;
+    
+    const { data: post, error: fetchError } = await supabase
+      .from('posts')
+      .select('likes')
+      .eq('id', postId)
+      .single();
 
-    const body = await parseJsonBody(response);
+    if (fetchError) throw new Error(fetchError.message);
 
-    if (!response.ok) {
-      throw new Error(toErrorMessage(body, "Could not update like."));
-    }
+    const { data, error } = await supabase
+      .from('posts')
+      .update({ likes: Math.max(0, (post.likes || 0) + increment) })
+      .eq('id', postId)
+      .select(`*, comments (*)`)
+      .single();
 
-    return body?.post || null;
+    if (error) throw new Error(error.message);
+    return data;
   },
 
   async addCommentToPost(postId, { text, user = "USER" }) {
-    const response = await fetch(getEndpointUrl(`/${encodeURIComponent(String(postId))}/comments`), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text, user }),
-    });
+    const { data: comment, error: commentError } = await supabase
+      .from('comments')
+      .insert([{ post_id: postId, text, user_email: user }])
+      .select()
+      .single();
 
-    const body = await parseJsonBody(response);
+    if (commentError) throw new Error(commentError.message);
 
-    if (!response.ok) {
-      throw new Error(toErrorMessage(body, "Could not add comment."));
-    }
+    const { data: post, error: postError } = await supabase
+      .from('posts')
+      .select(`*, comments (*)`)
+      .eq('id', postId)
+      .single();
 
-    return {
-      post: body?.post || null,
-      comment: body?.comment || null,
-    };
+    if (postError) throw new Error(postError.message);
+
+    return { post, comment };
   },
 
   async deleteCommentFromPost(postId, commentId) {
-    const response = await fetch(
-      getEndpointUrl(
-        `/${encodeURIComponent(String(postId))}/comments/${encodeURIComponent(String(commentId))}`
-      ),
-      {
-        method: "DELETE",
-      }
-    );
+    const { error: commentError } = await supabase
+      .from('comments')
+      .delete()
+      .eq('id', commentId);
 
-    const body = await parseJsonBody(response);
+    if (commentError) throw new Error(commentError.message);
 
-    if (!response.ok) {
-      throw new Error(toErrorMessage(body, "Could not delete comment."));
-    }
+    const { data: post, error: postError } = await supabase
+      .from('posts')
+      .select(`*, comments (*)`)
+      .eq('id', postId)
+      .single();
 
-    return body?.post || null;
+    if (postError) throw new Error(postError.message);
+
+    return post;
   },
 };

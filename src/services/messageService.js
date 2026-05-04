@@ -1,56 +1,51 @@
-const MESSAGES_API_URL = (import.meta.env.VITE_POSTS_API_URL || "http://localhost:3000").trim();
-
-const getEndpointUrl = (path = "") => `${MESSAGES_API_URL}/api/messages${path}`;
-
-const parseJsonBody = async (response) => {
-  return response.json().catch(() => ({}));
-};
-
-const toErrorMessage = (body, fallback) => body?.error || fallback;
+import { supabase } from "../config/supabase";
 
 export const messageService = {
   async getThreads() {
-    const response = await fetch(getEndpointUrl("/threads"));
-    const body = await parseJsonBody(response);
+    const { data, error } = await supabase
+      .from('message_threads')
+      .select(`
+        *,
+        messages (*)
+      `)
+      .order('created_at', { ascending: false });
 
-    if (!response.ok) {
-      throw new Error(toErrorMessage(body, "Could not load threads."));
-    }
-
-    return Array.isArray(body?.threads) ? body.threads : [];
+    if (error) throw new Error(error.message);
+    return data || [];
   },
 
   async sendMessage(threadId, payload) {
-    const response = await fetch(getEndpointUrl(`/threads/${encodeURIComponent(String(threadId))}/messages`), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    const { data, error } = await supabase
+      .from('messages')
+      .insert([{
+        thread_id: threadId,
+        sender: payload.sender || "me",
+        text: payload.text,
+        time: payload.time || new Date().toLocaleTimeString(),
+        ts: payload.ts || Date.now(),
+        status: payload.status || "sent"
+      }])
+      .select()
+      .single();
 
-    const body = await parseJsonBody(response);
-
-    if (!response.ok) {
-      throw new Error(toErrorMessage(body, "Could not send message."));
-    }
-
-    return body?.message || null;
+    if (error) throw new Error(error.message);
+    return data;
   },
 
   subscribeToMessages(onEvent) {
-    const streamUrl = getEndpointUrl("/stream");
-    const eventSource = new EventSource(streamUrl);
+    // Suscripción en tiempo real de Supabase
+    const subscription = supabase
+      .channel('public:messages')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+        onEvent?.(payload.new);
+      })
+      .subscribe();
 
-    eventSource.onmessage = (event) => {
-      try {
-        const payload = JSON.parse(event.data);
-        onEvent?.(payload);
-      } catch {
-        // Ignore malformed event payloads.
+    // Emula el método close del EventSource original
+    return {
+      close: () => {
+        supabase.removeChannel(subscription);
       }
     };
-
-    return eventSource;
   },
 };
