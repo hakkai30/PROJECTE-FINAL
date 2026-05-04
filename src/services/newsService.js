@@ -1,10 +1,19 @@
 export const getFashionNews = async (lang = "es") => {
-  const API_KEY = import.meta.env.VITE_GNEWS_API_KEY || "";
-  const query = "moda OR fashion";
-  // Convert standard language codes to ones GNews uses if needed, or default to the requested one
   const safeLang = ["en", "es", "fr"].includes(lang) ? lang : "en";
-  const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=${safeLang}&max=12&apikey=${API_KEY}`;
-  
+
+  // En producción usa la Serverless Function de Vercel (evita CORS)
+  // En local usa la API directamente
+  const isLocal = window.location.hostname === "localhost";
+
+  let url;
+  if (isLocal) {
+    const API_KEY = import.meta.env.VITE_GNEWS_API_KEY || "";
+    const query = "moda OR fashion";
+    url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=${safeLang}&max=12&apikey=${API_KEY}`;
+  } else {
+    url = `/api/news?lang=${safeLang}`;
+  }
+
   try {
     const response = await fetch(url);
     if (!response.ok) {
