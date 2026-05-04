@@ -20,6 +20,8 @@ const uploadImage = async (file) => {
 };
 
 export const postService = {
+  uploadImage,
+
   async getFeedPosts() {
     const { data, error } = await supabase
       .from('posts')
