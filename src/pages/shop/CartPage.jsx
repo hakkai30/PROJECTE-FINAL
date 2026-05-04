@@ -1,5 +1,5 @@
-import { GlobalFooter, GlobalHeader } from "../components/Layout";
-import { localizeProduct } from "../data/i18n";
+import { GlobalFooter, GlobalHeader } from "../../components/Layout";
+import { localizeProduct } from "../../data/i18n";
 
 const CartPage = ({
   changePage,

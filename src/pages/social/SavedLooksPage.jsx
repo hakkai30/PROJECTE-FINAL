@@ -1,6 +1,6 @@
 import { Bookmark, Heart, MessageCircle, ShoppingCart } from "lucide-react";
 import { useState } from "react";
-import { localizePost } from "../data/i18n";
+import { localizePost } from "../../data/i18n";
 
 const SavedLooksPage = ({
   changePage,

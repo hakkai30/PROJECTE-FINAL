@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { messageService } from "../services/messageService";
+import { messageService } from "../../services/messageService";
 
 const normalizeContactHandle = (value) => {
   const cleaned = String(value || "").trim().replace(/^@/, "");

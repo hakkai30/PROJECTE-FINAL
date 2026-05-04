@@ -1,5 +1,5 @@
-import { GlobalFooter, GlobalHeader } from "../components/Layout";
-import { LANGUAGE_OPTIONS, getLanguageLabel } from "../data/i18n";
+import { GlobalFooter, GlobalHeader } from "../../components/Layout";
+import { LANGUAGE_OPTIONS, getLanguageLabel } from "../../data/i18n";
 
 const THEMES = [
   {

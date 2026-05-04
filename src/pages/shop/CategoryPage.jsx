@@ -1,4 +1,4 @@
-import { GlobalFooter, GlobalHeader } from "../components/Layout";
+import { GlobalFooter, GlobalHeader } from "../../components/Layout";
 
 const CategoryPage = ({
   changePage,

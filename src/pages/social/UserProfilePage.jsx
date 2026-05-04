@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Heart, Trash2, Plus } from "lucide-react";
-import { GlobalFooter, GlobalHeader } from "../components/Layout";
-import UploadProductForm from "../components/UploadProductForm";
-import { userProductService } from "../services/userProductService";
+import { GlobalFooter, GlobalHeader } from "../../components/Layout";
+import UploadProductForm from "../../components/UploadProductForm";
+import { userProductService } from "../../services/userProductService";
 
 const UserProfilePage = ({
   changePage,

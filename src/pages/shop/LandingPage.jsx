@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { WindowOverlay, GlobalHeader } from "../components/Layout";
-import { getFashionNews } from "../services/newsService";
+import { WindowOverlay, GlobalHeader } from "../../components/Layout";
+import { getFashionNews } from "../../services/newsService";
 
 const LandingPage = ({ changePage, currentUser, cartCount = 0, wishlistCount = 0, t, language = "es" }) => {
   const [news, setNews] = useState([]);

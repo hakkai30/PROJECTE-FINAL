@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { getFashionNews } from "../services/newsService";
-import { GlobalHeader, GlobalFooter } from "../components/Layout";
+import { getFashionNews } from "../../services/newsService";
+import { GlobalHeader, GlobalFooter } from "../../components/Layout";
 
 const NewsPage = ({ changePage, language, t, cartCount, wishlistCount, theme, onToggleTheme }) => {
   const [articles, setArticles] = useState([]);

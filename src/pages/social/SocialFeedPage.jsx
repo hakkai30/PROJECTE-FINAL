@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Bookmark, Heart, ImagePlus, MessageCircle, ShoppingCart, X } from "lucide-react";
-import { localizePost } from "../data/i18n";
+import { localizePost } from "../../data/i18n";
 
 const SocialFeedPage = ({
   changePage,

@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Heart } from "lucide-react";
-import { GlobalFooter, GlobalHeader } from "../components/Layout";
-import { MOCK_PRODUCTS } from "../data/mockData";
-import { localizeProduct } from "../data/i18n";
+import { GlobalFooter, GlobalHeader } from "../../components/Layout";
+import { MOCK_PRODUCTS } from "../../data/mockData";
+import { localizeProduct } from "../../data/i18n";
 
 const ProductsPage = ({
   changePage,
