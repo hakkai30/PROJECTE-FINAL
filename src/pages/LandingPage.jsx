@@ -2,8 +2,13 @@ import { useState, useEffect } from "react";
 import { WindowOverlay, GlobalHeader } from "../components/Layout";
 import { getFashionNews } from "../services/newsService";
 
-const LandingPage = ({ changePage, currentUser, t, language = "es" }) => {
+const LandingPage = ({ changePage, currentUser, cartCount = 0, wishlistCount = 0, t, language = "es" }) => {
   const [news, setNews] = useState([]);
+
+  // Debug para ver si llega el usuario al hosting
+  useEffect(() => {
+    console.log("LandingPage CurrentUser:", currentUser);
+  }, [currentUser]);
 
   useEffect(() => {
     getFashionNews(language).then(articles => {
@@ -15,11 +20,11 @@ const LandingPage = ({ changePage, currentUser, t, language = "es" }) => {
 
   return (
     <div className="landing-page-brutalist">
-      {/* Añadimos el Header para tener acceso al Sidebar */}
       <GlobalHeader 
         changePage={changePage} 
         currentUser={currentUser} 
-        cartCount={0} 
+        cartCount={cartCount} 
+        wishlistCount={wishlistCount}
         t={t} 
         language={language}
       />

@@ -812,6 +812,8 @@ const App = () => {
         <LandingPage
           changePage={setCurrentPage}
           currentUser={currentUser}
+          cartCount={cartItems.length}
+          wishlistCount={wishlistCount}
           language={language}
           t={t}
         />
