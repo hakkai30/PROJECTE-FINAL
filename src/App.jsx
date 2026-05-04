@@ -952,6 +952,7 @@ const App = () => {
           theme={theme}
           onToggleTheme={toggleTheme}
           removeFromCart={removeFromCart}
+          currentUser={currentUser}
           language={language}
           t={t}
         />
@@ -967,6 +968,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
+          currentUser={currentUser}
           language={language}
           t={t}
         />
@@ -979,8 +981,8 @@ const App = () => {
           theme={theme}
           setTheme={setTheme}
           onToggleTheme={toggleTheme}
+          currentUser={currentUser}
           language={language}
-          setLanguage={changeLanguage}
           t={t}
         />
       )}
@@ -991,6 +993,7 @@ const App = () => {
           wishlistCount={wishlistCount}
           theme={theme}
           onToggleTheme={toggleTheme}
+          currentUser={currentUser}
           language={language}
           t={t}
         />
@@ -1019,6 +1022,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
+          currentUser={currentUser}
           language={language}
           t={t}
         />
