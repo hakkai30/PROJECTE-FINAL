@@ -811,7 +811,7 @@ const App = () => {
       {currentPage === "landing" && (
         <LandingPage
           changePage={setCurrentPage}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           cartCount={cartItems.length}
           wishlistCount={wishlistCount}
           language={language}
@@ -826,7 +826,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
         />
@@ -842,7 +842,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           userProducts={userProducts}
           language={language}
           t={t}
@@ -859,7 +859,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
         />
@@ -875,7 +875,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
         />
@@ -891,7 +891,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
         />
@@ -907,7 +907,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
         />
@@ -923,7 +923,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
         />
@@ -939,7 +939,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
         />
@@ -954,7 +954,7 @@ const App = () => {
           theme={theme}
           onToggleTheme={toggleTheme}
           removeFromCart={removeFromCart}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
         />
@@ -970,7 +970,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
         />
@@ -983,7 +983,7 @@ const App = () => {
           theme={theme}
           setTheme={setTheme}
           onToggleTheme={toggleTheme}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
         />
@@ -995,7 +995,7 @@ const App = () => {
           wishlistCount={wishlistCount}
           theme={theme}
           onToggleTheme={toggleTheme}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
         />
@@ -1024,7 +1024,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
         />
@@ -1032,7 +1032,7 @@ const App = () => {
       {currentPage === "socials" && (
         <SocialFeedPage
           changePage={setCurrentPage}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           onLogout={handleLogout}
           posts={socialPosts}
           likedPostIds={likedPostIds}
@@ -1054,7 +1054,7 @@ const App = () => {
       {currentPage === "saved-looks" && (
         <SavedLooksPage
           changePage={setCurrentPage}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           onLogout={handleLogout}
           savedLooks={savedLooks}
           likedPostIds={likedPostIds}
@@ -1073,7 +1073,7 @@ const App = () => {
       {currentPage === "messages" && (
         <MessagesPage
           changePage={setCurrentPage}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           onLogout={handleLogout}
           onOpenProfile={openProfile}
           pendingContact={pendingContact}
@@ -1087,7 +1087,7 @@ const App = () => {
           changePage={setCurrentPage}
           cartCount={cartItems.length}
           wishlistCount={wishlistCount}
-          currentUser={currentUser}
+          currentUser={currentUser} onLogout={handleLogout}
           theme={theme}
           onToggleTheme={toggleTheme}
           language={language}

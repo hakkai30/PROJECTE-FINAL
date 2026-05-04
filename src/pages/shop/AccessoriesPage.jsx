@@ -9,7 +9,7 @@ const AccessoriesPage = ({
   onToggleWishlist,
   onOpenProductDetail,
   theme,
-  onToggleTheme,
+  onToggleTheme, currentUser,
   language,
   t,
 }) => {
@@ -21,7 +21,7 @@ const AccessoriesPage = ({
       wishlistCount={wishlistCount}
       wishlistIds={wishlistIds}
       onToggleWishlist={onToggleWishlist}
-      onOpenProductDetail={onOpenProductDetail}
+      onOpenProductDetail={onOpenProductDetail} currentUser={currentUser}
       theme={theme}
       onToggleTheme={onToggleTheme}
       collectionKicker={t("category.categories.accessories", "ACCESSORIES")}

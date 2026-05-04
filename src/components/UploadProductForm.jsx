@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Upload, AlertCircle } from "lucide-react";
+import { useState, useRef } from "react";
+import { Upload, AlertCircle, Image as ImageIcon, X } from "lucide-react";
+import { postService } from "../services/postService";
 
 const UploadProductForm = ({
   currentUser,
@@ -9,6 +10,7 @@ const UploadProductForm = ({
   onCancel = () => {},
   t,
 }) => {
+  const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -19,7 +21,10 @@ const UploadProductForm = ({
     sizes: ["ONE SIZE"],
   });
 
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [localError, setLocalError] = useState("");
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,6 +33,35 @@ const UploadProductForm = ({
       [name]: value,
     }));
     setLocalError("");
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setLocalError(t("uploadForm.errors.notImage", "Please select an image file."));
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setLocalError(t("uploadForm.errors.tooLarge", "Image must be less than 5MB."));
+      return;
+    }
+
+    setSelectedFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+    setLocalError("");
+  };
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+    setImagePreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleSizeToggle = (size) => {
@@ -43,7 +77,6 @@ const UploadProductForm = ({
     e.preventDefault();
     setLocalError("");
 
-    // Validaciones
     if (!formData.name.trim()) {
       setLocalError(t("uploadForm.nameRequired", "Product name is required."));
       return;
@@ -59,7 +92,7 @@ const UploadProductForm = ({
       return;
     }
 
-    if (!formData.image.trim()) {
+    if (!selectedFile) {
       setLocalError(t("uploadForm.imageRequired", "Product image is required."));
       return;
     }
@@ -70,18 +103,28 @@ const UploadProductForm = ({
     }
 
     try {
+      setIsUploadingImage(true);
+      
+      // 1. Subir la imagen a Supabase Storage
+      const imageUrl = await postService.uploadImage(selectedFile);
+      
+      // 2. Enviar los datos del producto con la URL de la imagen
       await onSubmit({
         ...formData,
+        image: imageUrl,
         price: parseFloat(formData.price),
         seller: currentUser?.name || "USER",
         sellerEmail: currentUser?.email || "user@example.com",
       });
     } catch (err) {
       setLocalError(err.message || t("uploadForm.submitError", "Could not upload product."));
+    } finally {
+      setIsUploadingImage(false);
     }
   };
 
   const displayError = localError || error;
+  const isPending = isLoading || isUploadingImage;
 
   return (
     <div className="upload-form-container">
@@ -116,7 +159,7 @@ const UploadProductForm = ({
             value={formData.name}
             onChange={handleChange}
             placeholder={t("uploadForm.namePlaceholder", "e.g., Vintage Leather Jacket")}
-            disabled={isLoading}
+            disabled={isPending}
             maxLength={100}
           />
         </div>
@@ -133,7 +176,7 @@ const UploadProductForm = ({
             value={formData.description}
             onChange={handleChange}
             placeholder={t("uploadForm.descriptionPlaceholder", "Describe your item, condition, brand, etc.")}
-            disabled={isLoading}
+            disabled={isPending}
             maxLength={500}
             rows={4}
           />
@@ -142,43 +185,45 @@ const UploadProductForm = ({
           </small>
         </div>
 
-        {/* Gender */}
-        <div className="form-group">
-          <label htmlFor="product-gender">
-            {t("uploadForm.gender", "Gender")}
-            <span className="required">*</span>
-          </label>
-          <select
-            id="product-gender"
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            disabled={isLoading}
-          >
-            <option value="men">{t("uploadForm.genderMen", "Men")}</option>
-            <option value="women">{t("uploadForm.genderWomen", "Women")}</option>
-            <option value="kids">{t("uploadForm.genderKids", "Kids")}</option>
-            <option value="unisex">{t("uploadForm.genderUnisex", "Unisex")}</option>
-          </select>
-        </div>
+        <div className="form-row-2">
+          {/* Gender */}
+          <div className="form-group">
+            <label htmlFor="product-gender">
+              {t("uploadForm.gender", "Gender")}
+              <span className="required">*</span>
+            </label>
+            <select
+              id="product-gender"
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              disabled={isPending}
+            >
+              <option value="men">{t("uploadForm.genderMen", "Men")}</option>
+              <option value="women">{t("uploadForm.genderWomen", "Women")}</option>
+              <option value="kids">{t("uploadForm.genderKids", "Kids")}</option>
+              <option value="unisex">{t("uploadForm.genderUnisex", "Unisex")}</option>
+            </select>
+          </div>
 
-        {/* Price */}
-        <div className="form-group">
-          <label htmlFor="product-price">
-            {t("uploadForm.price", "Price (€)")}
-            <span className="required">*</span>
-          </label>
-          <input
-            id="product-price"
-            type="number"
-            name="price"
-            value={formData.price}
-            onChange={handleChange}
-            placeholder="0.00"
-            disabled={isLoading}
-            step="0.01"
-            min="0"
-          />
+          {/* Price */}
+          <div className="form-group">
+            <label htmlFor="product-price">
+              {t("uploadForm.price", "Price (€)")}
+              <span className="required">*</span>
+            </label>
+            <input
+              id="product-price"
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              placeholder="0.00"
+              disabled={isPending}
+              step="0.01"
+              min="0"
+            />
+          </div>
         </div>
 
         {/* Category */}
@@ -191,7 +236,7 @@ const UploadProductForm = ({
             name="category"
             value={formData.category}
             onChange={handleChange}
-            disabled={isLoading}
+            disabled={isPending}
           >
             <option value="clothing">{t("uploadForm.categoryClothing", "Clothing")}</option>
             <option value="accessories">{t("uploadForm.categoryAccessories", "Accessories")}</option>
@@ -201,30 +246,42 @@ const UploadProductForm = ({
           </select>
         </div>
 
-        {/* Image URL */}
+        {/* Image Attachment */}
         <div className="form-group">
-          <label htmlFor="product-image">
-            {t("uploadForm.imageUrl", "Image URL")}
+          <label>
+            {t("uploadForm.image", "Product Image")}
             <span className="required">*</span>
           </label>
+          
           <input
-            id="product-image"
-            type="url"
-            name="image"
-            value={formData.image}
-            onChange={handleChange}
-            placeholder="https://example.com/image.jpg"
-            disabled={isLoading}
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            style={{ display: "none" }}
+            disabled={isPending}
           />
-          {formData.image && (
-            <div className="image-preview">
-              <img
-                src={formData.image}
-                alt="Product preview"
-                onError={(e) => {
-                  e.target.style.display = "none";
-                }}
-              />
+
+          {!imagePreview ? (
+            <div 
+              className="file-upload-dropzone"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <ImageIcon size={40} strokeWidth={1} />
+              <p>{t("uploadForm.attachImage", "Click to attach image from device")}</p>
+              <span>{t("uploadForm.maxSize", "Max 5MB - JPG, PNG")}</span>
+            </div>
+          ) : (
+            <div className="image-preview-container">
+              <img src={imagePreview} alt="Preview" className="upload-preview-img" />
+              <button 
+                type="button" 
+                className="remove-image-btn"
+                onClick={handleRemoveFile}
+                disabled={isPending}
+              >
+                <X size={20} />
+              </button>
             </div>
           )}
         </div>
@@ -234,12 +291,12 @@ const UploadProductForm = ({
           <label>{t("uploadForm.sizes", "Available Sizes")}</label>
           <div className="sizes-grid">
             {["XS", "S", "M", "L", "XL", "XXL", "ONE SIZE"].map((size) => (
-              <label key={size} className="size-checkbox">
+              <label key={size} className="size-checkbox-pill">
                 <input
                   type="checkbox"
                   checked={formData.sizes.includes(size)}
                   onChange={() => handleSizeToggle(size)}
-                  disabled={isLoading}
+                  disabled={isPending}
                 />
                 <span>{size}</span>
               </label>
@@ -253,17 +310,17 @@ const UploadProductForm = ({
             type="button"
             className="btn-secondary"
             onClick={onCancel}
-            disabled={isLoading}
+            disabled={isPending}
           >
             {t("uploadForm.cancel", "CANCEL")}
           </button>
           <button
             type="submit"
             className="btn-primary"
-            disabled={isLoading}
+            disabled={isPending}
           >
             <Upload size={18} aria-hidden="true" />
-            {isLoading
+            {isPending
               ? t("uploadForm.uploading", "UPLOADING...")
               : t("uploadForm.upload", "UPLOAD ITEM")}
           </button>

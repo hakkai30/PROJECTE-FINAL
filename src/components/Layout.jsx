@@ -79,6 +79,7 @@ export const GlobalHeader = ({
   cartCount,
   wishlistCount = 0,
   currentUser = null,
+  onLogout = null,
   onOpenProductDetail = null,
   language = "ca",
   t,
@@ -171,9 +172,21 @@ export const GlobalHeader = ({
                     {t("nav.wishlist", "WISHLIST")} [ {wishlistCount} ]
                   </button>
                   {currentUser ? (
-                    <button type="button" onClick={() => { setIsMenuOpen(false); changePage("user-profile"); }}>
-                      {t("nav.profile", "MY PROFILE")}
-                    </button>
+                    <>
+                      <button type="button" onClick={() => { setIsMenuOpen(false); changePage("user-profile"); }}>
+                        {t("nav.profile", "MY PROFILE")}
+                      </button>
+                      <button 
+                        type="button" 
+                        className="sidebar-logout-btn" 
+                        onClick={() => { 
+                          setIsMenuOpen(false); 
+                          if (onLogout) onLogout(); 
+                        }}
+                      >
+                        {t("nav.logout", "LOGOUT")}
+                      </button>
+                    </>
                   ) : (
                     <button type="button" onClick={() => { setIsMenuOpen(false); changePage("auth"); }}>
                       {t("auth.submit.login", "SIGN IN")} / {t("auth.submit.register", "CREATE ACCOUNT")}
