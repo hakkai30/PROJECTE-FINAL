@@ -673,17 +673,9 @@ const App = () => {
     const result = await authService.login({ email, password });
     if (!result.ok) return result;
 
-    if (result.offlineFallback) {
-      setCartToast(
-        t(
-          "auth.offlineNotice",
-          "Servidor no disponible. Sesion iniciada en modo offline local."
-        )
-      );
-    }
-
     setCurrentUser(result.user);
-    completeProtectedAccess();
+    setIsGuest(false);
+    setCurrentPage("shop");
     return result;
   };
 

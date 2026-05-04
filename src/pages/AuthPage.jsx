@@ -95,8 +95,7 @@ const AuthPage = ({
           setFeedback(result.error || t("auth.errors.create", "Could not create the account."));
           setIsSubmitting(false);
         } else {
-          // Success - user will be navigated by parent component
-          // No need to reset isSubmitting as page will unmount
+          setIsSubmitting(false);
         }
       } catch (error) {
         console.error("Register error:", error);
@@ -113,8 +112,7 @@ const AuthPage = ({
         setFeedback(result.error || t("auth.errors.login", "Could not sign in."));
         setIsSubmitting(false);
       } else {
-        // Success - user will be navigated by parent component
-        // No need to reset isSubmitting as page will unmount
+        setIsSubmitting(false);
       }
     } catch (error) {
       console.error("Login error:", error);
