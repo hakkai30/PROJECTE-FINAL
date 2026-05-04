@@ -809,7 +809,12 @@ const App = () => {
   return (
     <div>
       {currentPage === "landing" && (
-        <LandingPage changePage={setCurrentPage} language={language} t={t} />
+        <LandingPage
+          changePage={setCurrentPage}
+          currentUser={currentUser}
+          language={language}
+          t={t}
+        />
       )}
       {currentPage === "shop" && (
         <CategoryPage
