@@ -1,5 +1,5 @@
 export const getFashionNews = async (lang = "es") => {
-  const API_KEY = "4aa0a2ecb6fe331486fcdd6593bc7ef3";
+  const API_KEY = import.meta.env.VITE_GNEWS_API_KEY || "";
   const query = "moda OR fashion";
   // Convert standard language codes to ones GNews uses if needed, or default to the requested one
   const safeLang = ["en", "es", "fr"].includes(lang) ? lang : "en";
