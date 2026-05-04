@@ -819,6 +819,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
+          currentUser={currentUser}
           language={language}
           t={t}
         />
@@ -931,6 +932,7 @@ const App = () => {
           onOpenProductDetail={openProductDetail}
           theme={theme}
           onToggleTheme={toggleTheme}
+          currentUser={currentUser}
           language={language}
           t={t}
         />
