@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Bookmark, Heart, ImagePlus, MessageCircle, ShoppingCart, X, Newspaper, User, ChevronRight, ChevronLeft, MessageSquare } from "lucide-react";
-import { GlobalFooter, GlobalHeader } from "../../components/Layout";
+import { GlobalFooter, GlobalHeader, SocialSidebar } from "../../components/Layout";
 import { localizePost } from "../../data/i18n";
 
 const SocialFeedPage = ({
@@ -156,59 +156,12 @@ const SocialFeedPage = ({
         t={t}
       />
       <div className="social-layout">
-        <aside className={`social-side-nav ${isSidebarOpen ? 'expanded' : 'collapsed'}`}>
-          <button 
-            type="button" 
-            className="side-nav-toggle" 
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-          >
-            {isSidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-          </button>
-
-          <nav className="side-nav-content">
-            <button 
-              type="button" 
-              className="side-nav-item" 
-              onClick={() => changePage("news")}
-              title={t("nav.news", "FASHION NEWS")}
-            >
-              <Newspaper size={20} />
-              {isSidebarOpen && <span>{t("nav.news", "FASHION NEWS")}</span>}
-            </button>
-            
-            <button 
-              type="button" 
-              className="side-nav-item" 
-              onClick={() => changePage("messages")}
-              title={t("social.sidebar.messages", "MESSAGES")}
-            >
-              <MessageSquare size={20} />
-              {isSidebarOpen && <span>{t("social.sidebar.messages", "MESSAGES")}</span>}
-            </button>
-
-            <button 
-              type="button" 
-              className="side-nav-item" 
-              onClick={() => changePage("saved-looks")}
-              title={t("social.sidebar.savedLooks", "SAVED LOOKS")}
-            >
-              <Bookmark size={20} />
-              {isSidebarOpen && <span>{t("social.sidebar.savedLooks", "SAVED LOOKS")}</span>}
-            </button>
-
-            <button 
-              type="button" 
-              className="side-nav-item" 
-              onClick={() => changePage("user-profile")}
-              title={t("nav.profile", "MY PROFILE")}
-            >
-              <User size={20} />
-              {isSidebarOpen && <span>{t("nav.profile", "MY PROFILE")}</span>}
-            </button>
-          </nav>
-        </aside>
-
+        <SocialSidebar 
+          isSidebarOpen={isSidebarOpen} 
+          setIsSidebarOpen={setIsSidebarOpen} 
+          changePage={changePage} 
+          t={t} 
+        />
         <div className="social-feed">
         <div className="social-feed-header">
           <div className="social-feed-title-row">

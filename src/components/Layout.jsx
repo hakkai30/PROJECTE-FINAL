@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import FocusTrap from "focus-trap-react";
-import { X, Search, Menu, ShoppingBag, Heart, Send, Palette, History, Plus } from "lucide-react";
+import { X, Search, Menu, ShoppingBag, Heart, Send, Palette, History, Plus, Newspaper, User, ChevronRight, ChevronLeft, MessageSquare, Bookmark, ShoppingCart } from "lucide-react";
 import { MOCK_PRODUCTS } from "../data/mockData";
 import { LANGUAGE_OPTIONS, getLanguageLabel } from "../data/i18n";
 import { localizeProduct } from "../data/i18n";
@@ -63,7 +63,7 @@ export const WindowOverlay = ({ label, offsetClass, article }) => {
 
 export const LanguageSwitcher = ({ language, onChangeLanguage, t }) => {
   return (
-    <div className="language-switcher" aria-label={t("language.label", "Language")}> 
+    <div className="language-switcher" aria-label={t("language.label", "Language")}>
       <span>{t("language.label", "Language")}</span>
       <select value={language} onChange={(event) => onChangeLanguage(event.target.value)}>
         {LANGUAGE_OPTIONS.map((option) => (
@@ -73,6 +73,73 @@ export const LanguageSwitcher = ({ language, onChangeLanguage, t }) => {
         ))}
       </select>
     </div>
+  );
+};
+
+export const SocialSidebar = ({ isSidebarOpen, setIsSidebarOpen, changePage, t }) => {
+  return (
+    <aside className={`social-side-nav ${isSidebarOpen ? 'expanded' : 'collapsed'}`}>
+      <button 
+        type="button" 
+        className="side-nav-toggle" 
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+      >
+        {isSidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+      </button>
+
+      <nav className="side-nav-content">
+        <button 
+          type="button" 
+          className="side-nav-item" 
+          onClick={() => changePage("shop")}
+          title={t("nav.shop", "SHOP")}
+        >
+          <ShoppingCart size={20} />
+          {isSidebarOpen && <span>{t("nav.shop", "SHOP")}</span>}
+        </button>
+
+        <button 
+          type="button" 
+          className="side-nav-item" 
+          onClick={() => changePage("news")}
+          title={t("nav.news", "FASHION NEWS")}
+        >
+          <Newspaper size={20} />
+          {isSidebarOpen && <span>{t("nav.news", "FASHION NEWS")}</span>}
+        </button>
+        
+        <button 
+          type="button" 
+          className="side-nav-item" 
+          onClick={() => changePage("messages")}
+          title={t("social.sidebar.messages", "MESSAGES")}
+        >
+          <MessageSquare size={20} />
+          {isSidebarOpen && <span>{t("social.sidebar.messages", "MESSAGES")}</span>}
+        </button>
+
+        <button 
+          type="button" 
+          className="side-nav-item" 
+          onClick={() => changePage("saved-looks")}
+          title={t("social.sidebar.savedLooks", "SAVED LOOKS")}
+        >
+          <Bookmark size={20} />
+          {isSidebarOpen && <span>{t("social.sidebar.savedLooks", "SAVED LOOKS")}</span>}
+        </button>
+
+        <button 
+          type="button" 
+          className="side-nav-item" 
+          onClick={() => changePage("user-profile")}
+          title={t("nav.profile", "MY PROFILE")}
+        >
+          <User size={20} />
+          {isSidebarOpen && <span>{t("nav.profile", "MY PROFILE")}</span>}
+        </button>
+      </nav>
+    </aside>
   );
 };
 

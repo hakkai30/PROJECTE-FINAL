@@ -1,6 +1,6 @@
 import { Bookmark, Heart, MessageCircle, ShoppingCart } from "lucide-react";
 import { useState } from "react";
-import { GlobalFooter, GlobalHeader } from "../../components/Layout";
+import { GlobalFooter, GlobalHeader, SocialSidebar } from "../../components/Layout";
 import { localizePost } from "../../data/i18n";
 
 const SavedLooksPage = ({
@@ -25,6 +25,7 @@ const SavedLooksPage = ({
   language = "ca",
   t,
 }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openCommentPostIds, setOpenCommentPostIds] = useState([]);
   const [commentDrafts, setCommentDrafts] = useState({});
   const [submittingCommentIds, setSubmittingCommentIds] = useState([]);
@@ -112,8 +113,13 @@ const SavedLooksPage = ({
         t={t}
       />
       <div className="social-layout">
-
-      <div className="social-feed">
+        <SocialSidebar 
+          isSidebarOpen={isSidebarOpen} 
+          setIsSidebarOpen={setIsSidebarOpen} 
+          changePage={changePage} 
+          t={t} 
+        />
+        <div className="social-feed">
         <div className="social-feed-header">
           <div className="social-feed-title-row">
             <h1 className="social-feed-title">{t("social.savedLooks.title", "SAVED LOOKS")}</h1>

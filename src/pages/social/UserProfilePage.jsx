@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Heart, Trash2, Plus, MessageCircle, Bookmark, MessageSquare } from "lucide-react";
-import { GlobalFooter, GlobalHeader } from "../../components/Layout";
+import { GlobalFooter, GlobalHeader, SocialSidebar } from "../../components/Layout";
 import { localizePost } from "../../data/i18n";
 
 const UserProfilePage = ({
@@ -21,6 +21,7 @@ const UserProfilePage = ({
   language,
   t,
 }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isCurrentUserProfile = currentUser?.email && currentUser?.name;
 
   // Upload form rendering removed
@@ -37,7 +38,14 @@ const UserProfilePage = ({
         t={t}
       />
 
-      <main className="user-profile-container">
+      <div className="social-layout">
+        <SocialSidebar 
+          isSidebarOpen={isSidebarOpen} 
+          setIsSidebarOpen={setIsSidebarOpen} 
+          changePage={changePage} 
+          t={t} 
+        />
+        <main className="user-profile-container">
         {/* Profile Header */}
         <section className="profile-header">
           <div className="profile-avatar">
@@ -108,6 +116,7 @@ const UserProfilePage = ({
           </div>
         </section>
       </main>
+      </div>
 
       <GlobalFooter t={t} />
     </div>

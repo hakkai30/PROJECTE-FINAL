@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { GlobalFooter, GlobalHeader } from "../../components/Layout";
+import { GlobalFooter, GlobalHeader, SocialSidebar } from "../../components/Layout";
 import { messageService } from "../../services/messageService";
 
 const normalizeContactHandle = (value) => {
@@ -21,6 +21,7 @@ const MessagesPage = ({
   language = "ca",
   t,
 }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [threads, setThreads] = useState([]);
   const [activeThreadId, setActiveThreadId] = useState("");
   const [messageInput, setMessageInput] = useState("");
@@ -255,8 +256,13 @@ const MessagesPage = ({
         t={t}
       />
       <div className="social-layout messages-layout">
-
-      <div className="messages-main">
+        <SocialSidebar 
+          isSidebarOpen={isSidebarOpen} 
+          setIsSidebarOpen={setIsSidebarOpen} 
+          changePage={changePage} 
+          t={t} 
+        />
+        <div className="messages-main">
         <aside className="messages-threads-panel">
           <h2>{t("messages.title", "CHATS")}</h2>
           <input

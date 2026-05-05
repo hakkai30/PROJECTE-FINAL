@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { getFashionNews } from "../../services/newsService";
-import { GlobalHeader, GlobalFooter } from "../../components/Layout";
+import { GlobalHeader, GlobalFooter, SocialSidebar } from "../../components/Layout";
 
 const NewsPage = ({ changePage, language, t, cartCount, wishlistCount, theme, onToggleTheme }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [articles, setArticles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -35,7 +36,14 @@ const NewsPage = ({ changePage, language, t, cartCount, wishlistCount, theme, on
         language={language}
         t={t}
       />
-      <main className="social-layout" style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
+      <div className="social-layout">
+        <SocialSidebar 
+          isSidebarOpen={isSidebarOpen} 
+          setIsSidebarOpen={setIsSidebarOpen} 
+          changePage={changePage} 
+          t={t} 
+        />
+        <main className="social-feed" style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
         <div style={{ flex: 1 }}>
           <div className="social-feed-header">
             <h1 className="social-feed-title">{t("news.title", "FASHION NEWS")}</h1>
@@ -90,7 +98,8 @@ const NewsPage = ({ changePage, language, t, cartCount, wishlistCount, theme, on
             </div>
           )}
         </div>
-      </main>
+        </main>
+      </div>
       <GlobalFooter t={t} />
     </div>
   );
