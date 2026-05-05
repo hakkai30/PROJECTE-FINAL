@@ -36,19 +36,8 @@ const ProductsPage = ({
 
   // Combina productos de tienda con productos de usuarios
   const combinedBaseProducts = useMemo(() => {
-    const mockProds = MOCK_PRODUCTS;
-    const userProds = (userProducts || []).map((prod) => ({
-      ...prod,
-      id: prod.id,
-      brand: "COMMUNITY",
-      color: prod.gender || "neutral",
-      img: prod.image || "",
-      category: prod.category || "clothing",
-      isUserProduct: true,
-      seller: prod.seller,
-    }));
-    return showUserProducts ? [...mockProds, ...userProds] : mockProds;
-  }, [userProducts, showUserProducts]);
+    return MOCK_PRODUCTS;
+  }, []);
 
   const baseProducts =
     categoryKey === "all"
@@ -157,18 +146,7 @@ const ProductsPage = ({
         <h2 className="collection-title">{resolvedCollectionTitle}</h2>
         <p className="collection-results">{sortedProducts.length} {t("products.results", "RESULTS")}</p>
         
-        {userProducts.length > 0 && (
-          <div className="community-products-toggle">
-            <label>
-              <input
-                type="checkbox"
-                checked={showUserProducts}
-                onChange={(e) => setShowUserProducts(e.target.checked)}
-              />
-              <span>{t("products.showCommunity", "Show community items")} ({userProducts.length})</span>
-            </label>
-          </div>
-        )}
+        {/* Community products toggle removed */}
       </section>
 
       {activeFilterChips.length > 0 && (
