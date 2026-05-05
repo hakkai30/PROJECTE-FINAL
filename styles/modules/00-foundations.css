@@ -1,48 +1,40 @@
-@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap");
-
-/* =========================================
-   VARIABLES GLOBALES Y RESET
-========================================= */
 :root {
-  --bg-landing: #B3B3B3; 
-  --window-blue: #0A16E6; 
-  --border-black: #000000;
-  --accent-hot: #c73922;
-  --accent-cold: #1f77ff;
-  --brand-primary: #141414;
-  --brand-accent: #c73922;
-  --surface-0: #ffffff;
-  --surface-1: #f7f7f7;
-  --surface-2: #efefef;
-  --ink-1: #101010;
-  --ink-2: #3d3d3d;
-  --ink-3: #747474;
-  --dark-border-strong: #2f333a;
-  --dark-border-soft: #3a4049;
-  --dark-border-control: #464d57;
-  --dark-border-active: #46505e;
-  --dark-on-light: #111;
-  --dark-control-fill: #f2f2f2;
-  --font-family: 'Gotham Book', sans-serif;
-  --gray-light: #F5F5F5;
-  --shadow-brutalist: 4px 4px 0px var(--border-black);
+  /* Premium Color Palette (HSL for harmony) */
+  --bg-primary: #f8f9fa;
+  --bg-secondary: #ffffff;
+  --accent-gold: 42, 60%, 55%;
+  --accent-gold-soft: 42, 60%, 95%;
+  --brand-black: #0a0a0a;
+  --brand-gray-900: #1a1a1a;
+  --brand-gray-800: #2d2d2d;
+  --brand-gray-400: #a0a0a0;
+  --brand-gray-100: #f0f0f0;
+
+  /* Atmospheric Tones */
+  --atmo-cold: rgba(10, 22, 230, 0.08);
+  --atmo-hot: rgba(199, 57, 34, 0.08);
+  --atmo-gold: hsla(var(--accent-gold), 0.05);
+
+  /* Glassmorphism & Surface */
+  --surface-unified-bg: rgba(255, 255, 255, 0.82);
+  --surface-unified-border: rgba(10, 10, 10, 0.08);
+  --surface-unified-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  --surface-unified-radius: 20px;
+  --glass-blur: 16px;
+
+  /* Controls */
+  --control-unified-bg: rgba(255, 255, 255, 0.95);
+  --control-unified-border: rgba(10, 10, 10, 0.12);
+  --control-radius: 12px;
+
+  /* Typography */
+  --font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
+  --font-display: "Archivo Black", sans-serif;
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-wide: 0.1em;
 }
 
-/* =========================================
-   BRAND POLISH PASS 3
-========================================= */
-:root {
-  --font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
-  --font-display: "Archivo Black", "Arial Black", sans-serif;
-  --atmo-cold: rgba(31, 119, 255, 0.16);
-  --atmo-hot: rgba(199, 57, 34, 0.14);
-  --surface-unified-bg: rgba(255, 255, 255, 0.9);
-  --surface-unified-border: rgba(16, 16, 16, 0.2);
-  --surface-unified-shadow: 0 14px 30px rgba(12, 12, 12, 0.1);
-  --surface-unified-radius: 14px;
-  --control-unified-bg: rgba(255, 255, 255, 0.92);
-  --control-unified-border: rgba(16, 16, 16, 0.24);
-}
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap");
 
 body {
   font-family: var(--font-family);
@@ -99,7 +91,7 @@ body {
 .product-card,
 .social-post,
 .wishlist-card {
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(var(--glass-blur));
 }
 
 .shop-toolbar,
@@ -145,7 +137,8 @@ body {
 .window-action {
   background: var(--control-unified-bg);
   border: 1px solid var(--control-unified-border);
-  border-radius: 10px;
+  border-radius: var(--control-radius);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .header-actions button:hover,
@@ -287,28 +280,23 @@ body {
 }
 
 :root[data-theme="dark"] {
-  --bg-landing: #1d1f24;
-  --brand-primary: #f2f2f2;
-  --brand-accent: #66a3ff;
-  --surface-0: #121316;
-  --surface-1: #17191d;
-  --surface-2: #20242a;
-  --ink-1: #f3f3f3;
-  --ink-2: #d9dee7;
-  --ink-3: #b2bbc8;
-  --dark-control-border-emphasis: #58606d;
-  --dark-input-placeholder: #aeb7c4;
-  --dark-user-bubble-bg: #2a3038;
-  --dark-success-soft: #8fe9b3;
-  --dark-hover-bright: #ffffff;
-  --dark-landing-ink: #efefef;
-  --atmo-cold: rgba(102, 163, 255, 0.2);
-  --atmo-hot: rgba(199, 57, 34, 0.2);
-  --surface-unified-bg: rgba(28, 28, 30, 0.9);
-  --surface-unified-border: rgba(238, 238, 238, 0.16);
-  --surface-unified-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
-  --control-unified-bg: rgba(38, 38, 40, 0.96);
-  --control-unified-border: rgba(238, 238, 238, 0.2);
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #121212;
+  --brand-black: #f8f9fa;
+  --brand-gray-900: #f0f0f0;
+  --brand-gray-800: #e0e0e0;
+  --brand-gray-400: #808080;
+  --brand-gray-100: #1a1a1a;
+
+  --atmo-cold: rgba(102, 163, 255, 0.1);
+  --atmo-hot: rgba(199, 57, 34, 0.1);
+  --atmo-gold: hsla(var(--accent-gold), 0.1);
+
+  --surface-unified-bg: rgba(20, 20, 20, 0.85);
+  --surface-unified-border: rgba(255, 255, 255, 0.08);
+  --surface-unified-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  --control-unified-bg: rgba(30, 30, 30, 0.9);
+  --control-unified-border: rgba(255, 255, 255, 0.12);
   color-scheme: dark;
 }
 

@@ -142,10 +142,12 @@ const AuthPage = ({
               }}
             >
               <LogIn size={24} aria-hidden="true" />
-              <span className="auth-option-title">{t("auth.welcome.login", "SIGN IN")}</span>
-              <span className="auth-option-desc">
-                {t("auth.welcome.loginDesc", "Access your account")}
-              </span>
+              <div>
+                <span className="auth-option-title">{t("auth.welcome.login", "SIGN IN")}</span>
+                <span className="auth-option-desc">
+                  {t("auth.welcome.loginDesc", "Access your account")}
+                </span>
+              </div>
             </button>
 
             <button
@@ -157,10 +159,12 @@ const AuthPage = ({
               }}
             >
               <UserPlus size={24} aria-hidden="true" />
-              <span className="auth-option-title">{t("auth.welcome.register", "CREATE ACCOUNT")}</span>
-              <span className="auth-option-desc">
-                {t("auth.welcome.registerDesc", "Join our community")}
-              </span>
+              <div>
+                <span className="auth-option-title">{t("auth.welcome.register", "CREATE ACCOUNT")}</span>
+                <span className="auth-option-desc">
+                  {t("auth.welcome.registerDesc", "Join our community")}
+                </span>
+              </div>
             </button>
 
             <button
@@ -169,10 +173,12 @@ const AuthPage = ({
               onClick={() => onContinueAsGuest()}
             >
               <ShoppingBag size={24} aria-hidden="true" />
-              <span className="auth-option-title">{t("auth.welcome.guest", "BROWSE AS GUEST")}</span>
-              <span className="auth-option-desc">
-                {t("auth.welcome.guestDesc", "Explore & shop without account")}
-              </span>
+              <div>
+                <span className="auth-option-title">{t("auth.welcome.guest", "BROWSE AS GUEST")}</span>
+                <span className="auth-option-desc">
+                  {t("auth.welcome.guestDesc", "Explore & shop without account")}
+                </span>
+              </div>
             </button>
           </div>
 

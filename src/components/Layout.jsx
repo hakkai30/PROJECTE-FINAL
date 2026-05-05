@@ -1211,10 +1211,16 @@ export const ChatbotWidget = ({
       <button
         type="button"
         className="chatbot-floating-bubble"
-        onClick={openChatbot}
+        onClick={() => {
+          if (isOpen) {
+            setIsOpen(false);
+          } else {
+            openChatbot();
+          }
+        }}
         aria-label={t("chatbot.trigger", "NECESITAS AYUDA?")}
       >
-        RTF
+        <span>CHAT</span>
       </button>
 
       {isOpen && (
