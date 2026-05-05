@@ -1,4 +1,5 @@
 import React, { useEffect, useState, Suspense, lazy } from "react";
+import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
 import LandingPage from "./pages/shop/LandingPage";
 import CategoryPage from "./pages/shop/CategoryPage";
 import ProductsPage from "./pages/shop/ProductsPage";
@@ -26,6 +27,7 @@ import { socialService } from "./services/socialService";
 import { userProductService } from "./services/userProductService";
 import { notificationService } from "./services/notificationService";
 import { createTranslator, DEFAULT_LANGUAGE, localizePost } from "./data/i18n";
+import { supabase } from "./services/supabase";
 
 const AVATAR_STYLES = [
   { id: "midnight", label: "MIDNIGHT", from: "#111111", to: "#4a4a4a" },
@@ -35,73 +37,25 @@ const AVATAR_STYLES = [
 ];
 
 const getInitials = (value) => {
-  const parts = String(value || "")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
-
+  const parts = String(value || "").trim().split(/\s+/).filter(Boolean);
   if (!parts.length) return "RT";
-
-  return parts
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase();
+  return parts.slice(0, 2).map((part) => part[0]).join("").toUpperCase();
 };
 
 const buildAvatar = (seed, style) => {
   const initials = getInitials(seed);
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-hidden="true">
-      <defs>
-        <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="${style.from}" />
-          <stop offset="100%" stop-color="${style.to}" />
-        </linearGradient>
-      </defs>
-      <rect width="160" height="160" rx="80" fill="url(#g)" />
-      <circle cx="80" cy="80" r="58" fill="rgba(255,255,255,0.08)" />
-      <text x="80" y="94" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="700" letter-spacing="2" fill="#ffffff">${initials}</text>
-    </svg>
-  `;
-
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-hidden="true"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${style.from}" /><stop offset="100%" stop-color="${style.to}" /></linearGradient></defs><rect width="160" height="160" rx="80" fill="url(#g)" /><circle cx="80" cy="80" r="58" fill="rgba(255,255,255,0.08)" /><text x="80" y="94" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="700" letter-spacing="2" fill="#ffffff">${initials}</text></svg>`;
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 };
 
 const detectAvatarStyleId = (seed, avatar) => {
   const normalizedAvatar = String(avatar || "").trim();
   if (!normalizedAvatar) return AVATAR_STYLES[0].id;
-
   const matchedStyle = AVATAR_STYLES.find((style) => buildAvatar(seed, style) === normalizedAvatar);
   return matchedStyle?.id || AVATAR_STYLES[0].id;
 };
 
-const VALID_PAGES = new Set([
-  "landing",
-  "shop",
-  "products",
-  "men",
-  "women",
-  "kids",
-  "bags",
-  "accessories",
-  "home",
-  "cart",
-  "wishlist",
-  "settings",
-  "product-detail",
-  "auth",
-  "socials",
-  "saved-looks",
-  "messages",
-  "user-profile",
-  "news",
-  "success",
-  "cancel",
-]);
-
 const PROTECTED_PAGES = new Set(["socials", "saved-looks", "messages", "user-profile"]);
-
 const VALID_THEMES = new Set(["auto", "light", "dark"]);
 const VALID_LANGUAGES = new Set(["ca", "es", "en", "fr"]);
 
@@ -115,143 +69,129 @@ const normalizeLanguage = (value) => {
   return VALID_LANGUAGES.has(value) ? value : DEFAULT_LANGUAGE;
 };
 
-
 const App = () => {
-  const [currentPage, setCurrentPage] = useState(() => {
-    try {
-      // El usuario comienza en la página de autenticación
-      const savedPage = localStorage.getItem("rtf_current_page");
-      const currentUser = authService.loadCurrentUser();
-      const isGuest = localStorage.getItem("rtf_is_guest") === "true";
-      
-      // Si no está autenticado y no es invitado, mostrar landing primero (a petición del usuario)
-      if (!currentUser && !isGuest) {
-        return "landing";
-      }
-      
-      // Si tiene página guardada y es válida, ir allí
-      if (savedPage && VALID_PAGES.has(savedPage)) {
-        return savedPage;
-      }
-      
-      return "landing";
-    } catch {
-      return "landing";
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const getPageFromPath = (path) => {
+    const segments = path.split("/").filter(Boolean);
+    if (segments.length === 0) return "landing";
+    if (segments[0] === "shop") {
+      if (segments[1]) return segments[1];
+      return "shop";
     }
-  });
-  
+    if (segments[0] === "social") {
+      if (segments[1] === "saved") return "saved-looks";
+      if (segments[1] === "messages") return "messages";
+      return "socials";
+    }
+    if (segments[0] === "profile") return "user-profile";
+    if (segments[0] === "product") return "product-detail";
+    return segments[0];
+  };
+
+  const currentPage = getPageFromPath(location.pathname);
+
+  const setCurrentPage = (page) => {
+    const routeMap = {
+      landing: "/",
+      shop: "/shop",
+      products: "/products",
+      men: "/shop/men",
+      women: "/shop/women",
+      kids: "/shop/kids",
+      bags: "/shop/bags",
+      accessories: "/shop/accessories",
+      home: "/shop/home",
+      cart: "/cart",
+      wishlist: "/wishlist",
+      settings: "/settings",
+      "product-detail": "/products",
+      auth: "/auth",
+      socials: "/social",
+      "saved-looks": "/social/saved",
+      messages: "/social/messages",
+      "user-profile": "/profile",
+      news: "/news",
+    };
+    const target = routeMap[page] || "/";
+    navigate(target);
+  };
+
   const [isGuest, setIsGuest] = useState(() => {
-    try {
-      return localStorage.getItem("rtf_is_guest") === "true";
-    } catch {
-      return false;
-    }
+    try { return localStorage.getItem("rtf_is_guest") === "true"; } catch { return false; }
   });
   const [cartItems, setCartItems] = useState(() => {
     try {
       const savedCart = localStorage.getItem("rtf_cart_items");
       const parsed = savedCart ? JSON.parse(savedCart) : [];
       return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
+    } catch { return []; }
   });
   const [wishlistIds, setWishlistIds] = useState(() => {
     try {
       const saved = localStorage.getItem("rtf_wishlist_ids");
       return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
+    } catch { return []; }
   });
   const [savedLookIds, setSavedLookIds] = useState(() => {
     try {
       const saved = localStorage.getItem("rtf_saved_look_ids");
       const parsed = saved ? JSON.parse(saved) : [];
       return Array.isArray(parsed) ? parsed.map((id) => String(id)) : [];
-    } catch {
-      return [];
-    }
+    } catch { return []; }
   });
   const [socialPosts, setSocialPosts] = useState([]);
   const [isLoadingSocialPosts, setIsLoadingSocialPosts] = useState(false);
   const [hasMorePosts, setHasMorePosts] = useState(true);
-  const [socialFeedFilter, setSocialFeedFilter] = useState("all"); // 'all' or 'following'
+  const [socialFeedFilter, setSocialFeedFilter] = useState("all");
   const [socialFeedError, setSocialFeedError] = useState("");
   const [isCreatingSocialPost, setIsCreatingSocialPost] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
   const [pendingContact, setPendingContact] = useState(null);
-  const [selectedProfile, setSelectedProfile] = useState(null);
   const [followedHandles, setFollowedHandles] = useState(() => {
     try {
       const saved = localStorage.getItem("rtf_followed_handles");
       const parsed = saved ? JSON.parse(saved) : [];
-      return Array.isArray(parsed) ? parsed.map((handle) => String(handle).trim().toLowerCase()).filter(Boolean) : [];
-    } catch {
-      return [];
-    }
+      return Array.isArray(parsed) ? parsed.map((h) => String(h).trim().toLowerCase()).filter(Boolean) : [];
+    } catch { return []; }
   });
   const [likedPostIds, setLikedPostIds] = useState(() => {
     try {
       const saved = localStorage.getItem("rtf_liked_post_ids");
       const parsed = saved ? JSON.parse(saved) : [];
       return Array.isArray(parsed) ? parsed.map((id) => String(id)) : [];
-    } catch {
-      return [];
-    }
+    } catch { return []; }
   });
   const [selectedProductId, setSelectedProductId] = useState(() => {
     try {
       const saved = localStorage.getItem("rtf_selected_product_id");
       return saved ? Number(saved) : null;
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   });
   const [theme, setTheme] = useState(() => {
     try {
       const savedTheme = localStorage.getItem("rtf_theme");
       return normalizeTheme(savedTheme);
-    } catch {
-      return "auto";
-    }
-  });
-  const [systemTheme, setSystemTheme] = useState(() => {
-    if (typeof window === "undefined" || !window.matchMedia) return "light";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    } catch { return "auto"; }
   });
   const [language, setLanguage] = useState(() => {
     try {
       const savedLanguage = localStorage.getItem("rtf_language");
       return normalizeLanguage(savedLanguage);
-    } catch {
-      return DEFAULT_LANGUAGE;
-    }
+    } catch { return DEFAULT_LANGUAGE; }
   });
   const [cartToast, setCartToast] = useState("");
-  const [currentUser, setCurrentUser] = useState(() => {
-    return authService.loadCurrentUser();
-  });
-  const [profileDraftBio, setProfileDraftBio] = useState("");
-  const [profileDraftAvatar, setProfileDraftAvatar] = useState("");
-  const [profileDraftAvatarFile, setProfileDraftAvatarFile] = useState(null);
-  const [profileAvatarStyle, setProfileAvatarStyle] = useState(AVATAR_STYLES[0].id);
-  const [profileEditError, setProfileEditError] = useState("");
-  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [currentUser, setCurrentUser] = useState(() => authService.loadCurrentUser());
   const [pendingProtectedPage, setPendingProtectedPage] = useState("shop");
   const t = createTranslator(language);
 
   const syncUserAppData = async (updates) => {
     if (!currentUser?.id) return;
     try {
-      await supabase
-        .from('users')
-        .update(updates)
-        .eq('id', currentUser.id);
-    } catch (e) {
-      console.warn("Could not sync app data to Supabase:", e);
-    }
+      await supabase.from('users').update(updates).eq('id', currentUser.id);
+    } catch (e) { console.warn("Could not sync app data:", e); }
   };
 
   const addToCart = (product) => {
@@ -262,16 +202,6 @@ const App = () => {
     });
     setCartToast(`${t("cart.toastAdded", "Added to cart:")} ${product.name}`);
   };
-
-  useEffect(() => {
-    if (!cartToast) return;
-
-    const timeoutId = setTimeout(() => {
-      setCartToast("");
-    }, 2200);
-
-    return () => clearTimeout(timeoutId);
-  }, [cartToast]);
 
   const removeFromCart = (indexToRemove) => {
     setCartItems((prev) => {
@@ -293,398 +223,13 @@ const App = () => {
 
   const toggleSavedLook = async (postId) => {
     const normalizedId = String(postId);
-    setSavedLookIds((prev) =>
-      prev.includes(normalizedId)
-        ? prev.filter((id) => id !== normalizedId)
-        : [...prev, normalizedId]
-    );
-
-    try {
-      await socialService.toggleSavedLook(normalizedId);
-    } catch (err) {
-      console.error("Error persisting saved look:", err);
-    }
+    setSavedLookIds((prev) => prev.includes(normalizedId) ? prev.filter((id) => id !== normalizedId) : [...prev, normalizedId]);
+    try { await socialService.toggleSavedLook(normalizedId); } catch (err) { console.error("Error persisting saved look:", err); }
   };
-
-  const normalizeHandle = (value) => String(value || "").trim().replace(/^@/, "");
-
-  const getProfileStats = (handle) => {
-    const cleanHandle = normalizeHandle(handle);
-    const loweredHandle = cleanHandle.toLowerCase();
-    const authoredPosts = socialPosts.filter((post) => String(post.user || "").trim().toLowerCase() === loweredHandle);
-    const uniqueCommenters = new Set();
-
-    authoredPosts.forEach((post) => {
-      (post.comments || []).forEach((comment) => {
-        const commenterHandle = String(comment?.user || "").trim().toLowerCase();
-        if (commenterHandle && commenterHandle !== loweredHandle) {
-          uniqueCommenters.add(commenterHandle);
-        }
-      });
-    });
-
-    const engagementScore = authoredPosts.reduce((score, post) => score + Number(post.likes || 0), 0);
-    const followsFromCurrentUser = followedHandles.includes(loweredHandle) ? 1 : 0;
-    const followersCount = Math.max(
-      0,
-      Math.round(engagementScore / 20) + uniqueCommenters.size * 3 + authoredPosts.length * 2 + followsFromCurrentUser
-    );
-    const followingCount =
-      currentUser?.name?.trim().toLowerCase() === loweredHandle
-        ? followedHandles.length
-        : Math.max(2, authoredPosts.length + Math.min(15, uniqueCommenters.size * 2));
-
-    return {
-      authoredPosts,
-      followersCount,
-      followingCount,
-      isFollowing: followedHandles.includes(loweredHandle),
-    };
-  };
-
-  const loadSocialPosts = async (isMore = false) => {
-    if (isLoadingSocialPosts || (!hasMorePosts && isMore)) return;
-
-    setIsLoadingSocialPosts(true);
-    setSocialFeedError("");
-
-    try {
-      const offset = isMore ? socialPosts.length : 0;
-      const limit = 10;
-      
-      const newPosts = await postService.getFeedPosts({ 
-        limit, 
-        offset,
-        followedUsers: socialFeedFilter === 'following' ? followedHandles : []
-      });
-
-      if (isMore) {
-        setSocialPosts(prev => [...prev, ...newPosts]);
-      } else {
-        setSocialPosts(newPosts);
-      }
-
-      setHasMorePosts(newPosts.length === limit);
-    } catch (error) {
-      setSocialFeedError(error.message || "Could not load posts.");
-    } finally {
-      setIsLoadingSocialPosts(false);
-    }
-  };
-
-  const createSocialPost = async ({ text, imageFile }) => {
-    if (isCreatingSocialPost) return;
-    if (!text?.trim()) return;
-
-    setIsCreatingSocialPost(true);
-    setSocialFeedError("");
-
-    try {
-      const post = await postService.createPost({
-        text,
-        imageFile,
-        user: currentUser?.email || "USER",
-      });
-
-      if (post) {
-        setSocialPosts((prev) => [post, ...prev]);
-      }
-    } catch (error) {
-      setSocialFeedError(error.message || "Could not create post.");
-      throw error;
-    } finally {
-      setIsCreatingSocialPost(false);
-    }
-  };
-
-  const toggleSocialLike = async (postId) => {
-    const normalizedId = String(postId);
-    const isLiked = likedPostIds.includes(normalizedId);
-    const direction = isLiked ? "down" : "up";
-
-    setSocialFeedError("");
-    setLikedPostIds((prev) =>
-      isLiked ? prev.filter((id) => id !== normalizedId) : [...prev, normalizedId]
-    );
-
-    setSocialPosts((prev) =>
-      prev.map((post) => {
-        if (String(post.id) !== normalizedId) return post;
-        const nextLikes = isLiked ? Math.max(0, Number(post.likes || 0) - 1) : Number(post.likes || 0) + 1;
-        return { ...post, likes: nextLikes };
-      })
-    );
-
-    try {
-      const updatedPost = await postService.toggleLikePost(normalizedId, { direction });
-      if (!updatedPost) return;
-
-      setSocialPosts((prev) =>
-        prev.map((post) =>
-          String(post.id) === normalizedId ? updatedPost : post
-        )
-      );
-    } catch (error) {
-      setSocialFeedError(error.message || "Could not update like.");
-      setLikedPostIds((prev) =>
-        isLiked ? [...prev, normalizedId] : prev.filter((id) => id !== normalizedId)
-      );
-      setSocialPosts((prev) =>
-        prev.map((post) => {
-          if (String(post.id) !== normalizedId) return post;
-          const rollbackLikes = isLiked ? Number(post.likes || 0) + 1 : Math.max(0, Number(post.likes || 0) - 1);
-          return { ...post, likes: rollbackLikes };
-        })
-      );
-    }
-  };
-
-  const addSocialComment = async (postId, text) => {
-    const normalizedText = String(text || "").trim();
-    if (!normalizedText) return;
-
-    const normalizedId = String(postId);
-    setSocialFeedError("");
-
-    try {
-      const result = await postService.addCommentToPost(normalizedId, {
-        text: normalizedText,
-        user: currentUser?.email || "USER",
-      });
-
-      if (result?.post) {
-        setSocialPosts((prev) =>
-          prev.map((post) =>
-            String(post.id) === normalizedId ? result.post : post
-          )
-        );
-      }
-    } catch (error) {
-      setSocialFeedError(error.message || "Could not add comment.");
-      throw error;
-    }
-  };
-
-  const deleteSocialPost = async (postId) => {
-    const normalizedId = String(postId);
-    if (!confirm(t("social.confirmDelete", "Are you sure you want to delete this post?"))) {
-      return;
-    }
-
-    setSocialFeedError("");
-
-    try {
-      await postService.deletePost(normalizedId);
-      setSocialPosts((prev) => prev.filter((post) => String(post.id) !== normalizedId));
-    } catch (error) {
-      setSocialFeedError(error.message || "Could not delete post.");
-    }
-  };
-
-  const deleteSocialComment = async (postId, commentId) => {
-    const normalizedId = String(postId);
-    const normalizedCommentId = String(commentId);
-    if (!normalizedCommentId) return;
-
-    setSocialFeedError("");
-
-    try {
-      const updatedPost = await postService.deleteCommentFromPost(normalizedId, normalizedCommentId);
-
-      if (updatedPost) {
-        setSocialPosts((prev) =>
-          prev.map((post) =>
-            String(post.id) === normalizedId ? updatedPost : post
-          )
-        );
-      }
-    } catch (error) {
-      setSocialFeedError(error.message || "Could not delete comment.");
-      throw error;
-    }
-  };
-
-  const openDirectChatWithPostAuthor = (post) => {
-    const handle = String(post?.user || "").trim();
-    if (!handle) return;
-
-    setPendingContact({
-      id: `user:${handle.toLowerCase()}`,
-      handle,
-      name: `@${handle}`,
-    });
-    setPendingProtectedPage("messages");
-    setCurrentPage("messages");
-  };
-
-  const openProfile = (profile) => {
-    const handle = normalizeHandle(profile?.user || profile?.handle || profile?.name || "");
-    if (!handle) return;
-
-    const { authoredPosts, followersCount, followingCount, isFollowing } = getProfileStats(handle);
-    const isCurrentUser = currentUser?.name?.trim().toLowerCase() === handle.toLowerCase();
-    const avatarLabel = String(handle || "USER").slice(0, 2).toUpperCase();
-
-    const selected = {
-      handle,
-      name: profile?.name || `@${handle}`,
-      bio: profile?.bio || (isCurrentUser ? currentUser?.bio || "" : `Creative profile on ROB_THE_FAB.`),
-      avatar: profile?.avatar || (isCurrentUser ? currentUser?.avatar || "" : ""),
-      email: profile?.email || (isCurrentUser ? currentUser?.email || "" : ""),
-      postCount: authoredPosts.length,
-      posts: authoredPosts.slice(0, 6),
-      followersCount,
-      followingCount,
-      isFollowing,
-      initials: avatarLabel,
-      isCurrentUser,
-    };
-
-    setSelectedProfile(selected);
-    setProfileDraftBio(selected.bio || "");
-    setProfileDraftAvatar(selected.avatar || "");
-    setProfileAvatarStyle(detectAvatarStyleId(selected.name || selected.handle, selected.avatar));
-    setProfileEditError("");
-
-    socialService
-      .getProfile(handle)
-      .then((remoteProfile) => {
-        if (!remoteProfile) return;
-
-        setSelectedProfile((prev) => {
-          if (!prev || normalizeHandle(prev.handle) !== normalizeHandle(handle)) return prev;
-
-          const merged = {
-            ...prev,
-            ...remoteProfile,
-            handle: normalizeHandle(remoteProfile.handle || prev.handle),
-            posts: Array.isArray(remoteProfile.posts) ? remoteProfile.posts.slice(0, 6) : prev.posts,
-            postCount:
-              typeof remoteProfile.postCount === "number"
-                ? remoteProfile.postCount
-                : Array.isArray(remoteProfile.posts)
-                ? remoteProfile.posts.length
-                : prev.postCount,
-            isCurrentUser:
-              typeof remoteProfile.isCurrentUser === "boolean"
-                ? remoteProfile.isCurrentUser
-                : prev.isCurrentUser,
-            initials: String(remoteProfile.handle || prev.handle || "USER").slice(0, 2).toUpperCase(),
-          };
-
-          if (merged.isCurrentUser) {
-            setProfileDraftBio(merged.bio || "");
-            setProfileDraftAvatar(merged.avatar || "");
-            setProfileAvatarStyle(detectAvatarStyleId(merged.name || merged.handle, merged.avatar));
-          }
-
-          return merged;
-        });
-      })
-      .catch(() => {
-        // Keep local fallback profile when remote profile lookup is unavailable.
-      });
-  };
-
-  const toggleFollowProfile = async (handle) => {
-    const cleanHandle = normalizeHandle(handle);
-    if (!cleanHandle) return;
-
-    const loweredHandle = cleanHandle.toLowerCase();
-    if (currentUser?.name?.trim().toLowerCase() === loweredHandle) return;
-
-    const currentlyFollowing = followedHandles.includes(loweredHandle);
-
-    try {
-      if (currentlyFollowing) {
-        await socialService.unfollowProfile(loweredHandle);
-      } else {
-        await socialService.followProfile(loweredHandle);
-      }
-    } catch {
-      // Fall back to local social graph behavior when API follow state is unavailable.
-    }
-
-    setFollowedHandles((prev) => {
-      const isAlreadyFollowing = prev.includes(loweredHandle);
-      const nextHandles = isAlreadyFollowing
-        ? prev.filter((item) => item !== loweredHandle)
-        : [...prev, loweredHandle];
-
-      localStorage.setItem("rtf_followed_handles", JSON.stringify(nextHandles));
-
-      return nextHandles;
-    });
-
-    setSelectedProfile((prev) => {
-      if (!prev || prev.handle.toLowerCase() !== loweredHandle) return prev;
-      const nextIsFollowing = !prev.isFollowing;
-      return {
-        ...prev,
-        isFollowing: nextIsFollowing,
-        followersCount: Math.max(0, Number(prev.followersCount || 0) + (nextIsFollowing ? 1 : -1)),
-      };
-    });
-  };
-
-  const closeProfile = () => {
-    setSelectedProfile(null);
-    setProfileEditError("");
-    setProfileDraftAvatarFile(null);
-  };
-
-  const saveOwnProfile = async () => {
-    if (!selectedProfile?.isCurrentUser || isSavingProfile) return;
-
-    setProfileEditError("");
-    setIsSavingProfile(true);
-
-    try {
-      const payload = {
-        bio: String(profileDraftBio || "").trim(),
-        avatar: String(profileDraftAvatar || "").trim(),
-        avatarFile: profileDraftAvatarFile,
-      };
- 
-      const result = await authService.updateProfile(payload);
-      if (!result.ok) {
-        setProfileEditError(result.error || t("profile.updateError", "Could not update profile."));
-        return;
-      }
-
-      setCurrentUser(result.user);
-      setSelectedProfile((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          bio: result.user.bio || "",
-          avatar: result.user.avatar || "",
-          email: result.user.email || prev.email,
-        };
-      });
-    } catch {
-      setProfileEditError(t("profile.updateError", "Could not update profile."));
-    } finally {
-      setIsSavingProfile(false);
-    }
-  };
-
-  const applyGeneratedProfileAvatar = (styleId) => {
-    if (!selectedProfile?.isCurrentUser) return;
-
-    const selectedStyle = AVATAR_STYLES.find((style) => style.id === styleId) || AVATAR_STYLES[0];
-    const avatarSeed = selectedProfile.name || selectedProfile.handle || currentUser?.name || "USER";
-    const generatedAvatar = buildAvatar(avatarSeed, selectedStyle);
-
-    setProfileAvatarStyle(selectedStyle.id);
-    setProfileDraftAvatar(generatedAvatar);
-  };
-
-  const clearPendingContact = () => setPendingContact(null);
 
   const openProductDetail = (product) => {
     setSelectedProductId(product.id);
-    setCurrentPage("product-detail");
+    navigate(`/product/${product.id}`);
   };
 
   const toggleTheme = () => {
@@ -695,44 +240,12 @@ const App = () => {
     });
   };
 
-  const changeLanguage = (nextLanguage) => {
-    setLanguage(normalizeLanguage(nextLanguage));
-  };
-
-  const completeProtectedAccess = () => {
-    const targetPage = PROTECTED_PAGES.has(pendingProtectedPage)
-      ? pendingProtectedPage
-      : "shop";
-    setPendingProtectedPage("shop");
-    setCurrentPage(targetPage);
-  };
-
-  const handleRegister = async ({ name, email, password, bio, avatar }) => {
-    const result = await authService.register({ name, email, password, bio, avatar });
-    if (!result.ok) return result;
-
-    if (result.offlineFallback) {
-      setCartToast(
-        t(
-          "auth.offlineNotice",
-          "Servidor no disponible. Sesion iniciada en modo offline local."
-        )
-      );
-    }
-
-    setCurrentUser(result.user);
-    completeProtectedAccess();
-    return result;
-  };
-
-  const handleLogin = async ({ email, password }) => {
-    const result = await authService.login({ email, password });
-    if (!result.ok) return result;
-
-    setCurrentUser(result.user);
+  const handleLogout = async () => {
+    await authService.logout();
+    setCurrentUser(null);
     setIsGuest(false);
-    setCurrentPage("shop");
-    return result;
+    localStorage.removeItem("rtf_is_guest");
+    navigate("/auth");
   };
 
   const markNotificationAsRead = async (notificationId) => {
@@ -743,772 +256,61 @@ const App = () => {
     } catch (e) { console.error("Could not mark as read", e); }
   };
 
-  const handleLogout = async () => {
-    await authService.logout();
-    setCurrentUser(null);
-    setIsGuest(false);
-    localStorage.removeItem("rtf_is_guest");
-    setPendingProtectedPage("shop");
-    setCurrentPage("auth");
-  };
+  const selectedProduct = MOCK_PRODUCTS.find(p => p.id === selectedProductId);
+  const wishlistItems = MOCK_PRODUCTS.filter(p => wishlistIds.includes(p.id));
 
-  const handleContinueAsGuest = () => {
-    setIsGuest(true);
-    localStorage.setItem("rtf_is_guest", "true");
-    setCurrentPage("landing");
-  };
-
+  // Auto-restore Supabase session
   useEffect(() => {
-    if (typeof window === "undefined" || !window.matchMedia) return undefined;
-
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = (event) => {
-      setSystemTheme(event.matches ? "dark" : "light");
-    };
-
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener("change", handleChange);
-      return () => mediaQuery.removeEventListener("change", handleChange);
-    }
-
-    mediaQuery.addListener(handleChange);
-    return () => mediaQuery.removeListener(handleChange);
+    authService.restoreSession().then((user) => { if (user) setCurrentUser(user); });
   }, []);
 
+  // Redirect if product-detail but no product
   useEffect(() => {
-    localStorage.setItem("rtf_wishlist_ids", JSON.stringify(wishlistIds));
-  }, [wishlistIds]);
-
-  useEffect(() => {
-    localStorage.setItem("rtf_saved_look_ids", JSON.stringify(savedLookIds));
-  }, [savedLookIds]);
-
-  useEffect(() => {
-    localStorage.setItem("rtf_liked_post_ids", JSON.stringify(likedPostIds));
-  }, [likedPostIds]);
-
-  useEffect(() => {
-    localStorage.setItem("rtf_followed_handles", JSON.stringify(followedHandles));
-  }, [followedHandles]);
-
-  useEffect(() => {
-    localStorage.setItem("rtf_cart_items", JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  useEffect(() => {
-    localStorage.setItem("rtf_current_page", currentPage);
-  }, [currentPage]);
-
-  useEffect(() => {
-    if (isGuest) {
-      localStorage.setItem("rtf_is_guest", "true");
-    } else {
-      localStorage.removeItem("rtf_is_guest");
+    if (location.pathname.startsWith("/product/") && !selectedProduct) {
+      const idFromPath = Number(location.pathname.split("/")[2]);
+      if (idFromPath) setSelectedProductId(idFromPath);
     }
-  }, [isGuest]);
-
-  useEffect(() => {
-    localStorage.setItem("rtf_theme", theme);
-    const resolvedTheme = theme === "auto" ? systemTheme : theme;
-    document.documentElement.setAttribute("data-theme", resolvedTheme);
-  }, [theme, systemTheme]);
-
-  useEffect(() => {
-    localStorage.setItem("rtf_language", language);
-    document.documentElement.lang = language;
-  }, [language]);
-
-  useEffect(() => {
-    if (selectedProductId == null) {
-      localStorage.removeItem("rtf_selected_product_id");
-      return;
-    }
-    localStorage.setItem("rtf_selected_product_id", String(selectedProductId));
-  }, [selectedProductId]);
-
-  const wishlistCount = wishlistIds.length;
-  const wishlistItems = wishlistIds
-    .slice()
-    .reverse()
-    .map((id) => MOCK_PRODUCTS.find((product) => product.id === id))
-    .filter(Boolean);
-  const selectedProduct =
-    MOCK_PRODUCTS.find((product) => product.id === selectedProductId) || null;
-  const savedLooks = savedLookIds
-    .slice()
-    .reverse()
-    .map((id) => socialPosts.find((post) => String(post.id) === id))
-    .filter(Boolean);
-
-  useEffect(() => {
-    loadSocialPosts();
-  }, []);
-
-  useEffect(() => {
-    if (currentUser?.id) {
-      // Sync App Data (Cart, Wishlist, Saved Looks)
-      socialService.getProfile(currentUser.email).then(profile => {
-        if (!profile) return;
-
-        if (profile.cart_items) {
-          setCartItems(profile.cart_items);
-          localStorage.setItem("rtf_cart_items", JSON.stringify(profile.cart_items));
-        }
-        if (profile.wishlist_ids) {
-          const ids = profile.wishlist_ids.map(id => Number(id));
-          setWishlistIds(ids);
-          localStorage.setItem("rtf_wishlist_ids", JSON.stringify(ids));
-        }
-        if (profile.saved_post_ids) {
-          const remoteIds = profile.saved_post_ids.map(id => String(id));
-          setSavedLookIds(remoteIds);
-          localStorage.setItem("rtf_saved_look_ids", JSON.stringify(remoteIds));
-        }
-      }).catch(err => {
-        console.warn("Could not sync app data from Supabase:", err);
-      });
-
-      // Sync Liked Posts
-      postService.getUserLikedPostIds(currentUser.id).then(likedIds => {
-        setLikedPostIds(likedIds);
-        localStorage.setItem("rtf_liked_post_ids", JSON.stringify(likedIds));
-      }).catch(err => {
-        console.warn("Could not sync liked posts from Supabase:", err);
-      });
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    if (currentUser?.id) {
-      notificationService.getNotifications(currentUser.id).then(data => {
-        setNotifications(data);
-        setUnreadNotificationsCount(data.filter(n => !n.read).length);
-      });
-
-      const sub = notificationService.subscribeToNotifications(currentUser.id, (newNotif) => {
-        setNotifications(prev => [newNotif, ...prev]);
-        setUnreadNotificationsCount(prev => prev + 1);
-        
-        // Mostrar una notificación simple (usando la UI existente o alert)
-        console.log("Nueva notificación:", newNotif.content);
-      });
-
-      return () => sub.close();
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    loadSocialPosts();
-  }, [socialFeedFilter]);
-
-  // Restaurar sesión de Supabase al cargar la app (solo al inicio)
-  useEffect(() => {
-    authService.restoreSession().then((user) => {
-      if (user) {
-        setCurrentUser(user);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    if (currentPage === "product-detail" && !selectedProduct) {
-      setCurrentPage("shop");
-    }
-  }, [currentPage, selectedProduct]);
+  }, [location.pathname, selectedProduct]);
 
   useEffect(() => {
     if (PROTECTED_PAGES.has(currentPage) && (!currentUser || isGuest)) {
       setPendingProtectedPage(currentPage);
-      setCurrentPage("auth");
+      navigate("/auth");
     }
   }, [currentPage, currentUser, isGuest]);
 
-
   return (
     <Suspense fallback={<div className="loading">Cargando...</div>}>
-    <div key={currentPage} className="page-transition-wrapper">
-      {currentPage === "landing" && (
-        <LandingPage
-          changePage={setCurrentPage}
-          currentUser={currentUser} onLogout={handleLogout}
-          cartCount={cartItems.length}
-          wishlistCount={wishlistCount}
-          language={language}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
-      {currentPage === "shop" && (
-        <CategoryPage
-          changePage={setCurrentPage}
-          cartCount={cartItems.length}
-          wishlistCount={wishlistCount}
-          onOpenProductDetail={openProductDetail}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          currentUser={currentUser} onLogout={handleLogout}
-          language={language}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
-      {currentPage === "products" && (
-        <ProductsPage
-          changePage={setCurrentPage}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          addToCart={addToCart}
-          wishlistCount={wishlistCount}
-          wishlistIds={wishlistIds}
-          onToggleWishlist={toggleWishlist}
-          onOpenProductDetail={openProductDetail}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          currentUser={currentUser} onLogout={handleLogout}
-          language={language}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
-      {currentPage === "men" && (
-        <MenPage
-          changePage={setCurrentPage}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          addToCart={addToCart}
-          wishlistCount={wishlistCount}
-          wishlistIds={wishlistIds}
-          onToggleWishlist={toggleWishlist}
-          onOpenProductDetail={openProductDetail}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          currentUser={currentUser} onLogout={handleLogout}
-          language={language}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
-      {currentPage === "women" && (
-        <WomenPage
-          changePage={setCurrentPage}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          addToCart={addToCart}
-          wishlistCount={wishlistCount}
-          wishlistIds={wishlistIds}
-          onToggleWishlist={toggleWishlist}
-          onOpenProductDetail={openProductDetail}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          currentUser={currentUser} onLogout={handleLogout}
-          language={language}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
-      {currentPage === "kids" && (
-        <KidsPage
-          changePage={setCurrentPage}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          addToCart={addToCart}
-          wishlistCount={wishlistCount}
-          wishlistIds={wishlistIds}
-          onToggleWishlist={toggleWishlist}
-          onOpenProductDetail={openProductDetail}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          currentUser={currentUser} onLogout={handleLogout}
-          language={language}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
-      {currentPage === "bags" && (
-        <BagsPage
-          changePage={setCurrentPage}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          addToCart={addToCart}
-          wishlistCount={wishlistCount}
-          wishlistIds={wishlistIds}
-          onToggleWishlist={toggleWishlist}
-          onOpenProductDetail={openProductDetail}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          currentUser={currentUser} onLogout={handleLogout}
-          language={language}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
-      {currentPage === "accessories" && (
-        <AccessoriesPage
-          changePage={setCurrentPage}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          addToCart={addToCart}
-          wishlistCount={wishlistCount}
-          wishlistIds={wishlistIds}
-          onToggleWishlist={toggleWishlist}
-          onOpenProductDetail={openProductDetail}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          currentUser={currentUser} onLogout={handleLogout}
-          language={language}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
-      {currentPage === "home" && (
-        <HomeDecorPage
-          changePage={setCurrentPage}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          addToCart={addToCart}
-          wishlistCount={wishlistCount}
-          wishlistIds={wishlistIds}
-          onToggleWishlist={toggleWishlist}
-          onOpenProductDetail={openProductDetail}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          currentUser={currentUser} onLogout={handleLogout}
-          language={language}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
-      {currentPage === "cart" && (
-        <CartPage
-          changePage={setCurrentPage}
-          cartItems={cartItems}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          wishlistCount={wishlistCount}
-          onOpenProductDetail={openProductDetail}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          removeFromCart={removeFromCart}
-          currentUser={currentUser} onLogout={handleLogout}
-          language={language}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
-      {currentPage === "wishlist" && (
-        <WishlistPage
-          changePage={setCurrentPage}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          wishlistCount={wishlistCount}
-          wishlistItems={wishlistItems}
-          onToggleWishlist={toggleWishlist}
-          addToCart={addToCart}
-          onOpenProductDetail={openProductDetail}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          currentUser={currentUser} onLogout={handleLogout}
-          language={language}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
-      {currentPage === "settings" && (
-        <SettingsPage
-          changePage={setCurrentPage}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          wishlistCount={wishlistCount}
-          theme={theme}
-          setTheme={setTheme}
-          onToggleTheme={toggleTheme}
-          currentUser={currentUser} onLogout={handleLogout}
-          language={language}
-          setLanguage={changeLanguage}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
-      {currentPage === "news" && (
-        <NewsPage
-          changePage={setCurrentPage}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          wishlistCount={wishlistCount}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          currentUser={currentUser} onLogout={handleLogout}
-          language={language}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
-      {currentPage === "auth" && (
-        <AuthPage
-          changePage={setCurrentPage}
-          onLogin={handleLogin}
-          onRegister={handleRegister}
-          onContinueAsGuest={handleContinueAsGuest}
-          pendingPage={pendingProtectedPage}
-          language={language}
-          setLanguage={changeLanguage}
-          t={t}
-        />
-      )}
-      {currentPage === "product-detail" && selectedProduct && (
-        <ProductDetailPage
-          changePage={setCurrentPage}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          wishlistCount={wishlistCount}
-          product={selectedProduct}
-          addToCart={addToCart}
-          wishlistIds={wishlistIds}
-          onToggleWishlist={toggleWishlist}
-          onOpenProductDetail={openProductDetail}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          currentUser={currentUser} onLogout={handleLogout}
-          language={language}
-          t={t}
-        />
-      )}
-      {currentPage === "socials" && (
-        <SocialFeedPage
-          changePage={setCurrentPage}
-          currentUser={currentUser} onLogout={handleLogout}
-          posts={socialPosts}
-          likedPostIds={likedPostIds}
-          onToggleLikePost={toggleSocialLike}
-          onAddComment={addSocialComment}
-          onDeleteComment={deleteSocialComment}
-          onDeletePost={deleteSocialPost}
-          onCreatePost={createSocialPost}
-          onOpenProfile={openProfile}
-          onMessageAuthor={openDirectChatWithPostAuthor}
-          isLoadingPosts={isLoadingSocialPosts}
-          isPosting={isCreatingSocialPost}
-          feedError={socialFeedError}
-          activeView={socialFeedFilter}
-          onViewChange={(view) => {
-            setSocialFeedFilter(view);
-          }}
-          hasMore={hasMorePosts}
-          onLoadMore={() => loadSocialPosts(true)}
-          savedLookIds={savedLookIds}
-          onToggleSavedLook={toggleSavedLook}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          wishlistCount={wishlistCount}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          language={language}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
-      {currentPage === "saved-looks" && (
-        <SavedLooksPage
-          changePage={setCurrentPage}
-          currentUser={currentUser} onLogout={handleLogout}
-          savedLooks={savedLooks}
-          likedPostIds={likedPostIds}
-          onToggleLikePost={toggleSocialLike}
-          onAddComment={addSocialComment}
-          onDeleteComment={deleteSocialComment}
-          onDeletePost={deleteSocialPost}
-          onOpenProfile={openProfile}
-          onMessageAuthor={openDirectChatWithPostAuthor}
-          feedError={socialFeedError}
-          savedLookIds={savedLookIds}
-          onToggleSavedLook={toggleSavedLook}
-          language={language}
-          t={t}
-        />
-      )}
-      {currentPage === "messages" && (
-        <MessagesPage
-          changePage={setCurrentPage}
-          currentUser={currentUser} onLogout={handleLogout}
-          onOpenProfile={openProfile}
-          pendingContact={pendingContact}
-          onClearPendingContact={clearPendingContact}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          wishlistCount={wishlistCount}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          language={language}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
-      {currentPage === "user-profile" && currentUser && (
-        <UserProfilePage
-          changePage={setCurrentPage}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          wishlistCount={wishlistCount}
-          currentUser={currentUser} onLogout={handleLogout}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          posts={socialPosts}
-          likedPostIds={likedPostIds}
-          onToggleLikePost={toggleSocialLike}
-          onAddComment={addSocialComment}
-          onDeleteComment={deleteSocialComment}
-          onDeletePost={deleteSocialPost}
-          savedLookIds={savedLookIds}
-          onToggleSavedLook={toggleSavedLook}
-          language={language}
-          t={t}
-          notifications={notifications}
-          unreadNotificationsCount={unreadNotificationsCount}
-          onMarkNotificationRead={markNotificationAsRead}
-        />
-      )}
+      <div key={location.pathname} className="page-transition-wrapper">
+        <Routes>
+          <Route path="/" element={<LandingPage changePage={setCurrentPage} currentUser={currentUser} onLogout={handleLogout} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} language={language} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} />} />
+          <Route path="/shop" element={<CategoryPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/products" element={<ProductsPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} addToCart={addToCart} wishlistCount={wishlistIds.length} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} onOpenProductDetail={openProductDetail} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/shop/men" element={<ProductsPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} addToCart={addToCart} wishlistCount={wishlistIds.length} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} onOpenProductDetail={openProductDetail} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/shop/women" element={<ProductsPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} addToCart={addToCart} wishlistCount={wishlistIds.length} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} onOpenProductDetail={openProductDetail} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/shop/kids" element={<ProductsPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} addToCart={addToCart} wishlistCount={wishlistIds.length} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} onOpenProductDetail={openProductDetail} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/shop/bags" element={<ProductsPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} addToCart={addToCart} wishlistCount={wishlistIds.length} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} onOpenProductDetail={openProductDetail} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/shop/accessories" element={<ProductsPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} addToCart={addToCart} wishlistCount={wishlistIds.length} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} onOpenProductDetail={openProductDetail} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/shop/home" element={<ProductsPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} addToCart={addToCart} wishlistCount={wishlistIds.length} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} onOpenProductDetail={openProductDetail} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/cart" element={<CartPage changePage={setCurrentPage} cartItems={cartItems} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} onOpenProductDetail={openProductDetail} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} onRemoveFromCart={removeFromCart} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/wishlist" element={<WishlistPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} wishlistItems={wishlistItems} onToggleWishlist={toggleWishlist} onAddToCart={addToCart} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} onOpenProductDetail={openProductDetail} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/settings" element={<SettingsPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} setTheme={setTheme} language={language} setLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/news" element={<NewsPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/auth" element={<AuthPage changePage={setCurrentPage} onLoginSuccess={(user) => { setCurrentUser(user); navigate("/shop"); }} onGuestAccess={() => { setIsGuest(true); localStorage.setItem("rtf_is_guest", "true"); navigate("/shop"); }} t={t} />} />
+          <Route path="/product/:id" element={<ProductDetailPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} product={selectedProduct} addToCart={addToCart} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/social" element={<SocialFeedPage changePage={setCurrentPage} onOpenProductDetail={openProductDetail} posts={socialPosts} isLoadingPosts={isLoadingSocialPosts} feedError={socialFeedError} activeView={socialFeedFilter} onViewChange={setSocialFeedFilter} savedLookIds={savedLookIds} onToggleSavedLook={toggleSavedLook} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/social/saved" element={<SavedLooksPage changePage={setCurrentPage} posts={socialPosts} savedLookIds={savedLookIds} onToggleSavedLook={toggleSavedLook} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/social/messages" element={<MessagesPage changePage={setCurrentPage} pendingContact={pendingContact} onClearPendingContact={clearPendingContact} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/profile" element={<UserProfilePage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} currentUser={currentUser} onLogout={handleLogout} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} posts={socialPosts} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
 
-      {selectedProfile && (
-        <div className="profile-modal-overlay" role="presentation" onClick={closeProfile}>
-          <div className="profile-modal" role="dialog" aria-modal="true" aria-label={selectedProfile.name} onClick={(event) => event.stopPropagation()}>
-            <button type="button" className="profile-modal-close" onClick={closeProfile}>
-              {t("profile.close", "CLOSE")}
-            </button>
-            <p className="profile-modal-kicker">{t("profile.kicker", "SOCIAL PROFILE")}</p>
-            <div className="profile-modal-avatar" aria-hidden="true">
-              {selectedProfile.avatar ? (
-                <img src={selectedProfile.avatar} alt="" />
-              ) : (
-                <span>{selectedProfile.initials}</span>
-              )}
-            </div>
-            <h2 className="profile-modal-title">{selectedProfile.name}</h2>
-            <p className="profile-modal-handle">@{selectedProfile.handle}</p>
-            {selectedProfile.isCurrentUser ? (
-              <div className="profile-modal-editor">
-                <div className="profile-avatar-picker">
-                  <span className="profile-avatar-picker-label">
-                    {t("profile.fields.avatarStyle", "AVATAR STYLE")}
-                  </span>
-                  <div className="profile-avatar-options" role="radiogroup" aria-label={t("profile.fields.avatarStyle", "AVATAR STYLE")}>
-                    {AVATAR_STYLES.map((style) => {
-                      const previewSrc = buildAvatar(selectedProfile.name || selectedProfile.handle, style);
-                      const isActive = profileAvatarStyle === style.id;
+        {currentPage !== "landing" && currentPage !== "socials" && currentPage !== "messages" && currentPage !== "auth" && (
+          <ChatbotWidget t={t} currentPage={currentPage} changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} products={MOCK_PRODUCTS} socialPosts={socialPosts} savedLookCount={savedLookIds.length} isSocialLoading={isLoadingSocialPosts} isAuthenticated={Boolean(currentUser)} />
+        )}
 
-                      return (
-                        <button
-                          key={style.id}
-                          type="button"
-                          className={`profile-avatar-option${isActive ? " active" : ""}`}
-                          onClick={() => applyGeneratedProfileAvatar(style.id)}
-                          aria-pressed={isActive}
-                          disabled={isSavingProfile}
-                        >
-                          <img src={previewSrc} alt="" />
-                          <span>{style.label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-                <label>
-                  {t("profile.fields.bio", "BIO")}
-                  <textarea
-                    value={profileDraftBio}
-                    onChange={(event) => setProfileDraftBio(event.target.value)}
-                    rows="3"
-                    placeholder={t("profile.bioPlaceholder", "Tell the community who you are")}
-                    disabled={isSavingProfile}
-                  />
-                </label>
-                 <label>
-                  {t("profile.fields.avatar", "AVATAR URL")}
-                  <input
-                    type="url"
-                    value={profileDraftAvatar}
-                    onChange={(event) => {
-                      setProfileDraftAvatar(event.target.value);
-                    }}
-                    placeholder={t("profile.avatarPlaceholder", "https://...")}
-                    disabled={isSavingProfile}
-                  />
-                </label>
-                <label>
-                  {t("profile.fields.avatarFile", "UPLOAD PHOTO")}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(event) => {
-                      const file = event.target.files?.[0];
-                      if (file) setProfileDraftAvatarFile(file);
-                    }}
-                    disabled={isSavingProfile}
-                  />
-                </label>
-                {profileEditError && <p className="profile-modal-error">{profileEditError}</p>}
-              </div>
-            ) : (
-              <p className="profile-modal-bio">{selectedProfile.bio}</p>
-            )}
-            <div className="profile-modal-metrics">
-              <div className="profile-modal-metric">
-                <span className="profile-modal-metric-label">{t("profile.stats.posts", "POSTS")}</span>
-                <span className="profile-modal-metric-value">{selectedProfile.postCount}</span>
-              </div>
-              <div className="profile-modal-metric">
-                <span className="profile-modal-metric-label">{t("profile.stats.followers", "FOLLOWERS")}</span>
-                <span className="profile-modal-metric-value">{selectedProfile.followersCount}</span>
-              </div>
-              <div className="profile-modal-metric">
-                <span className="profile-modal-metric-label">{t("profile.stats.following", "FOLLOWING")}</span>
-                <span className="profile-modal-metric-value">{selectedProfile.followingCount}</span>
-              </div>
-            </div>
-            <div className="profile-modal-stats">
-              <span>{t("profile.stats.status", "STATUS")}: {t("messages.statuses.online", "ONLINE")}</span>
-              {selectedProfile.email && <span>{t("profile.stats.email", "EMAIL")}: {selectedProfile.email}</span>}
-            </div>
-            <div className="profile-modal-actions">
-              {selectedProfile.isCurrentUser && (
-                <button
-                  type="button"
-                  className="shop-look-btn"
-                  onClick={saveOwnProfile}
-                  disabled={isSavingProfile}
-                >
-                  {isSavingProfile
-                    ? t("profile.saving", "SAVING...")
-                    : t("profile.save", "SAVE PROFILE")}
-                </button>
-              )}
-              <button
-                type="button"
-                className={`shop-look-btn ${selectedProfile.isFollowing ? "active" : ""}`}
-                onClick={() => toggleFollowProfile(selectedProfile.handle)}
-                disabled={selectedProfile.isCurrentUser}
-              >
-                {selectedProfile.isCurrentUser
-                  ? t("profile.you", "THIS IS YOU")
-                  : selectedProfile.isFollowing
-                  ? t("profile.unfollow", "UNFOLLOW")
-                  : t("profile.follow", "FOLLOW")}
-              </button>
-              <button
-                type="button"
-                className="save-look-btn active"
-                onClick={() => { openDirectChatWithPostAuthor({ user: selectedProfile.handle }); closeProfile(); }}
-                disabled={selectedProfile.isCurrentUser}
-              >
-                {t("profile.message", "MESSAGE")}
-              </button>
-              <button type="button" className="save-look-btn" onClick={closeProfile}>
-                {t("profile.done", "DONE")}
-              </button>
-            </div>
-            <div className="profile-modal-posts">
-              <h3>{t("profile.postsTitle", "LATEST POSTS")}</h3>
-              {selectedProfile.posts?.length ? (
-                <div className="profile-modal-post-grid">
-                  {selectedProfile.posts.map((post) => {
-                    const previewPost = localizePost(post, language);
-
-                    return (
-                      <button
-                        key={previewPost.id}
-                        type="button"
-                        className="profile-modal-post"
-                        onClick={() => {
-                          closeProfile();
-                          setCurrentPage("socials");
-                        }}
-                      >
-                        <img src={previewPost.img} alt={previewPost.desc} />
-                        <span>{previewPost.desc}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="profile-modal-empty">{t("profile.noPosts", "No posts yet.")}</p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {currentPage !== "landing" &&
-        currentPage !== "socials" &&
-        currentPage !== "messages" &&
-        currentPage !== "auth" && (
-        <ChatbotWidget
-          t={t}
-          currentPage={currentPage}
-          changePage={setCurrentPage}
-          cartCount={cartItems.length}
-          cartToast={cartToast}
-          wishlistCount={wishlistCount}
-          products={MOCK_PRODUCTS}
-          socialPosts={socialPosts}
-          savedLookCount={savedLookIds.length}
-          isSocialLoading={isLoadingSocialPosts}
-          isAuthenticated={Boolean(currentUser)}
-        />
-      )}
-
-      {currentPage === "success" && (
-        <div className="cart-container" style={{ textAlign: "center", padding: "10rem 2rem" }}>
-          <h1 style={{ fontSize: "4rem", marginBottom: "2rem" }}>{t("checkout.success.title", "THANK YOU!")}</h1>
-          <p style={{ fontSize: "1.5rem", marginBottom: "3rem" }}>{t("checkout.success.message", "Your order has been placed successfully.")}</p>
-          <button className="checkout-btn" onClick={() => {
-            setCartItems([]);
-            setCurrentPage("shop");
-          }}>
-            {t("checkout.success.button", "CONTINUE SHOPPING")}
-          </button>
-        </div>
-      )}
-      {currentPage === "cancel" && (
-        <div className="cart-container" style={{ textAlign: "center", padding: "10rem 2rem" }}>
-          <h1 style={{ fontSize: "4rem", marginBottom: "2rem" }}>{t("checkout.cancel.title", "ORDER CANCELLED")}</h1>
-          <p style={{ fontSize: "1.5rem", marginBottom: "3rem" }}>{t("checkout.cancel.message", "Something went wrong or you cancelled the payment.")}</p>
-          <button className="checkout-btn" onClick={() => setCurrentPage("cart")}>
-            {t("checkout.cancel.button", "BACK TO BAG")}
-          </button>
-        </div>
-      )}
-
-      {cartToast && <div className="app-toast">{cartToast}</div>}
-    </div>
+        {cartToast && <div className="app-toast">{cartToast}</div>}
+      </div>
     </Suspense>
   );
 };
