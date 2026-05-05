@@ -81,11 +81,11 @@ const UserProfilePage = ({
           <h2 className="section-title">{t("profile.yourPosts", "YOUR POSTS")}</h2>
           
           <div className="profile-posts-grid">
-            {posts.filter(post => post.user === currentUser.email || post.user === currentUser.name).length === 0 ? (
+            {posts.filter(post => post.user_email === currentUser.email).length === 0 ? (
               <p className="empty-state">{t("profile.noPosts", "You haven't posted anything yet.")}</p>
             ) : (
               posts
-                .filter(post => post.user === currentUser.email || post.user === currentUser.name)
+                .filter(post => post.user_email === currentUser.email)
                 .map(post => (
                   <div key={post.id} className="profile-post-card">
                     <div className="post-media">
