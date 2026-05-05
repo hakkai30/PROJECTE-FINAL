@@ -5,17 +5,25 @@ import { getFashionNews } from "../../services/newsService";
 const LandingPage = ({ changePage, currentUser, cartCount = 0, wishlistCount = 0, t, language = "es" }) => {
   const [news, setNews] = useState([]);
 
-  // Debug para ver si llega el usuario al hosting
   useEffect(() => {
-    // Evitar logs en producción; mantener el hook para posibles side-effects
-  }, [currentUser]);
+    let isMounted = true;
 
-  useEffect(() => {
-    getFashionNews(language).then(articles => {
-      if (articles && articles.length >= 3) {
-        setNews(articles.slice(0, 3));
-      }
-    });
+    getFashionNews(language)
+      .then((articles) => {
+        if (!isMounted) return;
+        if (Array.isArray(articles) && articles.length >= 3) {
+          setNews(articles.slice(0, 3));
+          return;
+        }
+        setNews([]);
+      })
+      .catch(() => {
+        if (isMounted) setNews([]);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, [language]);
 
   return (

@@ -2,22 +2,22 @@ import React, { useEffect, useState, Suspense, lazy } from "react";
 import LandingPage from "./pages/shop/LandingPage";
 import CategoryPage from "./pages/shop/CategoryPage";
 import ProductsPage from "./pages/shop/ProductsPage";
-import MenPage from "./pages/shop/MenPage";
-import WomenPage from "./pages/shop/WomenPage";
-import KidsPage from "./pages/shop/KidsPage";
-import BagsPage from "./pages/shop/BagsPage";
-import AccessoriesPage from "./pages/shop/AccessoriesPage";
-import HomeDecorPage from "./pages/shop/HomeDecorPage";
-import CartPage from "./pages/shop/CartPage";
-import WishlistPage from "./pages/shop/WishlistPage";
+const MenPage = lazy(() => import("./pages/shop/MenPage"));
+const WomenPage = lazy(() => import("./pages/shop/WomenPage"));
+const KidsPage = lazy(() => import("./pages/shop/KidsPage"));
+const BagsPage = lazy(() => import("./pages/shop/BagsPage"));
+const AccessoriesPage = lazy(() => import("./pages/shop/AccessoriesPage"));
+const HomeDecorPage = lazy(() => import("./pages/shop/HomeDecorPage"));
+const CartPage = lazy(() => import("./pages/shop/CartPage"));
+const WishlistPage = lazy(() => import("./pages/shop/WishlistPage"));
 const ProductDetailPage = lazy(() => import("./pages/shop/ProductDetailPage"));
-import SettingsPage from "./pages/shop/SettingsPage";
+const SettingsPage = lazy(() => import("./pages/shop/SettingsPage"));
 const SocialFeedPage = lazy(() => import("./pages/social/SocialFeedPage"));
 const SavedLooksPage = lazy(() => import("./pages/social/SavedLooksPage"));
 const MessagesPage = lazy(() => import("./pages/social/MessagesPage"));
-import AuthPage from "./pages/shop/AuthPage";
+const AuthPage = lazy(() => import("./pages/shop/AuthPage"));
 const UserProfilePage = lazy(() => import("./pages/social/UserProfilePage"));
-import NewsPage from "./pages/social/NewsPage";
+const NewsPage = lazy(() => import("./pages/social/NewsPage"));
 import { ChatbotWidget } from "./components/Layout";
 import { MOCK_PRODUCTS } from "./data/mockData";
 import { authService } from "./services/authService";
@@ -110,6 +110,19 @@ const normalizeTheme = (value) => {
 
 const normalizeLanguage = (value) => {
   return VALID_LANGUAGES.has(value) ? value : DEFAULT_LANGUAGE;
+};
+
+const loadedStyleModules = new Set();
+
+const ensureStyleModule = async (modulePath) => {
+  if (loadedStyleModules.has(modulePath)) return;
+  loadedStyleModules.add(modulePath);
+
+  try {
+    await import(modulePath);
+  } catch {
+    loadedStyleModules.delete(modulePath);
+  }
 };
 
 const App = () => {
@@ -805,6 +818,34 @@ const App = () => {
       setCurrentPage("auth");
     }
   }, [currentPage, currentUser, isGuest]);
+
+  useEffect(() => {
+    if (currentPage === "auth") {
+      ensureStyleModule("../styles/modules/10-auth.css");
+    }
+
+    if (currentPage === "messages") {
+      ensureStyleModule("../styles/modules/09-messages.css");
+    }
+
+    if (
+      currentPage === "products" ||
+      currentPage === "socials" ||
+      currentPage === "saved-looks" ||
+      currentPage === "user-profile"
+    ) {
+      ensureStyleModule("../styles/modules/16-user-products.css");
+    }
+
+    if (
+      currentPage !== "landing" &&
+      currentPage !== "socials" &&
+      currentPage !== "messages" &&
+      currentPage !== "auth"
+    ) {
+      ensureStyleModule("../styles/modules/12-chatbot.css");
+    }
+  }, [currentPage]);
 
   return (
     <Suspense fallback={<div className="loading">Cargando...</div>}>
