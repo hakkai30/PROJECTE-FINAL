@@ -134,26 +134,26 @@
    SKELETON & TRANSITIONS
 ========================================= */
 
-@keyframes skeleton-pulse {
-  0% { background-color: rgba(0, 0, 0, 0.05); }
-  50% { background-color: rgba(0, 0, 0, 0.12); }
-  100% { background-color: rgba(0, 0, 0, 0.05); }
+:root {
+  --skeleton-base: rgba(0, 0, 0, 0.05);
+  --skeleton-highlight: rgba(0, 0, 0, 0.12);
 }
 
-[data-theme="dark"] @keyframes skeleton-pulse {
-  0% { background-color: rgba(255, 255, 255, 0.05); }
-  50% { background-color: rgba(255, 255, 255, 0.1); }
-  100% { background-color: rgba(255, 255, 255, 0.05); }
+[data-theme="dark"] {
+  --skeleton-base: rgba(255, 255, 255, 0.05);
+  --skeleton-highlight: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes skeleton-pulse {
+  0% { background-color: var(--skeleton-base); }
+  50% { background-color: var(--skeleton-highlight); }
+  100% { background-color: var(--skeleton-base); }
 }
 
 .skeleton {
   animation: skeleton-pulse 1.5s ease-in-out infinite;
   border-radius: 2px;
-  background: rgba(0, 0, 0, 0.08);
-}
-
-[data-theme="dark"] .skeleton {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--skeleton-base);
 }
 
 .skeleton-text { height: 1rem; margin-bottom: 0.5rem; width: 100%; }
