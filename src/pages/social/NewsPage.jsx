@@ -2,7 +2,18 @@ import { useState, useEffect } from "react";
 import { getFashionNews } from "../../services/newsService";
 import { GlobalHeader, GlobalFooter, SocialSidebar } from "../../components/Layout";
 
-const NewsPage = ({ changePage, language, t, cartCount, wishlistCount, theme, onToggleTheme }) => {
+const NewsPage = ({ 
+  changePage, 
+  language, 
+  t, 
+  cartCount, 
+  wishlistCount, 
+  theme, 
+  onToggleTheme,
+  notifications = [],
+  unreadNotificationsCount = 0,
+  onMarkNotificationRead,
+}) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [articles, setArticles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,6 +46,9 @@ const NewsPage = ({ changePage, language, t, cartCount, wishlistCount, theme, on
         onToggleTheme={onToggleTheme}
         language={language}
         t={t}
+        notifications={notifications}
+        unreadNotificationsCount={unreadNotificationsCount}
+        onMarkNotificationRead={onMarkNotificationRead}
       />
       <div className="social-layout">
         <SocialSidebar 

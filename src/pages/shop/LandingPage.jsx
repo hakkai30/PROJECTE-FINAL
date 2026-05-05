@@ -2,7 +2,17 @@ import { useState, useEffect } from "react";
 import { WindowOverlay, GlobalHeader } from "../../components/Layout";
 import { getFashionNews } from "../../services/newsService";
 
-const LandingPage = ({ changePage, currentUser, cartCount = 0, wishlistCount = 0, t, language = "es" }) => {
+const LandingPage = ({ 
+  changePage, 
+  currentUser, 
+  cartCount = 0, 
+  wishlistCount = 0, 
+  t, 
+  language = "es",
+  notifications = [],
+  unreadNotificationsCount = 0,
+  onMarkNotificationRead,
+}) => {
   const [news, setNews] = useState([]);
 
   useEffect(() => {
@@ -35,6 +45,9 @@ const LandingPage = ({ changePage, currentUser, cartCount = 0, wishlistCount = 0
         wishlistCount={wishlistCount}
         t={t} 
         language={language}
+        notifications={notifications}
+        unreadNotificationsCount={unreadNotificationsCount}
+        onMarkNotificationRead={onMarkNotificationRead}
       />
 
       <div className="windows-absolute-wrapper" aria-hidden="true">

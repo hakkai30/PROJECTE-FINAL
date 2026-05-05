@@ -81,7 +81,7 @@ const AuthPage = ({
         return;
       }
 
-      if (password !== confirmPassword) {
+      if (password.trim() !== confirmPassword.trim()) {
         setFeedback(t("auth.errors.mismatch", "Passwords do not match."));
         return;
       }
