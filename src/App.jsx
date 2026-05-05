@@ -273,13 +273,19 @@ const App = () => {
     );
   };
 
-  const toggleSavedLook = (postId) => {
+  const toggleSavedLook = async (postId) => {
     const normalizedId = String(postId);
     setSavedLookIds((prev) =>
       prev.includes(normalizedId)
         ? prev.filter((id) => id !== normalizedId)
         : [...prev, normalizedId]
     );
+
+    try {
+      await socialService.toggleSavedLook(normalizedId);
+    } catch (err) {
+      console.error("Error persisting saved look:", err);
+    }
   };
 
   const normalizeHandle = (value) => String(value || "").trim().replace(/^@/, "");
@@ -793,6 +799,20 @@ const App = () => {
   useEffect(() => {
     loadSocialPosts();
   }, []);
+
+  useEffect(() => {
+    if (currentUser?.email) {
+      socialService.getProfile(currentUser.email).then(profile => {
+        if (profile?.saved_post_ids) {
+          const remoteIds = profile.saved_post_ids.map(id => String(id));
+          setSavedLookIds(remoteIds);
+          localStorage.setItem("rtf_saved_look_ids", JSON.stringify(remoteIds));
+        }
+      }).catch(err => {
+        console.warn("Could not sync saved looks from Supabase:", err);
+      });
+    }
+  }, [currentUser]);
 
   // Restaurar sesión de Supabase al cargar la app (solo al inicio)
   useEffect(() => {

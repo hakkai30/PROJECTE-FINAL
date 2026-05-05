@@ -58,4 +58,32 @@ export const socialService = {
     if (error) throw new Error("No se pudo dejar de seguir el perfil.");
     return true;
   },
+
+  async toggleSavedLook(postId) {
+    const currentUser = authService.loadCurrentUser();
+    if (!currentUser) return;
+
+    const { data: user, error: fetchError } = await supabase
+      .from('users')
+      .select('saved_post_ids')
+      .eq('id', currentUser.id)
+      .single();
+
+    if (fetchError) throw new Error("No se pudo cargar la lista de guardados.");
+
+    const currentSaved = user.saved_post_ids || [];
+    const isSaved = currentSaved.includes(postId);
+    
+    const newSaved = isSaved 
+      ? currentSaved.filter(id => id !== postId)
+      : [...currentSaved, postId];
+
+    const { error } = await supabase
+      .from('users')
+      .update({ saved_post_ids: newSaved })
+      .eq('id', currentUser.id);
+
+    if (error) throw new Error("No se pudo actualizar la lista de guardados.");
+    return newSaved;
+  }
 };
