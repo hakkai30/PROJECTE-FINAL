@@ -5,22 +5,17 @@
 /* LANDING: editorial poster energy */
 .landing-page-brutalist {
   background:
-    radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.78) 0%, transparent 30%),
-    radial-gradient(circle at 84% 14%, rgba(10, 22, 230, 0.22) 0%, transparent 38%),
-    radial-gradient(circle at 78% 86%, rgba(199, 57, 34, 0.22) 0%, transparent 30%),
-    linear-gradient(132deg, #d5d5d5 0%, #c2c2c2 42%, #b4b4b4 100%);
+    radial-gradient(circle at 10% 20%, var(--atmo-cold) 0%, transparent 40%),
+    radial-gradient(circle at 90% 10%, var(--atmo-hot) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, var(--atmo-gold) 0%, transparent 60%),
+    var(--bg-primary);
 }
 
-.glitch-visual-text,
 .main-logo-glitch-text {
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.main-logo-glitch-text {
-  text-shadow:
-    7px 7px 0 rgba(255, 255, 255, 0.42),
-    0 0 26px rgba(10, 22, 230, 0.18);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--brand-black);
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .nav-btn-brutalist {

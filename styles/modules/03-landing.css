@@ -68,25 +68,23 @@
   overflow: hidden;
 }
 .main-logo-glitch-text {
-  font-size: clamp(4rem, 10.5vw, 8.1rem);
-  font-weight: 900;
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 800;
   margin: 0;
-  letter-spacing: -0.045em;
-  line-height: 0.88;
-  color: #121212;
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: 1;
+  color: var(--brand-black);
   text-transform: uppercase;
-  text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.34),
-    0 14px 34px rgba(0, 0, 0, 0.08);
 }
 .landing-tagline {
-  margin: 1rem 0 0;
-  max-width: 650px;
+  margin: 1.5rem 0 0;
+  max-width: 700px;
   text-align: center;
-  font-size: clamp(0.88rem, 1.4vw, 1.05rem);
-  letter-spacing: 0.12em;
+  font-size: clamp(0.9rem, 1.6vw, 1.2rem);
+  letter-spacing: var(--letter-spacing-wide);
+  font-weight: 300;
   text-transform: uppercase;
-  color: rgba(18, 18, 18, 0.74);
+  color: var(--brand-gray-400);
 }
 
 /* Contenedor invisible para que floten las ventanas */
@@ -120,13 +118,13 @@
 .window-3 { top: 58%; right: 6%; position: absolute; animation: floatC 8.8s ease-in-out infinite; transform: rotate(-3.2deg); }
 
 .window-header {
-  height: 31px;
-  background: linear-gradient(180deg, #2d66bf, #1f4f9f);
-  border-bottom: 1px solid rgba(8, 28, 64, 0.48);
+  height: 36px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--surface-unified-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 0 0 10px;
+  padding: 0 12px;
 }
 
 .window-actions {
@@ -136,10 +134,10 @@
 }
 
 .window-label {
-  color: rgba(255, 255, 255, 0.96);
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  color: var(--brand-black);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
@@ -277,19 +275,18 @@
 }
 .nav-btn-brutalist {
   width: 100%;
-  padding: 1.6rem 0;
+  padding: 2.2rem 0;
   text-align: center;
-  font-size: clamp(1.35rem, 4vw, 2.5rem);
-  font-weight: 700;
-  color: #101010;
-  letter-spacing: 0.18em;
-  transition: background-color 0.22s ease, color 0.22s ease, transform 0.2s ease, letter-spacing 0.22s ease, box-shadow 0.22s ease;
+  font-size: clamp(1.4rem, 4vw, 2.8rem);
+  font-weight: 600;
+  color: var(--brand-black);
+  letter-spacing: var(--letter-spacing-wide);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .nav-btn-brutalist:hover {
-  background: rgba(255, 255, 255, 0.72);
-  transform: translateY(-1px);
-  letter-spacing: 0.22em;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  background: var(--bg-secondary);
+  color: var(--brand-gray-900);
+  letter-spacing: 0.2em;
 }
 
 .nav-btn-container:first-child .nav-btn-brutalist:hover {
