@@ -191,48 +191,42 @@ const SocialFeedPage = ({
               {t("social.sidebar.savedLooks", "SAVED LOOKS")} [ {savedLooksCount} ]
             </button>
           </div>
-          <form className="social-feed-toolbar" onSubmit={handleCreatePost}>
-            <input
-              type="text"
-              className="threads-search-input"
-              value={postText}
-              onChange={(event) => setPostText(event.target.value)}
-              placeholder={t("social.feed.postPlaceholder", "Write a new post...")}
-              aria-label={t("social.feed.postPlaceholder", "Write a new post...")}
-            />
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleImageSelect}
-              style={{ display: "none" }}
-              id="post-image-upload"
-            />
-            <button
-              type="button"
-              className="icon-action-btn"
-              onClick={() => fileInputRef.current?.click()}
-              aria-label={t("social.feed.addImage", "Add image")}
-            >
-              <ImagePlus size={18} aria-hidden="true" />
-              {postImageFile ? postImageFile.name.slice(0, 15) + "..." : t("social.feed.addImage", "ADD IMAGE")}
-            </button>
+          <form className="social-feed-toolbar social-create-post-form" onSubmit={handleCreatePost}>
+            <div className="social-input-group">
+              <input
+                type="text"
+                className="threads-search-input"
+                value={postText}
+                onChange={(event) => setPostText(event.target.value)}
+                placeholder={t("social.feed.postPlaceholder", "Write a new post...")}
+                aria-label={t("social.feed.postPlaceholder", "Write a new post...")}
+              />
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageSelect}
+                style={{ display: "none" }}
+                id="post-image-upload"
+              />
+              <button
+                type="button"
+                className="social-add-img-btn"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <ImagePlus size={16} />
+                <span>{postImageFile ? postImageFile.name.slice(0, 10) + "..." : t("social.feed.addImage", "ADD IMAGE")}</span>
+              </button>
+              <button type="submit" className="social-publish-btn" disabled={isPosting || !postText.trim()}>
+                {isPosting ? t("social.feed.posting", "...") : t("social.feed.publish", "PUBLISH")}
+              </button>
+            </div>
             {postImagePreview && (
-              <div style={{ position: "relative", display: "inline-block" }}>
-                <img src={postImagePreview} alt="Preview" style={{ height: 48, borderRadius: 6, objectFit: "cover" }} />
-                <button
-                  type="button"
-                  onClick={clearImage}
-                  style={{ position: "absolute", top: -6, right: -6, background: "#333", border: "none", borderRadius: "50%", cursor: "pointer", padding: 2, lineHeight: 0 }}
-                  aria-label="Remove image"
-                >
-                  <X size={12} color="#fff" />
-                </button>
+              <div className="social-preview-wrap">
+                <img src={postImagePreview} alt="Preview" />
+                <button type="button" onClick={clearImage}><X size={12} /></button>
               </div>
             )}
-            <button type="submit" className="shop-look-btn" disabled={isPosting || !postText.trim()}>
-              {isPosting ? t("social.feed.posting", "POSTING...") : t("social.feed.publish", "PUBLISH")}
-            </button>
           </form>
           <p className="social-feed-subtitle">
             {t(

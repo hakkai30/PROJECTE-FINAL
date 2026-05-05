@@ -265,13 +265,16 @@ body {
   transform: translateY(-2px);
 }
 
-.search-content input,
-.auth-form input,
-.chat-compose input,
 .threads-search-input,
-.chatbot-input input {
-  font-family: var(--font-family);
-  letter-spacing: 0.01em;
+.social-comment-input {
+  border: 1px solid var(--brand-black) !important;
+  background: var(--bg-primary) !important;
+  color: var(--brand-black) !important;
+  border-radius: 0 !important;
+  padding: 0.8rem 1.2rem !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.75rem !important;
+  width: 100%;
 }
 
 .chat-topbar h3,
