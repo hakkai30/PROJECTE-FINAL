@@ -146,6 +146,7 @@ export const SocialSidebar = ({ isSidebarOpen, setIsSidebarOpen, changePage, t }
 export const GlobalHeader = ({
   changePage,
   cartCount,
+  cartToast = "",
   wishlistCount = 0,
   currentUser = null,
   onLogout = null,
@@ -380,7 +381,7 @@ export const GlobalHeader = ({
             )}
           </button>
           <button
-            className="header-icon-btn"
+            className={`header-icon-btn ${cartToast ? "cart-icon-animate" : ""}`}
             onClick={() => changePage("cart")}
             aria-label={`${t("header.bag", "BAG")} (${cartCount})`}
             title={`${t("header.bag", "BAG")} (${cartCount})`}

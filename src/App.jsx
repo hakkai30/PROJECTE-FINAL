@@ -242,8 +242,24 @@ const App = () => {
   const [pendingProtectedPage, setPendingProtectedPage] = useState("shop");
   const t = createTranslator(language);
 
+  const syncUserAppData = async (updates) => {
+    if (!currentUser?.id) return;
+    try {
+      await supabase
+        .from('users')
+        .update(updates)
+        .eq('id', currentUser.id);
+    } catch (e) {
+      console.warn("Could not sync app data to Supabase:", e);
+    }
+  };
+
   const addToCart = (product) => {
-    setCartItems([...cartItems, product]);
+    setCartItems((prev) => {
+      const next = [...prev, product];
+      if (currentUser?.id) syncUserAppData({ cart_items: next });
+      return next;
+    });
     setCartToast(`${t("cart.toastAdded", "Added to cart:")} ${product.name}`);
   };
 
@@ -258,15 +274,21 @@ const App = () => {
   }, [cartToast]);
 
   const removeFromCart = (indexToRemove) => {
-    setCartItems(cartItems.filter((_, index) => index !== indexToRemove));
+    setCartItems((prev) => {
+      const next = prev.filter((_, index) => index !== indexToRemove);
+      if (currentUser?.id) syncUserAppData({ cart_items: next });
+      return next;
+    });
   };
 
   const toggleWishlist = (product) => {
-    setWishlistIds((prev) =>
-      prev.includes(product.id)
-        ? prev.filter((id) => id !== product.id)
-        : [...prev, product.id]
-    );
+    const productId = typeof product === 'object' ? product.id : product;
+    setWishlistIds((prev) => {
+      const isWishlisted = prev.includes(productId);
+      const next = isWishlisted ? prev.filter((id) => id !== productId) : [...prev, productId];
+      if (currentUser?.id) syncUserAppData({ wishlist_ids: next });
+      return next;
+    });
   };
 
   const toggleSavedLook = async (postId) => {
@@ -824,15 +846,26 @@ const App = () => {
 
   useEffect(() => {
     if (currentUser?.id) {
-      // Sync Saved Looks
+      // Sync App Data (Cart, Wishlist, Saved Looks)
       socialService.getProfile(currentUser.email).then(profile => {
-        if (profile?.saved_post_ids) {
+        if (!profile) return;
+
+        if (profile.cart_items) {
+          setCartItems(profile.cart_items);
+          localStorage.setItem("rtf_cart_items", JSON.stringify(profile.cart_items));
+        }
+        if (profile.wishlist_ids) {
+          const ids = profile.wishlist_ids.map(id => Number(id));
+          setWishlistIds(ids);
+          localStorage.setItem("rtf_wishlist_ids", JSON.stringify(ids));
+        }
+        if (profile.saved_post_ids) {
           const remoteIds = profile.saved_post_ids.map(id => String(id));
           setSavedLookIds(remoteIds);
           localStorage.setItem("rtf_saved_look_ids", JSON.stringify(remoteIds));
         }
       }).catch(err => {
-        console.warn("Could not sync saved looks from Supabase:", err);
+        console.warn("Could not sync app data from Supabase:", err);
       });
 
       // Sync Liked Posts
@@ -927,6 +960,7 @@ const App = () => {
         <ProductsPage
           changePage={setCurrentPage}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           addToCart={addToCart}
           wishlistCount={wishlistCount}
           wishlistIds={wishlistIds}
@@ -946,6 +980,7 @@ const App = () => {
         <MenPage
           changePage={setCurrentPage}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           addToCart={addToCart}
           wishlistCount={wishlistCount}
           wishlistIds={wishlistIds}
@@ -965,6 +1000,7 @@ const App = () => {
         <WomenPage
           changePage={setCurrentPage}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           addToCart={addToCart}
           wishlistCount={wishlistCount}
           wishlistIds={wishlistIds}
@@ -984,6 +1020,7 @@ const App = () => {
         <KidsPage
           changePage={setCurrentPage}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           addToCart={addToCart}
           wishlistCount={wishlistCount}
           wishlistIds={wishlistIds}
@@ -1003,6 +1040,7 @@ const App = () => {
         <BagsPage
           changePage={setCurrentPage}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           addToCart={addToCart}
           wishlistCount={wishlistCount}
           wishlistIds={wishlistIds}
@@ -1022,6 +1060,7 @@ const App = () => {
         <AccessoriesPage
           changePage={setCurrentPage}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           addToCart={addToCart}
           wishlistCount={wishlistCount}
           wishlistIds={wishlistIds}
@@ -1041,6 +1080,7 @@ const App = () => {
         <HomeDecorPage
           changePage={setCurrentPage}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           addToCart={addToCart}
           wishlistCount={wishlistCount}
           wishlistIds={wishlistIds}
@@ -1061,6 +1101,7 @@ const App = () => {
           changePage={setCurrentPage}
           cartItems={cartItems}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           wishlistCount={wishlistCount}
           onOpenProductDetail={openProductDetail}
           theme={theme}
@@ -1078,6 +1119,7 @@ const App = () => {
         <WishlistPage
           changePage={setCurrentPage}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           wishlistCount={wishlistCount}
           wishlistItems={wishlistItems}
           onToggleWishlist={toggleWishlist}
@@ -1097,6 +1139,7 @@ const App = () => {
         <SettingsPage
           changePage={setCurrentPage}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           wishlistCount={wishlistCount}
           theme={theme}
           setTheme={setTheme}
@@ -1114,6 +1157,7 @@ const App = () => {
         <NewsPage
           changePage={setCurrentPage}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           wishlistCount={wishlistCount}
           theme={theme}
           onToggleTheme={toggleTheme}
@@ -1141,6 +1185,7 @@ const App = () => {
         <ProductDetailPage
           changePage={setCurrentPage}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           wishlistCount={wishlistCount}
           product={selectedProduct}
           addToCart={addToCart}
@@ -1179,6 +1224,7 @@ const App = () => {
           savedLookIds={savedLookIds}
           onToggleSavedLook={toggleSavedLook}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           wishlistCount={wishlistCount}
           theme={theme}
           onToggleTheme={toggleTheme}
@@ -1216,6 +1262,7 @@ const App = () => {
           pendingContact={pendingContact}
           onClearPendingContact={clearPendingContact}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           wishlistCount={wishlistCount}
           theme={theme}
           onToggleTheme={toggleTheme}
@@ -1230,6 +1277,7 @@ const App = () => {
         <UserProfilePage
           changePage={setCurrentPage}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           wishlistCount={wishlistCount}
           currentUser={currentUser} onLogout={handleLogout}
           theme={theme}
@@ -1427,6 +1475,7 @@ const App = () => {
           currentPage={currentPage}
           changePage={setCurrentPage}
           cartCount={cartItems.length}
+          cartToast={cartToast}
           wishlistCount={wishlistCount}
           products={MOCK_PRODUCTS}
           socialPosts={socialPosts}
