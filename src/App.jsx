@@ -247,6 +247,7 @@ const App = () => {
   });
   const [profileDraftBio, setProfileDraftBio] = useState("");
   const [profileDraftAvatar, setProfileDraftAvatar] = useState("");
+  const [profileDraftAvatarFile, setProfileDraftAvatarFile] = useState(null);
   const [profileAvatarStyle, setProfileAvatarStyle] = useState(AVATAR_STYLES[0].id);
   const [profileEditError, setProfileEditError] = useState("");
   const [isSavingProfile, setIsSavingProfile] = useState(false);
@@ -619,6 +620,7 @@ const App = () => {
   const closeProfile = () => {
     setSelectedProfile(null);
     setProfileEditError("");
+    setProfileDraftAvatarFile(null);
   };
 
   const saveOwnProfile = async () => {
@@ -631,8 +633,9 @@ const App = () => {
       const payload = {
         bio: String(profileDraftBio || "").trim(),
         avatar: String(profileDraftAvatar || "").trim(),
+        avatarFile: profileDraftAvatarFile,
       };
-
+ 
       const result = await authService.updateProfile(payload);
       if (!result.ok) {
         setProfileEditError(result.error || t("profile.updateError", "Could not update profile."));
@@ -1339,7 +1342,7 @@ const App = () => {
                     disabled={isSavingProfile}
                   />
                 </label>
-                <label>
+                 <label>
                   {t("profile.fields.avatar", "AVATAR URL")}
                   <input
                     type="url"
@@ -1348,6 +1351,18 @@ const App = () => {
                       setProfileDraftAvatar(event.target.value);
                     }}
                     placeholder={t("profile.avatarPlaceholder", "https://...")}
+                    disabled={isSavingProfile}
+                  />
+                </label>
+                <label>
+                  {t("profile.fields.avatarFile", "UPLOAD PHOTO")}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      if (file) setProfileDraftAvatarFile(file);
+                    }}
                     disabled={isSavingProfile}
                   />
                 </label>

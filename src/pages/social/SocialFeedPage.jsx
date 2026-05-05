@@ -419,10 +419,10 @@ const SocialFeedPage = ({
                           <button
                             type="button"
                             className="social-comment-user social-comment-user-btn"
-                            onClick={() => onOpenProfile?.({ user: comment.user })}
+                            onClick={() => onOpenProfile?.({ user: comment.users?.name, user_email: comment.user_email })}
                             aria-label={t("social.actions.viewProfile", "VIEW PROFILE")}
                           >
-                            @{comment.user || "USER"}
+                            @{comment.users?.name || comment.user_email.split('@')[0] || "USER"}
                           </button>
                           <span className="social-comment-time">{formatRelativeTime(comment.createdAt)}</span>
                         </div>

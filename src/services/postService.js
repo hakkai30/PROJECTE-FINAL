@@ -29,7 +29,10 @@ export const postService = {
       .from('posts')
       .select(`
         *,
-        comments (*)
+        comments (
+          *,
+          users:users(name, avatar)
+        )
       `)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -54,7 +57,13 @@ export const postService = {
     const { data, error } = await supabase
       .from('posts')
       .insert([{ description: text, img: finalImageUrl, user_email: user }])
-      .select(`*, comments (*)`)
+      .select(`
+        *,
+        comments (
+          *,
+          users:users(name, avatar)
+        )
+      `)
       .single();
 
     if (error) throw new Error(error.message);
@@ -123,7 +132,13 @@ export const postService = {
       .from('posts')
       .update({ likes: newLikesCount })
       .eq('id', postId)
-      .select(`*, comments (*)`)
+      .select(`
+        *,
+        comments (
+          *,
+          users:users(name, avatar)
+        )
+      `)
       .single();
 
     if (error) throw new Error(error.message);
@@ -158,7 +173,13 @@ export const postService = {
 
     const { data: post, error: postError } = await supabase
       .from('posts')
-      .select(`*, comments (*)`)
+      .select(`
+        *,
+        comments (
+          *,
+          users:users(name, avatar)
+        )
+      `)
       .eq('id', postId)
       .single();
 

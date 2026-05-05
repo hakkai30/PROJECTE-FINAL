@@ -75,7 +75,17 @@ export const authService = {
 
       if (error) throw error;
 
-      // Usar los datos que ya tenemos, sin consulta extra a la DB
+      // Sincronizar manualmente con la tabla pública de users
+      if (data.user) {
+        await supabase.from('users').upsert({
+          id: data.user.id,
+          email: email,
+          name: name,
+          bio: bio,
+          avatar: avatar
+        });
+      }
+
       const publicUser = toPublicUser(data.user, { name, bio, avatar });
       writeJson(STORAGE_KEYS.currentUser, publicUser);
 
@@ -94,8 +104,23 @@ export const authService = {
 
       if (error) throw error;
 
-      // Usar metadata del usuario, sin consulta extra a la tabla users
-      const publicUser = toPublicUser(data.user, data.user.user_metadata);
+      // Asegurar que existe en la tabla pública al loguearse
+      const { data: userRecord } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', data.user.id)
+        .single();
+      
+      if (!userRecord) {
+        await supabase.from('users').insert({
+          id: data.user.id,
+          email: data.user.email,
+          name: data.user.user_metadata?.name || data.user.email.split('@')[0],
+          avatar: data.user.user_metadata?.avatar || ""
+        });
+      }
+
+      const publicUser = toPublicUser(data.user, userRecord || data.user.user_metadata);
       writeJson(STORAGE_KEYS.currentUser, publicUser);
 
       return { ok: true, user: publicUser };
@@ -104,25 +129,45 @@ export const authService = {
     }
   },
 
-  async updateProfile({ bio = "", avatar = "" }) {
+  async updateProfile({ bio = "", avatar = "", avatarFile = null }) {
     try {
       const { data: sessionData } = await supabase.auth.getSession();
       if (!sessionData.session) throw new Error("No hay una sesión activa.");
       
       const user = sessionData.session.user;
+      let finalAvatarUrl = avatar;
+
+      // Si el usuario ha subido un archivo, subirlo a Storage primero
+      if (avatarFile) {
+        const fileExt = avatarFile.name.split('.').pop();
+        const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+        const filePath = `avatars/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('post-images') // Usamos el mismo bucket público
+          .upload(filePath, avatarFile, { upsert: true });
+
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = supabase.storage
+          .from('post-images')
+          .getPublicUrl(filePath);
+        
+        finalAvatarUrl = urlData.publicUrl;
+      }
 
       const { error: dbError } = await supabase
         .from('users')
-        .update({ bio, avatar })
+        .update({ bio, avatar: finalAvatarUrl })
         .eq('id', user.id);
 
       if (dbError) throw dbError;
 
       await supabase.auth.updateUser({
-        data: { bio, avatar }
+        data: { bio, avatar: finalAvatarUrl }
       });
 
-      const publicUser = toPublicUser(user, { ...user.user_metadata, bio, avatar });
+      const publicUser = toPublicUser(user, { ...user.user_metadata, bio, avatar: finalAvatarUrl });
       writeJson(STORAGE_KEYS.currentUser, publicUser);
 
       return { ok: true, user: publicUser };

@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   const { lang = "en" } = req.query;
-  const API_KEY = process.env.GNEWS_API_KEY || "";
+  const API_KEY = process.env.GNEWS_API_KEY || process.env.VITE_GNEWS_API_KEY || "";
   const query = "moda OR fashion";
   const safeLang = ["en", "es", "fr"].includes(lang) ? lang : "en";
   const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=${safeLang}&max=12&apikey=${API_KEY}`;
