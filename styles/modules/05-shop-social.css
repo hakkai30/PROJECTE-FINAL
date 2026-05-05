@@ -578,8 +578,8 @@ body {
 }
 
 .social-feed-header {
-  width: min(860px, 100%);
-  margin: 0 auto 1.1rem;
+  width: min(900px, 100%);
+  margin: 0 auto 2rem;
   padding: 0 0.4rem;
 }
 
@@ -710,11 +710,13 @@ body {
 }
 
 .social-post {
+  width: 100%;
+  max-width: 900px;
   border: 1px solid var(--brand-black);
   background: var(--bg-primary);
   border-radius: 0;
-  box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.05);
-  margin-bottom: 3rem;
+  box-shadow: 15px 15px 0px rgba(0, 0, 0, 0.05);
+  margin-bottom: 5rem;
 }
 
 .post-header {
@@ -731,6 +733,16 @@ body {
   align-items: center;
   gap: 1.5rem;
   border-top: 1px solid var(--brand-gray-100);
+}
+
+.post-img {
+  width: 100%;
+  height: auto;
+  min-height: 500px;
+  max-height: 1200px;
+  background-color: var(--brand-gray-100);
+  object-fit: cover;
+  display: block;
 }
 
 @media (max-width: 768px) {
