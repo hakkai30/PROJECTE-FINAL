@@ -440,6 +440,22 @@ const App = () => {
     }
   };
 
+  const deleteSocialPost = async (postId) => {
+    const normalizedId = String(postId);
+    if (!confirm(t("social.confirmDelete", "Are you sure you want to delete this post?"))) {
+      return;
+    }
+
+    setSocialFeedError("");
+
+    try {
+      await postService.deletePost(normalizedId);
+      setSocialPosts((prev) => prev.filter((post) => String(post.id) !== normalizedId));
+    } catch (error) {
+      setSocialFeedError(error.message || "Could not delete post.");
+    }
+  };
+
   const deleteSocialComment = async (postId, commentId) => {
     const normalizedId = String(postId);
     const normalizedCommentId = String(commentId);
@@ -1080,6 +1096,7 @@ const App = () => {
           onToggleLikePost={toggleSocialLike}
           onAddComment={addSocialComment}
           onDeleteComment={deleteSocialComment}
+          onDeletePost={deleteSocialPost}
           onCreatePost={createSocialPost}
           onOpenProfile={openProfile}
           onMessageAuthor={openDirectChatWithPostAuthor}
@@ -1101,6 +1118,7 @@ const App = () => {
           onToggleLikePost={toggleSocialLike}
           onAddComment={addSocialComment}
           onDeleteComment={deleteSocialComment}
+          onDeletePost={deleteSocialPost}
           onOpenProfile={openProfile}
           onMessageAuthor={openDirectChatWithPostAuthor}
           feedError={socialFeedError}

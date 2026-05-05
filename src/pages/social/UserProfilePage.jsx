@@ -80,6 +80,21 @@ const UserProfilePage = ({
     }
   };
 
+  const handleToggleSold = async (productId, currentStatus) => {
+    try {
+      const updatedProduct = await userProductService.updateProductStatus(productId, !currentStatus);
+      if (updatedProduct) {
+        setUserProducts((prev) =>
+          prev.map((prod) =>
+            prod.id === productId ? updatedProduct : prod
+          )
+        );
+      }
+    } catch (err) {
+      setError(err.message || "Could not update product status.");
+    }
+  };
+
   const handleToggleLike = async (productId) => {
     const isLiked = likedProductIds.includes(productId);
     const direction = isLiked ? "down" : "up";
@@ -234,6 +249,11 @@ const UserProfilePage = ({
                         e.target.style.display = "none";
                       }}
                     />
+                    {product.is_sold && (
+                      <div className="sold-badge">
+                        {t("profile.sold", "SOLD")}
+                      </div>
+                    )}
                   </div>
 
                   <div className="product-info">
@@ -264,13 +284,22 @@ const UserProfilePage = ({
                       </div>
 
                       {isCurrentUserProfile && (
-                        <button
-                          className="delete-btn"
-                          onClick={() => handleDeleteProduct(product.id)}
-                          aria-label={t("profile.deleteProduct", "Delete product")}
-                        >
-                          <Trash2 size={18} />
-                        </button>
+                        <div className="product-admin-actions" style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                          <button
+                            className={`btn-mini ${product.is_sold ? 'btn-sold' : ''}`}
+                            style={{ flex: 1, fontSize: '0.7rem', padding: '4px' }}
+                            onClick={() => handleToggleSold(product.id, product.is_sold)}
+                          >
+                            {product.is_sold ? t("profile.markAvailable", "AVAILABLE") : t("profile.markSold", "MARK SOLD")}
+                          </button>
+                          <button
+                            className="delete-btn"
+                            onClick={() => handleDeleteProduct(product.id)}
+                            aria-label={t("profile.deleteProduct", "Delete product")}
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
                       )}
                     </div>
                   </div>

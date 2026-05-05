@@ -112,4 +112,14 @@ export const postService = {
 
     return post;
   },
+
+  async deletePost(postId) {
+    const { error } = await supabase
+      .from('posts')
+      .delete()
+      .eq('id', postId);
+
+    if (error) throw new Error(error.message);
+    return true;
+  },
 };
