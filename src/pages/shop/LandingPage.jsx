@@ -7,7 +7,7 @@ const LandingPage = ({ changePage, currentUser, cartCount = 0, wishlistCount = 0
 
   // Debug para ver si llega el usuario al hosting
   useEffect(() => {
-    console.log("LandingPage CurrentUser:", currentUser);
+    // Evitar logs en producción; mantener el hook para posibles side-effects
   }, [currentUser]);
 
   useEffect(() => {

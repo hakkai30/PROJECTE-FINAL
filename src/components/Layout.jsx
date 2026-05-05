@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import FocusTrap from "focus-trap-react";
 import { X, Search, Menu, ShoppingBag, Heart, Send, Palette, History, Plus } from "lucide-react";
 import { MOCK_PRODUCTS } from "../data/mockData";
 import { LANGUAGE_OPTIONS, getLanguageLabel } from "../data/i18n";
 import { localizeProduct } from "../data/i18n";
+import OptimizedImage from "./OptimizedImage";
 
 export const WindowOverlay = ({ label, offsetClass, article }) => {
   const [isVisible, setIsVisible] = useState(true);
@@ -24,11 +26,11 @@ export const WindowOverlay = ({ label, offsetClass, article }) => {
             </button>
         </div>
       </div>
-      {article ? (
+        {article ? (
         <a href={article.url} target="_blank" rel="noopener noreferrer" className="window-body" style={{ textDecoration: "none", color: "inherit", display: "flex", flexDirection: "column", cursor: "pointer" }}>
           <div className="window-url">{article.source.name.substring(0, 20)}</div>
           <div className="window-preview" style={{ padding: 0, gap: 0, overflow: "hidden" }}>
-            <img src={article.image || "https://via.placeholder.com/150"} alt="" style={{ width: "100%", height: "80px", objectFit: "cover" }} />
+            <OptimizedImage src={article.image || "https://via.placeholder.com/150?w=400&q=80"} alt={article.title || "Noticia"} loading="lazy" decoding="async" width={400} height={80} sizes="(max-width:400px) 100vw, 400px" style={{ width: "100%", height: "80px", objectFit: "cover" }} />
             <div style={{ padding: "4px", fontSize: "0.55rem", fontWeight: "bold", color: "#333" }}>
               {article.title.length > 50 ? article.title.substring(0, 50) + "..." : article.title}
             </div>
@@ -132,7 +134,8 @@ export const GlobalHeader = ({
           {/* Menú lateral (Sidebar) */}
           {isMenuOpen && (
             <div className="sidebar-overlay" onClick={() => setIsMenuOpen(false)}>
-              <div className="sidebar-menu" onClick={(e) => e.stopPropagation()}>
+              <FocusTrap active={isMenuOpen} focusTrapOptions={{ clickOutsideDeactivates: true }}>
+                <div className="sidebar-menu" role="dialog" aria-modal="true" aria-label={t("nav.sidebar", "Main menu")} onClick={(e) => e.stopPropagation()} tabIndex={-1}>
                 <div className="sidebar-intro">
                   <p className="sidebar-kicker">{t("nav.explore", "EXPLORE")}</p>
                   <p className="sidebar-note">
@@ -201,7 +204,8 @@ export const GlobalHeader = ({
                   </button>
                   <button type="button">{t("header.currency", "SPAIN / EUR")}</button>
                 </div>
-              </div>
+                </div>
+              </FocusTrap>
             </div>
           )}
         </div>
@@ -251,7 +255,8 @@ export const GlobalHeader = ({
 
       {/* OVERLAY DE BÚSQUEDA A PANTALLA COMPLETA */}
       {isSearchOpen && (
-        <div className="search-fullscreen-overlay">
+        <div className="search-fullscreen-overlay" role="dialog" aria-modal="true" aria-label={t("header.search", "SEARCH")}>
+          <FocusTrap active={isSearchOpen} focusTrapOptions={{ clickOutsideDeactivates: true }}>
           <button
             className="close-search-btn"
             onClick={() => {
@@ -312,7 +317,7 @@ export const GlobalHeader = ({
                     onClick={() => handleResultOpen(product)}
                     onMouseEnter={() => setActiveResultIndex(index)}
                   >
-                    <img src={product.img} alt={localizeProduct(product, language).name} className="search-result-thumb" />
+                    <OptimizedImage src={product.img} alt={localizeProduct(product, language).name} className="search-result-thumb" loading="lazy" decoding="async" width={56} height={56} sizes="56px" />
                     <div className="search-result-texts">
                       <span>{localizeProduct(product, language).name}</span>
                       <small>
@@ -327,6 +332,7 @@ export const GlobalHeader = ({
               </div>
             )}
           </div>
+          </FocusTrap>
         </div>
       )}
     </>
