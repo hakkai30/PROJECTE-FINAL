@@ -720,6 +720,14 @@ const App = () => {
     return result;
   };
 
+  const markNotificationAsRead = async (notificationId) => {
+    try {
+      await notificationService.markAsRead(notificationId);
+      setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, read: true } : n));
+      setUnreadNotificationsCount(prev => Math.max(0, prev - 1));
+    } catch (e) { console.error("Could not mark as read", e); }
+  };
+
   const handleLogout = async () => {
     await authService.logout();
     setCurrentUser(null);
@@ -928,6 +936,9 @@ const App = () => {
           wishlistCount={wishlistCount}
           language={language}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
       {currentPage === "shop" && (
@@ -941,6 +952,9 @@ const App = () => {
           currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
       {currentPage === "products" && (
@@ -957,6 +971,9 @@ const App = () => {
           currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
       {currentPage === "men" && (
@@ -973,6 +990,9 @@ const App = () => {
           currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
       {currentPage === "women" && (
@@ -989,6 +1009,9 @@ const App = () => {
           currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
       {currentPage === "kids" && (
@@ -1005,6 +1028,9 @@ const App = () => {
           currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
       {currentPage === "bags" && (
@@ -1021,6 +1047,9 @@ const App = () => {
           currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
       {currentPage === "accessories" && (
@@ -1037,6 +1066,9 @@ const App = () => {
           currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
       {currentPage === "home" && (
@@ -1053,6 +1085,9 @@ const App = () => {
           currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
       {currentPage === "cart" && (
@@ -1068,6 +1103,9 @@ const App = () => {
           currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
       {currentPage === "wishlist" && (
@@ -1084,6 +1122,9 @@ const App = () => {
           currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
       {currentPage === "settings" && (
@@ -1109,6 +1150,9 @@ const App = () => {
           currentUser={currentUser} onLogout={handleLogout}
           language={language}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
       {currentPage === "auth" && (
@@ -1150,6 +1194,7 @@ const App = () => {
           onAddComment={addSocialComment}
           onDeleteComment={deleteSocialComment}
           onDeletePost={deleteSocialPost}
+          onDeletePost={deleteSocialPost}
           onCreatePost={createSocialPost}
           onOpenProfile={openProfile}
           onMessageAuthor={openDirectChatWithPostAuthor}
@@ -1159,8 +1204,6 @@ const App = () => {
           activeView={socialFeedFilter}
           onViewChange={(view) => {
             setSocialFeedFilter(view);
-            // setSocialPosts([]); // Opcional: limpiar posts anteriores
-            // setHasMorePosts(true);
           }}
           hasMore={hasMorePosts}
           onLoadMore={() => loadSocialPosts(true)}
@@ -1172,6 +1215,9 @@ const App = () => {
           onToggleTheme={toggleTheme}
           language={language}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
       {currentPage === "saved-looks" && (
@@ -1206,6 +1252,9 @@ const App = () => {
           onToggleTheme={toggleTheme}
           language={language}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
       {currentPage === "user-profile" && currentUser && (
@@ -1226,6 +1275,9 @@ const App = () => {
           onToggleSavedLook={toggleSavedLook}
           language={language}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
 

@@ -152,11 +152,15 @@ export const GlobalHeader = ({
   onOpenProductDetail = null,
   language = "ca",
   t,
+  notifications = [],
+  unreadNotificationsCount = 0,
+  onMarkNotificationRead,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeResultIndex, setActiveResultIndex] = useState(-1);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   const normalizedTerm = searchTerm.trim().toLowerCase();
   const searchResults = normalizedTerm
@@ -287,6 +291,73 @@ export const GlobalHeader = ({
         </div>
         
         <div className="header-actions">
+          {currentUser && (
+            <div style={{ position: 'relative' }}>
+              <button
+                className={`header-icon-btn ${isNotificationsOpen ? 'active' : ''}`}
+                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                aria-label={t("notifications.title", "NOTIFICATIONS")}
+                title={t("notifications.title", "NOTIFICATIONS")}
+              >
+                <div style={{ position: 'relative' }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+                  {unreadNotificationsCount > 0 && (
+                    <span className="header-icon-badge" aria-hidden="true" style={{ backgroundColor: 'var(--brand-black)' }}>
+                      {unreadNotificationsCount > 9 ? "9+" : unreadNotificationsCount}
+                    </span>
+                  )}
+                </div>
+              </button>
+              
+              {isNotificationsOpen && (
+                <div className="notifications-dropdown-logic" style={{
+                  position: 'absolute',
+                  top: '100%',
+                  right: 0,
+                  width: '280px',
+                  backgroundColor: 'var(--brand-white)',
+                  border: '2px solid var(--brand-black)',
+                  marginTop: '0.5rem',
+                  zIndex: 1000,
+                  boxShadow: '4px 4px 0 var(--brand-black)'
+                }}>
+                  <div style={{ padding: '0.75rem', borderBottom: '2px solid var(--brand-black)', fontWeight: 'bold', fontSize: '0.8rem', display: 'flex', justifyContent: 'space-between' }}>
+                    <span>{t("notifications.title", "NOTIFICATIONS")}</span>
+                    <button onClick={() => setIsNotificationsOpen(false)} style={{ border: 'none', background: 'none', cursor: 'pointer', fontWeight: 'bold' }}>×</button>
+                  </div>
+                  <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                    {notifications.length === 0 ? (
+                      <p style={{ padding: '1rem', fontSize: '0.75rem', textAlign: 'center', color: 'var(--brand-gray-400)' }}>
+                        {t("notifications.empty", "No notifications yet.")}
+                      </p>
+                    ) : (
+                      notifications.map(notif => (
+                        <div 
+                          key={notif.id} 
+                          onClick={() => {
+                            onMarkNotificationRead?.(notif.id);
+                            setIsNotificationsOpen(false);
+                          }}
+                          style={{ 
+                            padding: '0.75rem', 
+                            borderBottom: '1px solid var(--brand-black)', 
+                            fontSize: '0.7rem',
+                            backgroundColor: notif.read ? 'transparent' : 'rgba(0,0,0,0.05)',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <strong>@{notif.actor?.email?.split('@')[0] || 'User'}</strong> {notif.content}
+                          <div style={{ fontSize: '0.6rem', marginTop: '0.25rem', color: 'var(--brand-gray-400)' }}>
+                            {new Date(notif.created_at).toLocaleDateString()}
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           <button
             className="header-icon-btn"
             onClick={() => setIsSearchOpen(true)}
