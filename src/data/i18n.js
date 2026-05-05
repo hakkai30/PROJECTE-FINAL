@@ -153,6 +153,18 @@ const TRANSLATIONS = {
       checkout: "PASSA AL PAGAMENT",
       toastAdded: "Afegit al carret:",
     },
+    checkout: {
+      success: {
+        title: "GRÀCIES!",
+        message: "La teva comanda s'ha realitzat correctament.",
+        button: "CONTINUA COMPRANT",
+      },
+      cancel: {
+        title: "COMANDA CANCEL·LADA",
+        message: "Alguna cosa ha anat malament o has cancel·lat el pagament.",
+        button: "TORNAR A LA BOSSA",
+      },
+    },
     wishlist: {
       title: "WISHLIST",
       empty: "Encara no tens favorits guardats.",
@@ -490,6 +502,18 @@ const TRANSLATIONS = {
       checkout: "IR AL PAGO",
       toastAdded: "Añadido al carrito:",
     },
+    checkout: {
+      success: {
+        title: "¡GRACIAS!",
+        message: "Tu pedido se ha realizado correctamente.",
+        button: "CONTINUAR COMPRANDO",
+      },
+      cancel: {
+        title: "PEDIDO CANCELADO",
+        message: "Algo ha salido mal o has cancelado el pago.",
+        button: "VOLVER A LA BOLSA",
+      },
+    },
     wishlist: {
       title: "WISHLIST",
       empty: "Todavía no tienes favoritos guardados.",
@@ -789,6 +813,18 @@ const TRANSLATIONS = {
       checkout: "PROCEED TO CHECKOUT",
       toastAdded: "Added to cart:",
     },
+    checkout: {
+      success: {
+        title: "THANK YOU!",
+        message: "Your order has been placed successfully.",
+        button: "CONTINUE SHOPPING",
+      },
+      cancel: {
+        title: "ORDER CANCELLED",
+        message: "Something went wrong or you cancelled the payment.",
+        button: "BACK TO BAG",
+      },
+    },
     wishlist: {
       title: "WISHLIST",
       empty: "You do not have any saved favorites yet.",
@@ -1086,6 +1122,18 @@ const TRANSLATIONS = {
       taxNotice: "Taxes incluses. Frais de livraison calculés au paiement.",
       checkout: "ALLER AU PAIEMENT",
       toastAdded: "Ajouté au panier :",
+    },
+    checkout: {
+      success: {
+        title: "MERCI !",
+        message: "Votre commande a été passée avec succès.",
+        button: "CONTINUER VOS ACHATS",
+      },
+      cancel: {
+        title: "COMMANDE ANNULÉE",
+        message: "Quelque chose s'est mal passé ou vous avez annulé le paiement.",
+        button: "RETOUR AU PANIER",
+      },
     },
     wishlist: {
       title: "WISHLIST",

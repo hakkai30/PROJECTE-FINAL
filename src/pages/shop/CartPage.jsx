@@ -1,5 +1,6 @@
 import { GlobalFooter, GlobalHeader } from "../../components/Layout";
 import { localizeProduct } from "../../data/i18n";
+import { redirectToCheckout } from "../../services/stripe";
 
 const CartPage = ({
   changePage,
@@ -14,6 +15,12 @@ const CartPage = ({
   t,
 }) => {
   const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+
+  const handleCheckout = async () => {
+    // Localize items before sending to checkout to ensure names match user's language
+    const localizedItems = cartItems.map(item => localizeProduct(item, language));
+    await redirectToCheckout(localizedItems);
+  };
 
   return (
     <div className="category-page">
@@ -80,7 +87,12 @@ const CartPage = ({
               <p style={{ color: "#666", marginBottom: "2rem" }}>
                 {t("cart.taxNotice", "Taxes included. Shipping costs calculated at checkout.")}
               </p>
-              <button className="checkout-btn">{t("cart.checkout", "PROCEED TO CHECKOUT")}</button>
+              <button 
+                className="checkout-btn"
+                onClick={handleCheckout}
+              >
+                {t("cart.checkout", "PROCEED TO CHECKOUT")}
+              </button>
             </div>
           </div>
         )}

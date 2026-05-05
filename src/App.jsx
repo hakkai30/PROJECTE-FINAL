@@ -96,6 +96,8 @@ const VALID_PAGES = new Set([
   "messages",
   "user-profile",
   "news",
+  "success",
+  "cancel",
 ]);
 
 const PROTECTED_PAGES = new Set(["socials", "saved-looks", "messages", "user-profile"]);
@@ -1198,7 +1200,6 @@ const App = () => {
           onAddComment={addSocialComment}
           onDeleteComment={deleteSocialComment}
           onDeletePost={deleteSocialPost}
-          onDeletePost={deleteSocialPost}
           onCreatePost={createSocialPost}
           onOpenProfile={openProfile}
           onMessageAuthor={openDirectChatWithPostAuthor}
@@ -1457,6 +1458,28 @@ const App = () => {
           isSocialLoading={isLoadingSocialPosts}
           isAuthenticated={Boolean(currentUser)}
         />
+      )}
+
+      {currentPage === "success" && (
+        <div className="cart-container" style={{ textAlign: "center", padding: "10rem 2rem" }}>
+          <h1 style={{ fontSize: "4rem", marginBottom: "2rem" }}>{t("checkout.success.title", "THANK YOU!")}</h1>
+          <p style={{ fontSize: "1.5rem", marginBottom: "3rem" }}>{t("checkout.success.message", "Your order has been placed successfully.")}</p>
+          <button className="checkout-btn" onClick={() => {
+            setCartItems([]);
+            setCurrentPage("shop");
+          }}>
+            {t("checkout.success.button", "CONTINUE SHOPPING")}
+          </button>
+        </div>
+      )}
+      {currentPage === "cancel" && (
+        <div className="cart-container" style={{ textAlign: "center", padding: "10rem 2rem" }}>
+          <h1 style={{ fontSize: "4rem", marginBottom: "2rem" }}>{t("checkout.cancel.title", "ORDER CANCELLED")}</h1>
+          <p style={{ fontSize: "1.5rem", marginBottom: "3rem" }}>{t("checkout.cancel.message", "Something went wrong or you cancelled the payment.")}</p>
+          <button className="checkout-btn" onClick={() => setCurrentPage("cart")}>
+            {t("checkout.cancel.button", "BACK TO BAG")}
+          </button>
+        </div>
       )}
 
       {cartToast && <div className="app-toast">{cartToast}</div>}
