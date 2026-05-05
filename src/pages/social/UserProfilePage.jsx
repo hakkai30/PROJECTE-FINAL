@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { Heart, Trash2, Plus } from "lucide-react";
+import { Heart, Trash2, Plus, MessageCircle, Bookmark, MessageSquare } from "lucide-react";
 import { GlobalFooter, GlobalHeader } from "../../components/Layout";
-import UploadProductForm from "../../components/UploadProductForm";
-import { userProductService } from "../../services/userProductService";
+import { localizePost } from "../../data/i18n";
 
 const UserProfilePage = ({
   changePage,
@@ -11,6 +10,14 @@ const UserProfilePage = ({
   currentUser,
   theme,
   onToggleTheme,
+  posts = [],
+  likedPostIds = [],
+  onToggleLikePost,
+  onAddComment,
+  onDeleteComment,
+  onDeletePost,
+  savedLookIds = [],
+  onToggleSavedLook,
   language,
   t,
 }) => {
@@ -59,6 +66,46 @@ const UserProfilePage = ({
            <button className="btn-primary" onClick={() => changePage("socials")}>
              {t("profile.viewFeed", "VIEW SOCIAL FEED")}
            </button>
+        </section>
+
+        {/* User Posts Feed */}
+        <section className="user-posts-section">
+          <h2 className="section-title">{t("profile.yourPosts", "YOUR POSTS")}</h2>
+          
+          <div className="profile-posts-grid">
+            {posts.filter(post => post.user === currentUser.email || post.user === currentUser.name).length === 0 ? (
+              <p className="empty-state">{t("profile.noPosts", "You haven't posted anything yet.")}</p>
+            ) : (
+              posts
+                .filter(post => post.user === currentUser.email || post.user === currentUser.name)
+                .map(post => (
+                  <div key={post.id} className="profile-post-card">
+                    <div className="post-media">
+                      {post.image ? (
+                        <img src={post.image} alt="" />
+                      ) : (
+                        <div className="post-text-placeholder">
+                          <p>{post.text}</p>
+                        </div>
+                      )}
+                    </div>
+                    <div className="post-overlay">
+                      <div className="post-stats">
+                        <span><Heart size={16} fill="currentColor" /> {post.likes || 0}</span>
+                        <span><MessageCircle size={16} fill="currentColor" /> {post.comments?.length || 0}</span>
+                      </div>
+                      <button 
+                        className="delete-post-btn"
+                        onClick={() => onDeletePost?.(post.id)}
+                        title={t("social.comments.delete", "DELETE")}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))
+            )}
+          </div>
         </section>
       </main>
 

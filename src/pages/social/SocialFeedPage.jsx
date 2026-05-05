@@ -190,6 +190,16 @@ const SocialFeedPage = ({
             <button 
               type="button" 
               className="side-nav-item" 
+              onClick={() => changePage("saved-looks")}
+              title={t("social.sidebar.savedLooks", "SAVED LOOKS")}
+            >
+              <Bookmark size={20} />
+              {isSidebarOpen && <span>{t("social.sidebar.savedLooks", "SAVED LOOKS")}</span>}
+            </button>
+
+            <button 
+              type="button" 
+              className="side-nav-item" 
               onClick={() => changePage("user-profile")}
               title={t("nav.profile", "MY PROFILE")}
             >

@@ -1135,6 +1135,14 @@ const App = () => {
           currentUser={currentUser} onLogout={handleLogout}
           theme={theme}
           onToggleTheme={toggleTheme}
+          posts={socialPosts}
+          likedPostIds={likedPostIds}
+          onToggleLikePost={toggleSocialLike}
+          onAddComment={addSocialComment}
+          onDeleteComment={deleteSocialComment}
+          onDeletePost={deleteSocialPost}
+          savedLookIds={savedLookIds}
+          onToggleSavedLook={toggleSavedLook}
           language={language}
           t={t}
         />
