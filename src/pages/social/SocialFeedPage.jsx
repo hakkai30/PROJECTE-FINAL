@@ -11,6 +11,7 @@ const SocialFeedPage = ({
   onToggleLikePost,
   onAddComment,
   onDeleteComment,
+  onDeletePost,
   onCreatePost,
   onOpenProfile,
   isLoadingPosts = false,
@@ -309,6 +310,17 @@ const SocialFeedPage = ({
                 >
                   @{post.user}
                 </button>
+
+                {currentUser?.email === post.user_email && (
+                  <button
+                    type="button"
+                    className="social-comment-delete"
+                    style={{ marginLeft: 'auto', marginRight: '1rem', border: '1px solid var(--border-color)', padding: '2px 8px' }}
+                    onClick={() => onDeletePost?.(post.id)}
+                  >
+                    {t("social.feed.deletePost", "DELETE POST")}
+                  </button>
+                )}
               </div>
               <img
                 src={localizedPost.img}

@@ -332,6 +332,22 @@
   aspect-ratio: 3 / 4;
   overflow: hidden;
   background: var(--color-bg-input);
+  position: relative;
+}
+
+.sold-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--color-primary);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 4px;
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  letter-spacing: 1px;
 }
 
 .product-image {
@@ -699,4 +715,21 @@
 [data-theme="dark"] .form-group textarea,
 [data-theme="dark"] .form-group select {
   color: #e0e0e0;
+}
+
+.btn-mini {
+  padding: 0.5rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-input);
+  color: var(--color-text-primary);
+  transition: all 0.2s ease;
+}
+
+.btn-sold {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
 }

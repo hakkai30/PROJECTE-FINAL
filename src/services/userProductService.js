@@ -44,7 +44,8 @@ export const userProductService = {
         sizes,
         category,
         seller,
-        seller_email: sellerEmail
+        seller_email: sellerEmail,
+        is_sold: false
       }])
       .select()
       .single();
@@ -77,6 +78,18 @@ export const userProductService = {
     const { data, error } = await supabase
       .from('user_products')
       .update({ likes: Math.max(0, (product.likes || 0) + increment) })
+      .eq('id', productId)
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return data;
+  },
+
+  async updateProductStatus(productId, isSold) {
+    const { data, error } = await supabase
+      .from('user_products')
+      .update({ is_sold: isSold })
       .eq('id', productId)
       .select()
       .single();
