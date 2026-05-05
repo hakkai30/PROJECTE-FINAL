@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense, lazy } from "react";
 import LandingPage from "./pages/shop/LandingPage";
 import CategoryPage from "./pages/shop/CategoryPage";
 import ProductsPage from "./pages/shop/ProductsPage";
@@ -10,13 +10,13 @@ import AccessoriesPage from "./pages/shop/AccessoriesPage";
 import HomeDecorPage from "./pages/shop/HomeDecorPage";
 import CartPage from "./pages/shop/CartPage";
 import WishlistPage from "./pages/shop/WishlistPage";
-import ProductDetailPage from "./pages/shop/ProductDetailPage";
+const ProductDetailPage = lazy(() => import("./pages/shop/ProductDetailPage"));
 import SettingsPage from "./pages/shop/SettingsPage";
-import SocialFeedPage from "./pages/social/SocialFeedPage";
-import SavedLooksPage from "./pages/social/SavedLooksPage";
-import MessagesPage from "./pages/social/MessagesPage";
+const SocialFeedPage = lazy(() => import("./pages/social/SocialFeedPage"));
+const SavedLooksPage = lazy(() => import("./pages/social/SavedLooksPage"));
+const MessagesPage = lazy(() => import("./pages/social/MessagesPage"));
 import AuthPage from "./pages/shop/AuthPage";
-import UserProfilePage from "./pages/social/UserProfilePage";
+const UserProfilePage = lazy(() => import("./pages/social/UserProfilePage"));
 import NewsPage from "./pages/social/NewsPage";
 import { ChatbotWidget } from "./components/Layout";
 import { MOCK_PRODUCTS } from "./data/mockData";
@@ -807,6 +807,7 @@ const App = () => {
   }, [currentPage, currentUser, isGuest]);
 
   return (
+    <Suspense fallback={<div className="loading">Cargando...</div>}>
     <div>
       {currentPage === "landing" && (
         <LandingPage
@@ -1033,7 +1034,6 @@ const App = () => {
         <SocialFeedPage
           changePage={setCurrentPage}
           currentUser={currentUser} onLogout={handleLogout}
-          onLogout={handleLogout}
           posts={socialPosts}
           likedPostIds={likedPostIds}
           onToggleLikePost={toggleSocialLike}
@@ -1055,7 +1055,6 @@ const App = () => {
         <SavedLooksPage
           changePage={setCurrentPage}
           currentUser={currentUser} onLogout={handleLogout}
-          onLogout={handleLogout}
           savedLooks={savedLooks}
           likedPostIds={likedPostIds}
           onToggleLikePost={toggleSocialLike}
@@ -1074,7 +1073,6 @@ const App = () => {
         <MessagesPage
           changePage={setCurrentPage}
           currentUser={currentUser} onLogout={handleLogout}
-          onLogout={handleLogout}
           onOpenProfile={openProfile}
           pendingContact={pendingContact}
           onClearPendingContact={clearPendingContact}
@@ -1271,6 +1269,7 @@ const App = () => {
 
       {cartToast && <div className="app-toast">{cartToast}</div>}
     </div>
+    </Suspense>
   );
 };
 

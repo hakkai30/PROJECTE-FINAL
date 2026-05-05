@@ -3,6 +3,7 @@ import { Heart } from "lucide-react";
 import { GlobalFooter, GlobalHeader } from "../../components/Layout";
 import { MOCK_PRODUCTS } from "../../data/mockData";
 import { localizeProduct } from "../../data/i18n";
+import OptimizedImage from "../../components/OptimizedImage";
 
 const ProductsPage = ({
   changePage,
@@ -217,10 +218,11 @@ const ProductsPage = ({
               />
             </button>
             <div className="product-img">
-              <img
+              <OptimizedImage
                 src={localizedProduct.img}
                 alt={localizedProduct.name}
                 className="product-placeholder"
+                sizes="(max-width:600px) 100vw, 25vw"
               />
             </div>
             <div className="product-info">
@@ -275,7 +277,7 @@ const ProductsPage = ({
               {t("products.quickView.close", "CLOSE")}
             </button>
             <div className="quick-view-grid">
-              <img src={localizeProduct(quickViewProduct, language).img} alt={localizeProduct(quickViewProduct, language).name} className="quick-view-img" />
+              <OptimizedImage src={localizeProduct(quickViewProduct, language).img} alt={localizeProduct(quickViewProduct, language).name} className="quick-view-img" sizes="(max-width:600px) 100vw, 40vw" />
               <div className="quick-view-content">
                 <p className="product-brand">{quickViewProduct.brand}</p>
                 <h3>{localizeProduct(quickViewProduct, language).name}</h3>
