@@ -251,6 +251,30 @@ const App = () => {
     });
   };
 
+  const handleLogin = async ({ email, password }) => {
+    try {
+      const { user, error } = await authService.login(email, password);
+      if (error) return { ok: false, error };
+      setCurrentUser(user);
+      navigate("/shop");
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
+  };
+
+  const handleRegister = async ({ name, email, password, bio, avatar }) => {
+    try {
+      const { user, error } = await authService.register(email, password, { name, bio, avatar });
+      if (error) return { ok: false, error };
+      setCurrentUser(user);
+      navigate("/shop");
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
+  };
+
   const handleLogout = async () => {
     // Redirigimos inmediatamente para una UX más fluida
     navigate("/auth");
@@ -367,7 +391,18 @@ const App = () => {
           <Route path="/wishlist" element={<WishlistPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} wishlistItems={wishlistItems} onToggleWishlist={toggleWishlist} onAddToCart={addToCart} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} onOpenProductDetail={openProductDetail} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
           <Route path="/settings" element={<SettingsPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} setTheme={setTheme} language={language} setLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
           <Route path="/news" element={<NewsPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
-          <Route path="/auth" element={<AuthPage changePage={setCurrentPage} onLoginSuccess={(user) => { setCurrentUser(user); navigate("/shop"); }} onGuestAccess={() => { setIsGuest(true); localStorage.setItem("rtf_is_guest", "true"); navigate("/shop"); }} t={t} />} />
+          <Route path="/auth" element={
+            <AuthPage
+              onLogin={handleLogin}
+              onRegister={handleRegister}
+              onContinueAsGuest={() => {
+                setIsGuest(true);
+                localStorage.setItem("rtf_is_guest", "true");
+                navigate("/shop");
+              }}
+              t={t}
+            />
+          } />
           <Route path="/product/:id" element={<ProductDetailPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} product={selectedProduct} addToCart={addToCart} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
           <Route path="/social" element={<SocialFeedPage changePage={setCurrentPage} onOpenProductDetail={openProductDetail} posts={socialPosts} isLoadingPosts={isLoadingSocialPosts} feedError={socialFeedError} activeView={socialFeedFilter} onViewChange={setSocialFeedFilter} savedLookIds={savedLookIds} onToggleSavedLook={toggleSavedLook} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} onLikePost={toggleSocialLike} onAddComment={addSocialComment} loadMorePosts={() => loadSocialPosts(true)} refreshPosts={() => loadSocialPosts(false)} onCreatePost={createSocialPost} onOpenProfile={openProfile} />} />
           <Route path="/social/saved" element={<SavedLooksPage changePage={setCurrentPage} posts={socialPosts} savedLookIds={savedLookIds} onToggleSavedLook={toggleSavedLook} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
