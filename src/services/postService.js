@@ -31,7 +31,10 @@ export const postService = {
         *,
         comments (
           *,
-          users:users(name, avatar)
+          users (
+            name,
+            avatar
+          )
         )
       `)
       .order('created_at', { ascending: false })
@@ -61,7 +64,10 @@ export const postService = {
         *,
         comments (
           *,
-          users:users(name, avatar)
+          users (
+            name,
+            avatar
+          )
         )
       `)
       .single();
@@ -136,7 +142,10 @@ export const postService = {
         *,
         comments (
           *,
-          users:users(name, avatar)
+          users (
+            name,
+            avatar
+          )
         )
       `)
       .single();
@@ -177,7 +186,10 @@ export const postService = {
         *,
         comments (
           *,
-          users:users(name, avatar)
+          users (
+            name,
+            avatar
+          )
         )
       `)
       .eq('id', postId)
