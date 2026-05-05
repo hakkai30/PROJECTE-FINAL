@@ -133,8 +133,8 @@
 }
 
 :root[data-theme="dark"] .chatbot-header {
-  background: linear-gradient(180deg, #2a2f36, #1b1f25);
-  border-bottom-color: var(--dark-border-strong);
+  background: var(--brand-black);
+  border-bottom: 1px solid var(--dark-border-strong);
   color: var(--ink-1);
 }
 
@@ -147,8 +147,7 @@
 }
 
 :root[data-theme="dark"] .chatbot-messages {
-  background:
-    linear-gradient(180deg, rgba(23, 25, 29, 0.98), rgba(18, 19, 22, 0.98));
+  background: var(--bg-primary);
 }
 
 :root[data-theme="dark"] .chat-bubble.ai {
@@ -237,10 +236,7 @@
 }
 
 :root[data-theme="dark"] .landing-page-brutalist {
-  background:
-    radial-gradient(circle at 12% 16%, rgba(255, 255, 255, 0.06) 0%, transparent 30%),
-    radial-gradient(circle at 80% 78%, rgba(130, 130, 130, 0.13) 0%, transparent 36%),
-    linear-gradient(145deg, #141414 0%, #191919 50%, #1f1f1f 100%);
+  background-color: var(--bg-primary);
 }
 
 :root[data-theme="dark"] .landing-kicker,
@@ -280,8 +276,8 @@
 }
 
 :root[data-theme="dark"] .window-header {
-  background: linear-gradient(180deg, #1f4e9b, #1b4588);
-  border-bottom-color: rgba(255, 255, 255, 0.18);
+  background: var(--brand-black);
+  border-bottom: 1px solid var(--brand-gray-800);
 }
 
 :root[data-theme="dark"] .window-body {

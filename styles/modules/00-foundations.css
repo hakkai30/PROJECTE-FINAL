@@ -1,11 +1,12 @@
 :root {
   /* Fusion Palette: Rick Owens (Monochrome) x Mihara (Industrial) */
-  --bg-primary: #ffffff;
-  --bg-secondary: #ffffff;
-  --brand-black: #000000;
-  --brand-gray-900: #121212;
+  /* Refined "Industrial Obsidian" Palette - Approved Phase 2 */
+  --bg-primary: #fafafa;
+  --bg-secondary: #f0f0f0;
+  --brand-black: #0a0a0a;
+  --brand-gray-900: #1a1a1a;
   --brand-gray-800: #333333;
-  --brand-gray-400: #666666; /* Improved contrast for light mode */
+  --brand-gray-400: #555555; /* Balanced secondary text contrast */
   --brand-gray-100: #eeeeee;
 
   /* Industrial Accents (Mihara) */
@@ -13,30 +14,30 @@
   --accent-industrial-soft: rgba(42, 59, 76, 0.05);
 
   /* Surface & Glass (Deconstructed) */
-  --surface-unified-bg: rgba(255, 255, 255, 0.85);
-  --surface-unified-border: #000000; /* Sharp, thin borders */
-  --surface-unified-shadow: none; /* Rick Owens: No shadows, pure flat */
-  --surface-unified-radius: 0px; /* Brutalist: Sharp corners */
+  --surface-unified-bg: rgba(250, 250, 250, 0.85);
+  --surface-unified-border: #111111; /* Sharp, thin borders but not pure black */
+  --surface-unified-shadow: none; 
+  --surface-unified-radius: 0px; 
   --glass-blur: 12px;
+
+  /* Core UI Variables (Absolute Contrast) */
+  --surface-0: var(--bg-primary);
+  --surface-1: var(--bg-primary);
+  --surface-2: var(--bg-secondary);
+  --ink-1: var(--brand-black);
+  --ink-2: var(--brand-gray-400);
+  --ink-3: var(--brand-gray-400);
+  --dark-control-fill: var(--brand-black);
+  --dark-on-light: var(--bg-primary);
+  --dark-border-strong: var(--brand-black);
+  --dark-border-soft: var(--brand-gray-100);
 
   /* Typography (Editorial Mix) */
   --font-family: "Inter", system-ui, sans-serif;
-  --font-display: "Crimson Pro", serif; /* Editorial elegance */
-  --font-mono: "Space Mono", monospace; /* Industrial tech */
+  --font-display: "Crimson Pro", serif; 
+  --font-mono: "Space Mono", monospace; 
   --letter-spacing-tight: -0.04em;
-  --letter-spacing-wide: 0.25em; /* Rick Owens extreme tracking */
-
-  /* Core UI Variables (Absolute Contrast) */
-  --surface-0: #ffffff;
-  --surface-1: #ffffff;
-  --surface-2: #fcfcfc;
-  --ink-1: #000000;
-  --ink-2: #333333;
-  --ink-3: #666666;
-  --dark-control-fill: #000000;
-  --dark-on-light: #ffffff;
-  --dark-border-strong: #000000;
-  --dark-border-soft: #eeeeee;
+  --letter-spacing-wide: 0.25em; 
 }
 
 @import url("https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Inter:wght@100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
@@ -289,32 +290,34 @@ body {
 }
 
 :root[data-theme="dark"] {
-  --bg-primary: #000000;
-  --bg-secondary: #000000;
-  --brand-black: #ffffff;
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #121212;
+  --brand-black: #f2f2f2;
   --brand-gray-900: #fcfcfc;
   --brand-gray-800: #e0e0e0;
-  --brand-gray-400: #b0b0b0; /* Improved contrast for dark mode */
+  --brand-gray-400: #a0a0a0; /* Refined dark mode secondary text */
   --brand-gray-100: #1a1a1a;
 
-  --surface-unified-bg: rgba(0, 0, 0, 0.85);
-  --surface-unified-border: #ffffff;
-  --control-unified-bg: rgba(15, 15, 15, 0.9);
-  --control-unified-border: #ffffff;
-  --surface-0: #000000;
-  --surface-1: #000000;
-  --surface-2: #0a0a0a;
-  --ink-1: #ffffff;
-  --ink-2: #e0e0e0;
-  --ink-3: #b0b0b0;
-  --dark-control-fill: #ffffff;
-  --dark-on-light: #000000;
-  --dark-border-strong: #ffffff;
-  --dark-border-soft: #333333;
-  --dark-border-control: #ffffff;
-  --dark-border-active: #ffffff;
-  --dark-user-bubble-bg: #ffffff;
-  --dark-input-placeholder: #737373;
+  --surface-unified-bg: rgba(10, 10, 10, 0.85);
+  --surface-unified-border: #333333;
+  --control-unified-bg: rgba(20, 20, 20, 0.9);
+  --control-unified-border: #444444;
+
+  /* Semantic UI variables for dark theme sync */
+  --surface-0: var(--bg-primary);
+  --surface-1: var(--bg-primary);
+  --surface-2: var(--bg-secondary);
+  --ink-1: var(--brand-black);
+  --ink-2: var(--brand-gray-400);
+  --ink-3: var(--brand-gray-400);
+  --dark-control-fill: var(--brand-black);
+  --dark-on-light: var(--bg-primary);
+  --dark-border-strong: var(--brand-black);
+  --dark-border-soft: var(--brand-gray-100);
+  --dark-border-control: #444444;
+  --dark-border-active: var(--brand-black);
+  --dark-user-bubble-bg: var(--brand-black);
+  --dark-input-placeholder: #555555;
   color-scheme: dark;
 }
 
