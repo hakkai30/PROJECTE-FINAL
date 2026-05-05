@@ -287,8 +287,20 @@ const SocialFeedPage = ({
         )}
 
         {isLoadingPosts && (
-          <div className="saved-looks-empty">
-            <h2>{t("social.feed.loading", "LOADING POSTS...")}</h2>
+          <div className="social-feed-loading-grid">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="skeleton-post" style={{ marginBottom: '3rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+                  <div className="skeleton skeleton-avatar"></div>
+                  <div className="skeleton skeleton-title"></div>
+                </div>
+                <div className="skeleton skeleton-image"></div>
+                <div style={{ marginTop: '1.5rem' }}>
+                  <div className="skeleton skeleton-text"></div>
+                  <div className="skeleton skeleton-text" style={{ width: '80%' }}></div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
 

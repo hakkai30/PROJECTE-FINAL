@@ -893,7 +893,7 @@ const App = () => {
 
   return (
     <Suspense fallback={<div className="loading">Cargando...</div>}>
-    <div>
+    <div key={currentPage} className="page-transition-wrapper">
       {currentPage === "landing" && (
         <LandingPage
           changePage={setCurrentPage}
