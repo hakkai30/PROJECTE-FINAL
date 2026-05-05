@@ -253,7 +253,7 @@ const App = () => {
 
   const handleLogin = async ({ email, password }) => {
     try {
-      const { user, error } = await authService.login(email, password);
+      const { user, error } = await authService.login({ email, password });
       if (error) return { ok: false, error };
       setCurrentUser(user);
       navigate("/shop");
@@ -265,7 +265,7 @@ const App = () => {
 
   const handleRegister = async ({ name, email, password, bio, avatar }) => {
     try {
-      const { user, error } = await authService.register(email, password, { name, bio, avatar });
+      const { user, error } = await authService.register({ name, email, password, bio, avatar });
       if (error) return { ok: false, error };
       setCurrentUser(user);
       navigate("/shop");
