@@ -1,5 +1,6 @@
 import { supabase } from "../config/supabase";
 import { authService } from "./authService";
+import { notificationService } from "./notificationService";
 
 export const socialService = {
   async getProfile(handle) {
@@ -33,6 +34,20 @@ export const socialService = {
       .eq('email', currentUser.email);
 
     if (error) throw new Error("No se pudo seguir el perfil.");
+
+    // Trigger notification
+    try {
+      const { data: targetUser } = await supabase.from('users').select('id').eq('email', handle).single();
+      if (targetUser) {
+        await notificationService.createNotification({
+          userId: targetUser.id,
+          actorId: currentUser.id,
+          type: 'follow',
+          content: 'ha empezado a seguirte'
+        });
+      }
+    } catch (e) { console.warn("Follow notif error", e); }
+
     return true;
   },
 

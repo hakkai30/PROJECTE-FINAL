@@ -113,53 +113,67 @@ const MessagesPage = ({
   }, [pendingContact, onClearPendingContact]);
 
   useEffect(() => {
-    const eventSource = messageService.subscribeToMessages((payload) => {
-      if (payload?.type !== "message.created") return;
+    const eventSource = messageService.subscribeToMessages(
+      (incomingMessage) => {
+        const threadId = String(incomingMessage.thread_id || "");
+        if (!threadId || !incomingMessage?.id) return;
 
-      const threadId = String(payload.threadId || "");
-      const incomingMessage = payload.message;
+        setThreads((prevThreads) => {
+          const existingThread = prevThreads.find((thread) => thread.id === threadId);
 
-      if (!threadId || !incomingMessage?.id) return;
+          if (!existingThread) {
+            return [
+              {
+                id: threadId,
+                name: `@${threadId.replace(/^user:/, "").toUpperCase()}`,
+                presence: "online",
+                messages: [incomingMessage],
+              },
+              ...prevThreads,
+            ];
+          }
 
-      setThreads((prevThreads) => {
-        const existingThread = prevThreads.find((thread) => thread.id === threadId);
-
-        if (!existingThread) {
-          return [
-            {
-              id: threadId,
-              name: `@${threadId.replace(/^user:/, "").toUpperCase()}`,
-              presence: "online",
-              messages: [incomingMessage],
-            },
-            ...prevThreads,
-          ];
-        }
-
-        return prevThreads.map((thread) => {
-          if (thread.id !== threadId) return thread;
-          const alreadyExists = thread.messages.some((msg) => msg.id === incomingMessage.id);
-          if (alreadyExists) return thread;
-          return {
-            ...thread,
-            messages: [...thread.messages, incomingMessage],
-          };
+          return prevThreads.map((thread) => {
+            if (thread.id !== threadId) return thread;
+            const alreadyExists = thread.messages.some((msg) => msg.id === incomingMessage.id);
+            if (alreadyExists) return thread;
+            return {
+              ...thread,
+              messages: [...thread.messages, incomingMessage],
+            };
+          });
         });
-      });
 
-      if (incomingMessage.sender === "them") {
-        setTypingByThread((prev) => ({ ...prev, [threadId]: false }));
+        if (incomingMessage.sender === "them") {
+          setTypingByThread((prev) => ({ ...prev, [threadId]: false }));
+          
+          if (activeThreadIdRef.current === threadId) {
+            messageService.markAsRead(incomingMessage.id);
+          } else {
+            setUnreadByThread((prev) => ({
+              ...prev,
+              [threadId]: (prev[threadId] || 0) + 1,
+            }));
+          }
+        }
+      },
+      (updatedMessage) => {
+        const threadId = String(updatedMessage.thread_id || "");
+        if (!threadId) return;
+
+        setThreads((prevThreads) =>
+          prevThreads.map((thread) => {
+            if (thread.id !== threadId) return thread;
+            return {
+              ...thread,
+              messages: thread.messages.map((msg) =>
+                msg.id === updatedMessage.id ? updatedMessage : msg
+              ),
+            };
+          })
+        );
       }
-
-      if (activeThreadIdRef.current !== threadId && incomingMessage.sender === "them") {
-        setUnreadByThread((prev) => ({
-          ...prev,
-          [threadId]: (prev[threadId] || 0) + 1,
-        }));
-      }
-
-      setActiveThreadId((prev) => prev || threadId);
-    });
+    );
 
     eventSource.onerror = () => {
       setMessagesError((prev) => prev || "Realtime stream disconnected. Reconnecting...");

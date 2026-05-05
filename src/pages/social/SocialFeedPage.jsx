@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Bookmark, Heart, ImagePlus, MessageCircle, ShoppingCart, X, Newspaper, User, ChevronRight, ChevronLeft, MessageSquare } from "lucide-react";
 import { GlobalFooter, GlobalHeader, SocialSidebar } from "../../components/Layout";
 import { localizePost } from "../../data/i18n";
@@ -8,6 +8,8 @@ const SocialFeedPage = ({
   currentUser,
   onLogout,
   posts = [],
+  activeView = "all",
+  onViewChange,
   likedPostIds = [],
   onToggleLikePost,
   onAddComment,
@@ -21,6 +23,8 @@ const SocialFeedPage = ({
   savedLookIds = [],
   onToggleSavedLook,
   onMessageAuthor,
+  hasMore = false,
+  onLoadMore,
   cartCount = 0,
   wishlistCount = 0,
   theme,
@@ -57,7 +61,7 @@ const SocialFeedPage = ({
     };
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeView, setActiveView] = useState("all");
+  const [localView, setLocalView] = useState("all"); // para el filtro de 'guardados'
   const [postText, setPostText] = useState("");
   const [postImageFile, setPostImageFile] = useState(null);
   const [postImagePreview, setPostImagePreview] = useState("");
@@ -65,10 +69,30 @@ const SocialFeedPage = ({
   const [openCommentPostIds, setOpenCommentPostIds] = useState([]);
   const [commentDrafts, setCommentDrafts] = useState({});
   const [submittingCommentIds, setSubmittingCommentIds] = useState([]);
+  const observerTarget = useRef(null);
+
+  useEffect(() => {
+    if (!hasMore || isLoadingPosts) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          onLoadMore?.();
+        }
+      },
+      { threshold: 1.0, rootMargin: '100px' }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasMore, isLoadingPosts, onLoadMore]);
   const savedLooksCount = savedLookIds.length;
-  const totalLikes = posts.reduce((acc, post) => acc + post.likes, 0);
+  const totalLikes = posts.reduce((acc, post) => acc + (post.likes || 0), 0);
   const visiblePosts =
-    activeView === "saved"
+    localView === "saved"
       ? posts.filter((post) => savedLookIds.includes(String(post.id)))
       : posts;
 
@@ -220,15 +244,28 @@ const SocialFeedPage = ({
           <div className="social-feed-toolbar">
             <button
               type="button"
-              className={`social-filter-chip ${activeView === "all" ? "active" : ""}`}
-              onClick={() => setActiveView("all")}
+              className={`social-filter-chip ${activeView === "all" && localView !== "saved" ? "active" : ""}`}
+              onClick={() => {
+                setLocalView("all");
+                onViewChange?.("all");
+              }}
             >
               {t("social.feed.allLooks", "ALL LOOKS")}
             </button>
             <button
               type="button"
-              className={`social-filter-chip ${activeView === "saved" ? "active" : ""}`}
-              onClick={() => setActiveView("saved")}
+              className={`social-filter-chip ${activeView === "following" ? "active" : ""}`}
+              onClick={() => {
+                setLocalView("all");
+                onViewChange?.("following");
+              }}
+            >
+              {t("social.feed.following", "FOLLOWING")}
+            </button>
+            <button
+              type="button"
+              className={`social-filter-chip ${localView === "saved" ? "active" : ""}`}
+              onClick={() => setLocalView("saved")}
             >
               {t("social.feed.savedOnly", "SAVED ONLY")}
             </button>
@@ -434,6 +471,11 @@ const SocialFeedPage = ({
             </div>
           );
         })}
+        {hasMore && (
+          <div ref={observerTarget} style={{ height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '2rem 0' }}>
+            {isLoadingPosts && <p>{t("social.feed.loadingMore", "LOADING MORE...")}</p>}
+          </div>
+        )}
       </div>
       </div>
       <GlobalFooter t={t} />

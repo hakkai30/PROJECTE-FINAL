@@ -23,7 +23,7 @@ export const messageService = {
         text: payload.text,
         time: payload.time || new Date().toLocaleTimeString(),
         ts: payload.ts || Date.now(),
-        status: payload.status || "sent"
+        status: "sent"
       }])
       .select()
       .single();
@@ -32,16 +32,26 @@ export const messageService = {
     return data;
   },
 
-  subscribeToMessages(onEvent) {
-    // Suscripción en tiempo real de Supabase
+  async markAsRead(messageId) {
+    const { error } = await supabase
+      .from('messages')
+      .update({ status: 'read' })
+      .eq('id', messageId);
+    
+    if (error) console.error("Could not mark message as read:", error);
+  },
+
+  subscribeToMessages(onInsert, onUpdate) {
     const subscription = supabase
       .channel('public:messages')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-        onEvent?.(payload.new);
+        onInsert?.(payload.new);
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages' }, payload => {
+        onUpdate?.(payload.new);
       })
       .subscribe();
 
-    // Emula el método close del EventSource original
     return {
       close: () => {
         supabase.removeChannel(subscription);

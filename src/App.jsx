@@ -24,6 +24,7 @@ import { authService } from "./services/authService";
 import { postService } from "./services/postService";
 import { socialService } from "./services/socialService";
 import { userProductService } from "./services/userProductService";
+import { notificationService } from "./services/notificationService";
 import { createTranslator, DEFAULT_LANGUAGE, localizePost } from "./data/i18n";
 
 const AVATAR_STYLES = [
@@ -183,9 +184,13 @@ const App = () => {
     }
   });
   const [socialPosts, setSocialPosts] = useState([]);
-  const [isLoadingSocialPosts, setIsLoadingSocialPosts] = useState(true);
+  const [isLoadingSocialPosts, setIsLoadingSocialPosts] = useState(false);
+  const [hasMorePosts, setHasMorePosts] = useState(true);
+  const [socialFeedFilter, setSocialFeedFilter] = useState("all"); // 'all' or 'following'
   const [socialFeedError, setSocialFeedError] = useState("");
   const [isCreatingSocialPost, setIsCreatingSocialPost] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
   const [pendingContact, setPendingContact] = useState(null);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [followedHandles, setFollowedHandles] = useState(() => {
@@ -324,13 +329,29 @@ const App = () => {
     };
   };
 
-  const loadSocialPosts = async () => {
+  const loadSocialPosts = async (isMore = false) => {
+    if (isLoadingSocialPosts || (!hasMorePosts && isMore)) return;
+
     setIsLoadingSocialPosts(true);
     setSocialFeedError("");
 
     try {
-      const posts = await postService.getFeedPosts();
-      setSocialPosts(posts);
+      const offset = isMore ? socialPosts.length : 0;
+      const limit = 10;
+      
+      const newPosts = await postService.getFeedPosts({ 
+        limit, 
+        offset,
+        followedUsers: socialFeedFilter === 'following' ? followedHandles : []
+      });
+
+      if (isMore) {
+        setSocialPosts(prev => [...prev, ...newPosts]);
+      } else {
+        setSocialPosts(newPosts);
+      }
+
+      setHasMorePosts(newPosts.length === limit);
     } catch (error) {
       setSocialFeedError(error.message || "Could not load posts.");
     } finally {
@@ -823,6 +844,29 @@ const App = () => {
     }
   }, [currentUser]);
 
+  useEffect(() => {
+    if (currentUser?.id) {
+      notificationService.getNotifications(currentUser.id).then(data => {
+        setNotifications(data);
+        setUnreadNotificationsCount(data.filter(n => !n.read).length);
+      });
+
+      const sub = notificationService.subscribeToNotifications(currentUser.id, (newNotif) => {
+        setNotifications(prev => [newNotif, ...prev]);
+        setUnreadNotificationsCount(prev => prev + 1);
+        
+        // Mostrar una notificación simple (usando la UI existente o alert)
+        console.log("Nueva notificación:", newNotif.content);
+      });
+
+      return () => sub.close();
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    loadSocialPosts();
+  }, [socialFeedFilter]);
+
   // Restaurar sesión de Supabase al cargar la app (solo al inicio)
   useEffect(() => {
     authService.restoreSession().then((user) => {
@@ -1112,6 +1156,14 @@ const App = () => {
           isLoadingPosts={isLoadingSocialPosts}
           isPosting={isCreatingSocialPost}
           feedError={socialFeedError}
+          activeView={socialFeedFilter}
+          onViewChange={(view) => {
+            setSocialFeedFilter(view);
+            // setSocialPosts([]); // Opcional: limpiar posts anteriores
+            // setHasMorePosts(true);
+          }}
+          hasMore={hasMorePosts}
+          onLoadMore={() => loadSocialPosts(true)}
           savedLookIds={savedLookIds}
           onToggleSavedLook={toggleSavedLook}
           cartCount={cartItems.length}

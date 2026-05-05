@@ -1,5 +1,6 @@
 import { supabase } from "../config/supabase";
 import { authService } from "./authService";
+import { notificationService } from "./notificationService";
 
 /** Sube una imagen a Supabase Storage y devuelve la URL pública */
 const uploadImage = async (file) => {
@@ -23,14 +24,21 @@ const uploadImage = async (file) => {
 export const postService = {
   uploadImage,
 
-  async getFeedPosts() {
-    const { data, error } = await supabase
+  async getFeedPosts({ limit = 10, offset = 0, followedUsers = [] } = {}) {
+    let query = supabase
       .from('posts')
       .select(`
         *,
         comments (*)
       `)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (followedUsers.length > 0) {
+      query = query.in('user_email', followedUsers);
+    }
+
+    const { data, error } = await query;
 
     if (error) throw new Error(error.message);
     return data || [];
@@ -82,10 +90,25 @@ export const postService = {
         .insert([{ post_id: postId, user_id: currentUser.id }]);
       
       if (insertError) throw new Error("No se pudo dar like.");
+
+      // Trigger notification
+      try {
+        const { data: postActor } = await supabase.from('posts').select('user_email').eq('id', postId).single();
+        if (postActor) {
+          const { data: targetUser } = await supabase.from('users').select('id').eq('email', postActor.user_email).single();
+          if (targetUser) {
+            await notificationService.createNotification({
+              userId: targetUser.id,
+              actorId: currentUser.id,
+              type: 'like',
+              content: 'ha dado me gusta a tu publicación'
+            });
+          }
+        }
+      } catch (e) { console.warn("Notif error", e); }
     }
 
-    // 2. Obtener el post actualizado (el trigger o el contador denormalizado se encarga si existiera, 
-    // pero aquí actualizaremos el contador de la tabla posts manualmente para mantener compatibilidad)
+    // 2. Obtener el post actualizado
     const { data: post, error: fetchError } = await supabase
       .from('posts')
       .select('likes')
@@ -115,6 +138,23 @@ export const postService = {
       .single();
 
     if (commentError) throw new Error(commentError.message);
+
+    // Trigger notification
+    try {
+      const currentUser = authService.loadCurrentUser();
+      const { data: postActor } = await supabase.from('posts').select('user_email').eq('id', postId).single();
+      if (postActor && currentUser) {
+        const { data: targetUser } = await supabase.from('users').select('id').eq('email', postActor.user_email).single();
+        if (targetUser) {
+          await notificationService.createNotification({
+            userId: targetUser.id,
+            actorId: currentUser.id,
+            type: 'comment',
+            content: 'ha comentado tu publicación'
+          });
+        }
+      }
+    } catch (e) { console.warn("Notif error", e); }
 
     const { data: post, error: postError } = await supabase
       .from('posts')
