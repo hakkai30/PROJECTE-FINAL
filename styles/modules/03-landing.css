@@ -291,13 +291,7 @@
   letter-spacing: 0.4em;
 }
 
-.nav-btn-container:first-child .nav-btn-brutalist:hover {
-  color: #060606;
-}
 
-.nav-btn-container:last-child .nav-btn-brutalist:hover {
-  color: #060606;
-}
 
 @keyframes floatA {
   0%,
