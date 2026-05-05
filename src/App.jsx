@@ -801,7 +801,8 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (currentUser?.email) {
+    if (currentUser?.id) {
+      // Sync Saved Looks
       socialService.getProfile(currentUser.email).then(profile => {
         if (profile?.saved_post_ids) {
           const remoteIds = profile.saved_post_ids.map(id => String(id));
@@ -810,6 +811,14 @@ const App = () => {
         }
       }).catch(err => {
         console.warn("Could not sync saved looks from Supabase:", err);
+      });
+
+      // Sync Liked Posts
+      postService.getUserLikedPostIds(currentUser.id).then(likedIds => {
+        setLikedPostIds(likedIds);
+        localStorage.setItem("rtf_liked_post_ids", JSON.stringify(likedIds));
+      }).catch(err => {
+        console.warn("Could not sync liked posts from Supabase:", err);
       });
     }
   }, [currentUser]);

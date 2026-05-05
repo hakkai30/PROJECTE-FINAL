@@ -1,4 +1,5 @@
 import { supabase } from "../config/supabase";
+import { authService } from "./authService";
 
 /** Sube una imagen a Supabase Storage y devuelve la URL pública */
 const uploadImage = async (file) => {
@@ -52,9 +53,39 @@ export const postService = {
     return data;
   },
 
-  async toggleLikePost(postId, { direction = "up" } = {}) {
-    const increment = direction === "up" ? 1 : -1;
-    
+  async toggleLikePost(postId) {
+    const currentUser = authService.loadCurrentUser();
+    if (!currentUser) throw new Error("Debes iniciar sesión para dar like.");
+
+    // 1. Verificar si ya existe el like en post_likes
+    const { data: existingLike, error: checkError } = await supabase
+      .from('post_likes')
+      .select('id')
+      .eq('post_id', postId)
+      .eq('user_id', currentUser.id)
+      .maybeSingle();
+
+    if (checkError) throw new Error("Error al verificar el like.");
+
+    if (existingLike) {
+      // Quitar like
+      const { error: deleteError } = await supabase
+        .from('post_likes')
+        .delete()
+        .eq('id', existingLike.id);
+      
+      if (deleteError) throw new Error("No se pudo quitar el like.");
+    } else {
+      // Dar like
+      const { error: insertError } = await supabase
+        .from('post_likes')
+        .insert([{ post_id: postId, user_id: currentUser.id }]);
+      
+      if (insertError) throw new Error("No se pudo dar like.");
+    }
+
+    // 2. Obtener el post actualizado (el trigger o el contador denormalizado se encarga si existiera, 
+    // pero aquí actualizaremos el contador de la tabla posts manualmente para mantener compatibilidad)
     const { data: post, error: fetchError } = await supabase
       .from('posts')
       .select('likes')
@@ -63,9 +94,11 @@ export const postService = {
 
     if (fetchError) throw new Error(fetchError.message);
 
+    const newLikesCount = existingLike ? Math.max(0, (post.likes || 0) - 1) : (post.likes || 0) + 1;
+
     const { data, error } = await supabase
       .from('posts')
-      .update({ likes: Math.max(0, (post.likes || 0) + increment) })
+      .update({ likes: newLikesCount })
       .eq('id', postId)
       .select(`*, comments (*)`)
       .single();
@@ -122,4 +155,14 @@ export const postService = {
     if (error) throw new Error(error.message);
     return true;
   },
+
+  async getUserLikedPostIds(userId) {
+    const { data, error } = await supabase
+      .from('post_likes')
+      .select('post_id')
+      .eq('user_id', userId);
+
+    if (error) throw new Error(error.message);
+    return data.map(row => String(row.post_id));
+  }
 };
