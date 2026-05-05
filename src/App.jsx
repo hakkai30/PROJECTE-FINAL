@@ -308,6 +308,21 @@ const App = () => {
   // Profile Methods
   const normalizeHandle = (value) => String(value || "").trim().replace(/^@/, "");
 
+  const deleteSocialPost = async (postId) => {
+    if (!window.confirm(t("social.confirmDelete", "Are you sure you want to delete this post?"))) return;
+    try {
+      await postService.deletePost(postId);
+      setSocialPosts(prev => prev.filter(p => String(p.id) !== String(postId)));
+    } catch (err) { console.error("Error deleting post:", err); }
+  };
+
+  const deleteSocialComment = async (postId, commentId) => {
+    try {
+      const updatedPost = await postService.deleteCommentFromPost(postId, commentId);
+      if (updatedPost) setSocialPosts(prev => prev.map(p => String(p.id) === String(postId) ? updatedPost : p));
+    } catch (err) { console.error("Error deleting comment:", err); }
+  };
+
   const openProfile = (profile) => {
     const handle = normalizeHandle(profile?.user || profile?.handle || "");
     if (!handle) return;
@@ -354,7 +369,26 @@ const App = () => {
           <Route path="/social" element={<SocialFeedPage changePage={setCurrentPage} onOpenProductDetail={openProductDetail} posts={socialPosts} isLoadingPosts={isLoadingSocialPosts} feedError={socialFeedError} activeView={socialFeedFilter} onViewChange={setSocialFeedFilter} savedLookIds={savedLookIds} onToggleSavedLook={toggleSavedLook} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} onLikePost={toggleSocialLike} onAddComment={addSocialComment} loadMorePosts={() => loadSocialPosts(true)} refreshPosts={() => loadSocialPosts(false)} onCreatePost={createSocialPost} onOpenProfile={openProfile} />} />
           <Route path="/social/saved" element={<SavedLooksPage changePage={setCurrentPage} posts={socialPosts} savedLookIds={savedLookIds} onToggleSavedLook={toggleSavedLook} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
           <Route path="/social/messages" element={<MessagesPage changePage={setCurrentPage} pendingContact={pendingContact} onClearPendingContact={clearPendingContact} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
-          <Route path="/profile" element={<UserProfilePage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} currentUser={currentUser} onLogout={handleLogout} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} posts={socialPosts} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} />} />
+          <Route path="/profile" element={
+            <UserProfilePage
+              changePage={setCurrentPage}
+              cartCount={cartItems.length}
+              cartToast={cartToast}
+              wishlistCount={wishlistIds.length}
+              currentUser={currentUser} onLogout={handleLogout}
+              theme={theme}
+              onToggleTheme={toggleTheme}
+              language={language}
+              onChangeLanguage={setLanguage}
+              t={t}
+              posts={socialPosts}
+              notifications={notifications}
+              unreadNotificationsCount={unreadNotificationsCount}
+              onMarkNotificationRead={markNotificationAsRead}
+              onDeletePost={deleteSocialPost}
+              onDeleteComment={deleteSocialComment}
+            />
+          } />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
 

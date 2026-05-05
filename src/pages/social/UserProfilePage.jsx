@@ -89,11 +89,11 @@ const UserProfilePage = ({
                 .map(post => (
                   <div key={post.id} className="profile-post-card">
                     <div className="post-media">
-                      {post.image ? (
-                        <img src={post.image} alt="" />
+                      {post.img ? (
+                        <img src={post.img} alt="" />
                       ) : (
                         <div className="post-text-placeholder">
-                          <p>{post.text}</p>
+                          <p>{post.description}</p>
                         </div>
                       )}
                     </div>
