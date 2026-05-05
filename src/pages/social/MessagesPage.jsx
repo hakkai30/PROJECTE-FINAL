@@ -368,6 +368,7 @@ const MessagesPage = ({
           </div>
         </section>
       </div>
+      </div>
       <GlobalFooter t={t} />
     </div>
   );

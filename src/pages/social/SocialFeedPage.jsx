@@ -429,6 +429,7 @@ const SocialFeedPage = ({
           );
         })}
       </div>
+      </div>
       <GlobalFooter t={t} />
     </div>
   );

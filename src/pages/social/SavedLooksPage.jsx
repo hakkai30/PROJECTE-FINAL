@@ -325,6 +325,7 @@ const SavedLooksPage = ({
           );
         })}
       </div>
+      </div>
       <GlobalFooter t={t} />
     </div>
   );
