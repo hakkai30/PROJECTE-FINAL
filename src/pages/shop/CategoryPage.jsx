@@ -9,6 +9,8 @@ const CategoryPage = ({
   onToggleTheme,
   language,
   t,
+  currentUser,
+  onLogout,
 }) => {
   const categories = [
     { label: t("category.categories.men", "MENS"), page: "men" },
@@ -30,6 +32,8 @@ const CategoryPage = ({
         onToggleTheme={onToggleTheme}
         language={language}
         t={t}
+        currentUser={currentUser}
+        onLogout={onLogout}
       />
       <main className="category-content-area">
         <p className="category-kicker">{t("category.kicker", "COLLECTIONS")}</p>

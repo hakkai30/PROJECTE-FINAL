@@ -20,6 +20,7 @@ const ProductsPage = ({
   collectionTitle = "READY TO WEAR",
   categoryKey = "all",
   currentUser = null,
+  onLogout = () => {},
   userProducts = [],
   language,
   t,
@@ -136,6 +137,7 @@ const ProductsPage = ({
         onToggleTheme={onToggleTheme}
         language={language}
         t={t}
+        onLogout={onLogout}
       />
 
       <div className="shop-toolbar">

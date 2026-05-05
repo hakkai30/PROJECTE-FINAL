@@ -13,6 +13,8 @@ const CartPage = ({
   onToggleTheme,
   language,
   t,
+  currentUser,
+  onLogout,
 }) => {
   const total = cartItems.reduce((sum, item) => sum + item.price, 0);
 
@@ -33,6 +35,8 @@ const CartPage = ({
         onToggleTheme={onToggleTheme}
         language={language}
         t={t}
+        currentUser={currentUser}
+        onLogout={onLogout}
       />
       <div className="cart-container">
         <h2 className="cart-title">{t("cart.title", "YOUR BAG")} ({cartCount})</h2>

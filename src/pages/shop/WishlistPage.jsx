@@ -13,6 +13,8 @@ const WishlistPage = ({
   onToggleTheme,
   language,
   t,
+  currentUser,
+  onLogout,
 }) => {
   return (
     <div className="category-page">
@@ -25,6 +27,8 @@ const WishlistPage = ({
         onToggleTheme={onToggleTheme}
         language={language}
         t={t}
+        currentUser={currentUser}
+        onLogout={onLogout}
       />
 
       <div className="cart-container">
