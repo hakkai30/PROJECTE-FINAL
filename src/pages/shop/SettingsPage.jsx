@@ -29,6 +29,11 @@ const SettingsPage = ({
   language,
   setLanguage,
   t,
+  currentUser,
+  onLogout,
+  notifications = [],
+  unreadNotificationsCount = 0,
+  onMarkNotificationRead,
 }) => {
   return (
     <div className="category-page">
@@ -40,6 +45,11 @@ const SettingsPage = ({
         onToggleTheme={onToggleTheme}
         language={language}
         t={t}
+        currentUser={currentUser}
+        onLogout={onLogout}
+        notifications={notifications}
+        unreadNotificationsCount={unreadNotificationsCount}
+        onMarkNotificationRead={onMarkNotificationRead}
       />
 
       <main className="settings-layout">

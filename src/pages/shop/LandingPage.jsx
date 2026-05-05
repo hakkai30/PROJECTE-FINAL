@@ -5,6 +5,7 @@ import { getFashionNews } from "../../services/newsService";
 const LandingPage = ({ 
   changePage, 
   currentUser, 
+  onLogout,
   cartCount = 0, 
   wishlistCount = 0, 
   t, 
@@ -41,6 +42,7 @@ const LandingPage = ({
       <GlobalHeader 
         changePage={changePage} 
         currentUser={currentUser} 
+        onLogout={onLogout}
         cartCount={cartCount} 
         wishlistCount={wishlistCount}
         t={t} 

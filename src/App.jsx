@@ -1137,7 +1137,11 @@ const App = () => {
           onToggleTheme={toggleTheme}
           currentUser={currentUser} onLogout={handleLogout}
           language={language}
+          setLanguage={changeLanguage}
           t={t}
+          notifications={notifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onMarkNotificationRead={markNotificationAsRead}
         />
       )}
       {currentPage === "news" && (

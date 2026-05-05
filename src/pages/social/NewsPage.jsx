@@ -4,12 +4,14 @@ import { GlobalHeader, GlobalFooter, SocialSidebar } from "../../components/Layo
 
 const NewsPage = ({ 
   changePage, 
-  language, 
+  language = "ca", 
   t, 
   cartCount, 
   wishlistCount, 
   theme, 
   onToggleTheme,
+  currentUser,
+  onLogout,
   notifications = [],
   unreadNotificationsCount = 0,
   onMarkNotificationRead,
@@ -46,6 +48,8 @@ const NewsPage = ({
         onToggleTheme={onToggleTheme}
         language={language}
         t={t}
+        currentUser={currentUser}
+        onLogout={onLogout}
         notifications={notifications}
         unreadNotificationsCount={unreadNotificationsCount}
         onMarkNotificationRead={onMarkNotificationRead}
