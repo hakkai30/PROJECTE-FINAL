@@ -4,18 +4,16 @@
 
 /* LANDING: editorial poster energy */
 .landing-page-brutalist {
-  background:
-    radial-gradient(circle at 10% 20%, var(--atmo-cold) 0%, transparent 40%),
-    radial-gradient(circle at 90% 10%, var(--atmo-hot) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, var(--atmo-gold) 0%, transparent 60%),
-    var(--bg-primary);
+  background-color: var(--bg-primary);
 }
 
 .main-logo-glitch-text {
   text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-tight);
+  letter-spacing: var(--letter-spacing-wide);
+  font-family: var(--font-family);
+  font-weight: 200;
   color: var(--brand-black);
-  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  text-shadow: none;
 }
 
 .nav-btn-brutalist {

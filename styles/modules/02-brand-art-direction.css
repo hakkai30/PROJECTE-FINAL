@@ -226,8 +226,6 @@
 body {
   margin: 0;
   font-family: var(--font-family);
-  background-color: white; 
-  color: black;
   overflow-x: hidden;
 }
 button { background: none; border: none; cursor: pointer; font-family: inherit; transition: all 0.2s; }

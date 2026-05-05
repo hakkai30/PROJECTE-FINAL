@@ -5,9 +5,10 @@
 :root[data-theme="dark"] .category-page,
 :root[data-theme="dark"] .social-layout,
 :root[data-theme="dark"] .messages-layout,
-:root[data-theme="dark"] .auth-screen {
-  background: var(--surface-0);
-  color: var(--ink-1);
+:root[data-theme="dark"] .auth-screen,
+:root[data-theme="dark"] .landing-page-brutalist {
+  background: var(--bg-primary) !important;
+  color: var(--brand-black) !important;
 }
 
 :root[data-theme="dark"] .main-header,

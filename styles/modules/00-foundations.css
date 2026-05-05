@@ -1,43 +1,52 @@
 :root {
-  /* Premium Color Palette (HSL for harmony) */
-  --bg-primary: #f8f9fa;
+  /* Fusion Palette: Rick Owens (Monochrome) x Mihara (Industrial) */
+  --bg-primary: #ffffff;
   --bg-secondary: #ffffff;
-  --accent-gold: 42, 60%, 55%;
-  --accent-gold-soft: 42, 60%, 95%;
-  --brand-black: #0a0a0a;
-  --brand-gray-900: #1a1a1a;
-  --brand-gray-800: #2d2d2d;
-  --brand-gray-400: #a0a0a0;
-  --brand-gray-100: #f0f0f0;
+  --brand-black: #000000;
+  --brand-gray-900: #121212;
+  --brand-gray-800: #333333;
+  --brand-gray-400: #666666; /* Improved contrast for light mode */
+  --brand-gray-100: #eeeeee;
 
-  /* Atmospheric Tones */
-  --atmo-cold: rgba(10, 22, 230, 0.08);
-  --atmo-hot: rgba(199, 57, 34, 0.08);
-  --atmo-gold: hsla(var(--accent-gold), 0.05);
+  /* Industrial Accents (Mihara) */
+  --accent-industrial: #2a3b4c; /* Steel blue */
+  --accent-industrial-soft: rgba(42, 59, 76, 0.05);
 
-  /* Glassmorphism & Surface */
-  --surface-unified-bg: rgba(255, 255, 255, 0.82);
-  --surface-unified-border: rgba(10, 10, 10, 0.08);
-  --surface-unified-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-  --surface-unified-radius: 20px;
-  --glass-blur: 16px;
+  /* Surface & Glass (Deconstructed) */
+  --surface-unified-bg: rgba(255, 255, 255, 0.85);
+  --surface-unified-border: #000000; /* Sharp, thin borders */
+  --surface-unified-shadow: none; /* Rick Owens: No shadows, pure flat */
+  --surface-unified-radius: 0px; /* Brutalist: Sharp corners */
+  --glass-blur: 12px;
 
-  /* Controls */
-  --control-unified-bg: rgba(255, 255, 255, 0.95);
-  --control-unified-border: rgba(10, 10, 10, 0.12);
-  --control-radius: 12px;
+  /* Typography (Editorial Mix) */
+  --font-family: "Inter", system-ui, sans-serif;
+  --font-display: "Crimson Pro", serif; /* Editorial elegance */
+  --font-mono: "Space Mono", monospace; /* Industrial tech */
+  --letter-spacing-tight: -0.04em;
+  --letter-spacing-wide: 0.25em; /* Rick Owens extreme tracking */
 
-  /* Typography */
-  --font-family: "Outfit", "Space Grotesk", system-ui, sans-serif;
-  --font-display: "Archivo Black", sans-serif;
-  --letter-spacing-tight: -0.02em;
-  --letter-spacing-wide: 0.1em;
+  /* Core UI Variables (Absolute Contrast) */
+  --surface-0: #ffffff;
+  --surface-1: #ffffff;
+  --surface-2: #fcfcfc;
+  --ink-1: #000000;
+  --ink-2: #333333;
+  --ink-3: #666666;
+  --dark-control-fill: #000000;
+  --dark-on-light: #ffffff;
+  --dark-border-strong: #000000;
+  --dark-border-soft: #eeeeee;
 }
 
-@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Inter:wght@100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
 body {
   font-family: var(--font-family);
+  background-color: var(--bg-primary);
+  color: var(--brand-black);
+  margin: 0;
+  overflow-x: hidden;
 }
 
 .logo-center-header,
@@ -280,23 +289,32 @@ body {
 }
 
 :root[data-theme="dark"] {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #121212;
-  --brand-black: #f8f9fa;
-  --brand-gray-900: #f0f0f0;
+  --bg-primary: #000000;
+  --bg-secondary: #000000;
+  --brand-black: #ffffff;
+  --brand-gray-900: #fcfcfc;
   --brand-gray-800: #e0e0e0;
-  --brand-gray-400: #808080;
+  --brand-gray-400: #b0b0b0; /* Improved contrast for dark mode */
   --brand-gray-100: #1a1a1a;
 
-  --atmo-cold: rgba(102, 163, 255, 0.1);
-  --atmo-hot: rgba(199, 57, 34, 0.1);
-  --atmo-gold: hsla(var(--accent-gold), 0.1);
-
-  --surface-unified-bg: rgba(20, 20, 20, 0.85);
-  --surface-unified-border: rgba(255, 255, 255, 0.08);
-  --surface-unified-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-  --control-unified-bg: rgba(30, 30, 30, 0.9);
-  --control-unified-border: rgba(255, 255, 255, 0.12);
+  --surface-unified-bg: rgba(0, 0, 0, 0.85);
+  --surface-unified-border: #ffffff;
+  --control-unified-bg: rgba(15, 15, 15, 0.9);
+  --control-unified-border: #ffffff;
+  --surface-0: #000000;
+  --surface-1: #000000;
+  --surface-2: #0a0a0a;
+  --ink-1: #ffffff;
+  --ink-2: #e0e0e0;
+  --ink-3: #b0b0b0;
+  --dark-control-fill: #ffffff;
+  --dark-on-light: #000000;
+  --dark-border-strong: #ffffff;
+  --dark-border-soft: #333333;
+  --dark-border-control: #ffffff;
+  --dark-border-active: #ffffff;
+  --dark-user-bubble-bg: #ffffff;
+  --dark-input-placeholder: #737373;
   color-scheme: dark;
 }
 

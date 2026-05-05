@@ -6,11 +6,11 @@
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  width: 58px;
-  height: 58px;
-  background-color: #0b0b0b;
-  color: #f5f5f5;
-  border: 1px solid #0b0b0b;
+  width: 64px;
+  height: 64px;
+  background-color: var(--brand-black);
+  color: var(--bg-primary);
+  border: 1px solid var(--brand-black);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -33,14 +33,14 @@
 
 .chatbot-window {
   position: fixed;
-  bottom: 6.25rem;
+  bottom: 6.5rem;
   right: 2rem;
-  width: min(390px, calc(100vw - 2rem));
-  height: min(620px, calc(100vh - 8rem));
-  background: #f9f9f7;
-  border: 1px solid #0f0f0f;
-  border-radius: 14px;
-  box-shadow: 0 18px 52px rgba(0, 0, 0, 0.26);
+  width: min(400px, calc(100vw - 2rem));
+  height: min(650px, calc(100vh - 8rem));
+  background: var(--bg-primary);
+  border: 1px solid var(--brand-black);
+  border-radius: 0;
+  box-shadow: 20px 20px 0px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   z-index: 1000;
   display: flex;
