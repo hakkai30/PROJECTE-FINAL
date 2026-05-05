@@ -252,11 +252,14 @@ const App = () => {
   };
 
   const handleLogout = async () => {
+    // Redirigimos inmediatamente para una UX más fluida
+    navigate("/auth");
+    
+    // Luego procesamos la limpieza de sesión
     await authService.logout();
     setCurrentUser(null);
     setIsGuest(false);
     localStorage.removeItem("rtf_is_guest");
-    navigate("/auth");
   };
 
   const markNotificationAsRead = async (notificationId) => {
