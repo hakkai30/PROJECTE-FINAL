@@ -427,7 +427,7 @@ const App = () => {
     try {
       const result = await postService.addCommentToPost(normalizedId, {
         text: normalizedText,
-        user: currentUser?.name || "USER",
+        user: currentUser?.email || "USER",
       });
 
       if (result?.post) {
