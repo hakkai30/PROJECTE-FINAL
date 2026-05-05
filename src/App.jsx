@@ -115,18 +115,6 @@ const normalizeLanguage = (value) => {
   return VALID_LANGUAGES.has(value) ? value : DEFAULT_LANGUAGE;
 };
 
-const loadedStyleModules = new Set();
-
-const ensureStyleModule = async (modulePath) => {
-  if (loadedStyleModules.has(modulePath)) return;
-  loadedStyleModules.add(modulePath);
-
-  try {
-    await import(modulePath);
-  } catch {
-    loadedStyleModules.delete(modulePath);
-  }
-};
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState(() => {
@@ -902,33 +890,6 @@ const App = () => {
     }
   }, [currentPage, currentUser, isGuest]);
 
-  useEffect(() => {
-    if (currentPage === "auth") {
-      ensureStyleModule("../styles/modules/10-auth.css");
-    }
-
-    if (currentPage === "messages") {
-      ensureStyleModule("../styles/modules/09-messages.css");
-    }
-
-    if (
-      currentPage === "products" ||
-      currentPage === "socials" ||
-      currentPage === "saved-looks" ||
-      currentPage === "user-profile"
-    ) {
-      ensureStyleModule("../styles/modules/16-user-products.css");
-    }
-
-    if (
-      currentPage !== "landing" &&
-      currentPage !== "socials" &&
-      currentPage !== "messages" &&
-      currentPage !== "auth"
-    ) {
-      ensureStyleModule("../styles/modules/12-chatbot.css");
-    }
-  }, [currentPage]);
 
   return (
     <Suspense fallback={<div className="loading">Cargando...</div>}>
