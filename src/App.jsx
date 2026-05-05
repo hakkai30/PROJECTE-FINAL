@@ -186,8 +186,6 @@ const App = () => {
   const [isLoadingSocialPosts, setIsLoadingSocialPosts] = useState(true);
   const [socialFeedError, setSocialFeedError] = useState("");
   const [isCreatingSocialPost, setIsCreatingSocialPost] = useState(false);
-  const [userProducts, setUserProducts] = useState([]);
-  const [isLoadingUserProducts, setIsLoadingUserProducts] = useState(true);
   const [pendingContact, setPendingContact] = useState(null);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [followedHandles, setFollowedHandles] = useState(() => {
@@ -331,19 +329,6 @@ const App = () => {
       setSocialFeedError(error.message || "Could not load posts.");
     } finally {
       setIsLoadingSocialPosts(false);
-    }
-  };
-
-  const loadUserProducts = async () => {
-    setIsLoadingUserProducts(true);
-
-    try {
-      const products = await userProductService.getAllUserProducts();
-      setUserProducts(products);
-    } catch (error) {
-      console.error("Could not load user products:", error);
-    } finally {
-      setIsLoadingUserProducts(false);
     }
   };
 
@@ -809,10 +794,6 @@ const App = () => {
     loadSocialPosts();
   }, []);
 
-  useEffect(() => {
-    loadUserProducts();
-  }, []);
-
   // Restaurar sesión de Supabase al cargar la app (solo al inicio)
   useEffect(() => {
     authService.restoreSession().then((user) => {
@@ -901,7 +882,6 @@ const App = () => {
           theme={theme}
           onToggleTheme={toggleTheme}
           currentUser={currentUser} onLogout={handleLogout}
-          userProducts={userProducts}
           language={language}
           t={t}
         />
