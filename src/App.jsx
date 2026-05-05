@@ -363,6 +363,7 @@ const App = () => {
   // Effects
   useEffect(() => {
     authService.restoreSession().then((user) => { if (user) setCurrentUser(user); });
+    loadSocialPosts(); // Pre-carga los posts para que la transición a Social sea instantánea
   }, []);
 
   useEffect(() => {
