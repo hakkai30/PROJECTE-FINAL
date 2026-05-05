@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { GlobalFooter, GlobalHeader } from "../../components/Layout";
 import { messageService } from "../../services/messageService";
 
 const normalizeContactHandle = (value) => {
@@ -13,6 +14,10 @@ const MessagesPage = ({
   onOpenProfile,
   pendingContact,
   onClearPendingContact,
+  cartCount = 0,
+  wishlistCount = 0,
+  theme,
+  onToggleTheme,
   language = "ca",
   t,
 }) => {
@@ -237,48 +242,19 @@ const MessagesPage = ({
     : "";
 
   return (
-    <div className="social-layout messages-layout">
-      <div className="social-sidebar">
-        <button type="button" className="sidebar-link" onClick={() => changePage("landing")}>
-          {t("messages.home", "HOME")}
-        </button>
-        <button type="button" className="sidebar-link" onClick={() => changePage("shop")}>
-          {t("nav.shop", "SHOP")}
-        </button>
-        <div className="sidebar-divider" aria-hidden="true"></div>
-        <button type="button" className="sidebar-link" onClick={() => changePage("socials")}>
-          {t("social.sidebar.brand", "ROB_THE_FAB")}
-        </button>
-        <button type="button" className="sidebar-link sidebar-link-active" onClick={() => changePage("messages")}>
-          {t("social.sidebar.messages", "MESSAGES")}
-        </button>
-        <button type="button" className="sidebar-link" onClick={() => changePage("saved-looks")}>
-          {t("social.sidebar.savedLooks", "SAVED LOOKS")}
-        </button>
-        <button
-          type="button"
-          className="sidebar-user-chip sidebar-user-chip-btn"
-          onClick={() => onOpenProfile?.({
-            user: currentUser?.name,
-            name: currentUser?.name ? `@${currentUser.name}` : "@USER",
-            bio: currentUser?.bio || "",
-            avatar: currentUser?.avatar || "",
-            email: currentUser?.email || "",
-          })}
-        >
-          @{currentUser?.name || "USER"}
-        </button>
-        <button type="button" className="sidebar-link sidebar-logout" onClick={onLogout}>
-          {t("social.sidebar.logout", "LOG OUT")}
-        </button>
-        <button
-          type="button"
-          className="sidebar-link sidebar-settings-link"
-          onClick={() => changePage("settings")}
-        >
-          {t("social.sidebar.settings", "SETTINGS")}
-        </button>
-      </div>
+    <div className="category-page">
+      <GlobalHeader
+        changePage={changePage}
+        cartCount={cartCount}
+        wishlistCount={wishlistCount}
+        currentUser={currentUser}
+        onLogout={onLogout}
+        theme={theme}
+        onToggleTheme={onToggleTheme}
+        language={language}
+        t={t}
+      />
+      <div className="social-layout messages-layout">
 
       <div className="messages-main">
         <aside className="messages-threads-panel">
@@ -392,6 +368,7 @@ const MessagesPage = ({
           </div>
         </section>
       </div>
+      <GlobalFooter t={t} />
     </div>
   );
 };

@@ -267,7 +267,8 @@ const TRANSLATIONS = {
       },
       submit: {
         login: "INICIAR SESSIÓ",
-        register: "CREAR COMPTE",
+        register: "REGISTRAR-SE",
+        loginRegister: "INICIA SESSIÓ / REGISTRAR-SE",
         validating: "VALIDANT...",
       },
       footnote: {
@@ -592,7 +593,8 @@ const TRANSLATIONS = {
       },
       submit: {
         login: "INICIAR SESIÓN",
-        register: "CREAR CUENTA",
+        register: "REGISTRARSE",
+        loginRegister: "INICIA SESIÓN / REGISTRARSE",
         validating: "VALIDANDO...",
       },
       footnote: {

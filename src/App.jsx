@@ -1085,6 +1085,10 @@ const App = () => {
           feedError={socialFeedError}
           savedLookIds={savedLookIds}
           onToggleSavedLook={toggleSavedLook}
+          cartCount={cartItems.length}
+          wishlistCount={wishlistCount}
+          theme={theme}
+          onToggleTheme={toggleTheme}
           language={language}
           t={t}
         />
@@ -1115,6 +1119,10 @@ const App = () => {
           onOpenProfile={openProfile}
           pendingContact={pendingContact}
           onClearPendingContact={clearPendingContact}
+          cartCount={cartItems.length}
+          wishlistCount={wishlistCount}
+          theme={theme}
+          onToggleTheme={toggleTheme}
           language={language}
           t={t}
         />

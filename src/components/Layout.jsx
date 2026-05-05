@@ -187,12 +187,16 @@ export const GlobalHeader = ({
                           if (onLogout) onLogout(); 
                         }}
                       >
-                        {t("nav.logout", "LOGOUT")}
+                        {t("nav.logout", "LOG OUT")}
                       </button>
                     </>
                   ) : (
-                    <button type="button" onClick={() => { setIsMenuOpen(false); changePage("auth"); }}>
-                      {t("auth.submit.login", "SIGN IN")} / {t("auth.submit.register", "CREATE ACCOUNT")}
+                    <button 
+                      type="button" 
+                      className="sidebar-login-btn"
+                      onClick={() => { setIsMenuOpen(false); changePage("auth"); }}
+                    >
+                      {t("auth.submit.loginRegister", "INICIA SESSIÓ / REGISTRAR-SE")}
                     </button>
                   )}
                   <button
