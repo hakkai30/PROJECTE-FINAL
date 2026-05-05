@@ -27,7 +27,7 @@ import { socialService } from "./services/socialService";
 import { userProductService } from "./services/userProductService";
 import { notificationService } from "./services/notificationService";
 import { createTranslator, DEFAULT_LANGUAGE, localizePost } from "./data/i18n";
-import { supabase } from "./services/supabase";
+import { supabase } from "./config/supabase";
 
 const AVATAR_STYLES = [
   { id: "midnight", label: "MIDNIGHT", from: "#111111", to: "#4a4a4a" },
