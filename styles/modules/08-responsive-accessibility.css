@@ -42,7 +42,7 @@
   font-size: 0.72rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(17, 17, 17, 0.58);
+  color: var(--brand-gray-400);
 }
 
 .sidebar-note {
@@ -50,7 +50,7 @@
   max-width: 26ch;
   font-size: 0.88rem;
   line-height: 1.45;
-  color: rgba(17, 17, 17, 0.76);
+  color: var(--brand-black);
 }
 
 .sidebar-header {

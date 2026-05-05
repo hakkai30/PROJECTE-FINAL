@@ -14,6 +14,7 @@
 :root[data-theme="dark"] .main-header,
 :root[data-theme="dark"] .main-app-footer,
 :root[data-theme="dark"] .social-sidebar,
+:root[data-theme="dark"] .social-side-nav,
 :root[data-theme="dark"] .messages-threads-panel,
 :root[data-theme="dark"] .messages-chat-panel,
 :root[data-theme="dark"] .quick-view-modal,

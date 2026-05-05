@@ -31,7 +31,7 @@
   font-size: 0.78rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: rgba(15, 15, 15, 0.7);
+  color: var(--brand-black);
 }
 
 .landing-intro {
@@ -40,7 +40,7 @@
   font-size: 0.92rem;
   line-height: 1.45;
   letter-spacing: 0.06em;
-  color: rgba(18, 18, 18, 0.68);
+  color: var(--brand-black);
 }
 .glitch-visual-text {
   font-size: clamp(1rem, 2.2vw, 1.55rem);
@@ -49,7 +49,7 @@
   text-transform: uppercase;
 }
 .glitch-visual-text .glitch-text {
-  color: rgba(15, 15, 15, 0.9);
+  color: var(--brand-black);
   -webkit-text-stroke: 0;
   animation: drift 12s ease-in-out infinite;
 }
@@ -133,7 +133,7 @@
 }
 
 .window-label {
-  color: var(--bg-primary);
+  color: var(--brand-black);
   font-family: var(--font-mono);
   font-size: 0.58rem;
   font-weight: 700;
@@ -187,7 +187,7 @@
   border: 1px solid rgba(17, 17, 17, 0.14);
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.95);
-  color: rgba(20, 20, 20, 0.55);
+  color: var(--brand-gray-400);
   font-size: 0.52rem;
   letter-spacing: 0.03em;
   padding: 3px 6px;

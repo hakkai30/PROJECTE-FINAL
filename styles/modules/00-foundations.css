@@ -6,7 +6,7 @@
   --brand-black: #0a0a0a;
   --brand-gray-900: #1a1a1a;
   --brand-gray-800: #333333;
-  --brand-gray-400: #555555; /* Balanced secondary text contrast */
+  --brand-gray-400: #444444; /* Darkened for better contrast in light mode */
   --brand-gray-100: #eeeeee;
 
   /* Industrial Accents (Mihara) */
@@ -298,7 +298,7 @@ body {
   --brand-black: #f2f2f2;
   --brand-gray-900: #fcfcfc;
   --brand-gray-800: #e0e0e0;
-  --brand-gray-400: #a0a0a0; /* Refined dark mode secondary text */
+  --brand-gray-400: #cccccc; /* Lightened for better readability in dark mode */
   --brand-gray-100: #1a1a1a;
 
   --surface-unified-bg: rgba(10, 10, 10, 0.85);

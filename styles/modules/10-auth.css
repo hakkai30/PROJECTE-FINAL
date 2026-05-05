@@ -44,7 +44,7 @@
   font-size: 0.72rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #666;
+  color: var(--brand-gray-400);
 }
 
 .language-switcher select,
@@ -69,7 +69,7 @@
   margin: 0;
   font-size: 0.74rem;
   letter-spacing: 0.18em;
-  color: #666;
+  color: var(--brand-gray-400);
 }
 
 .auth-card h1 {
@@ -80,7 +80,7 @@
 
 .auth-description {
   margin: 0;
-  color: #444;
+  color: var(--brand-gray-400);
   font-size: 0.9rem;
   line-height: 1.45;
 }
@@ -128,19 +128,21 @@
 }
 
 .auth-form input {
-  border: 1px solid #bcbcbc;
+  border: 1px solid var(--brand-gray-800);
   padding: 0.76rem 0.78rem;
   font-size: 0.9rem;
   font-family: inherit;
+  color: var(--brand-black);
 }
 
 .auth-form textarea {
-  border: 1px solid #bcbcbc;
+  border: 1px solid var(--brand-gray-800);
   padding: 0.76rem 0.78rem;
   font-size: 0.9rem;
   font-family: inherit;
   resize: vertical;
   min-height: 82px;
+  color: var(--brand-black);
 }
 
 .auth-avatar-picker {
@@ -215,7 +217,7 @@
 
 .auth-footnote {
   margin: 0.95rem 0 0;
-  color: #666;
+  color: var(--brand-gray-400);
   font-size: 0.72rem;
   letter-spacing: 0.12em;
 }
@@ -321,7 +323,7 @@
 
 .auth-welcome-subtitle {
   margin: 0.75rem 0 0;
-  color: #666;
+  color: var(--brand-gray-400);
   font-size: 0.95rem;
   line-height: 1.5;
 }
@@ -370,7 +372,7 @@
 }
 
 .auth-option-desc {
-  color: #666;
+  color: var(--brand-gray-400);
   font-size: 0.8rem;
   letter-spacing: 0.06em;
   display: block;
@@ -379,7 +381,7 @@
 .auth-welcome-note {
   margin: 0;
   text-align: center;
-  color: #999;
+  color: var(--brand-gray-400);
   font-size: 0.72rem;
   letter-spacing: 0.04em;
   line-height: 1.4;
