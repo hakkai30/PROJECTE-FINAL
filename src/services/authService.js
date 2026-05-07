@@ -18,6 +18,7 @@ const readJson = (key, fallback) => {
   }
 };
 
+// Convierte el usuario de Supabase en un objeto simple que usa la app.
 const toPublicUser = (supabaseUser, userRecord) => {
   if (!supabaseUser) return null;
   return {
@@ -34,6 +35,7 @@ export const authService = {
     return null;
   },
 
+  // Sesión local en memoria del navegador para no forzar login en cada recarga.
   loadCurrentUser() {
     return readJson(STORAGE_KEYS.currentUser, null);
   },

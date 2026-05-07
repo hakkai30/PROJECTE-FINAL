@@ -1,5 +1,6 @@
 import { supabase } from "../config/supabase";
 
+// Notificaciones en tiempo real para likes, comentarios y follows.
 export const notificationService = {
   async getNotifications(userId) {
     const { data, error } = await supabase

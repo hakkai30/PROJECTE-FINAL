@@ -1,5 +1,6 @@
 import { loadStripe } from '@stripe/stripe-js';
 
+// Cliente de Stripe para redirigir al checkout sin exponer la clave secreta.
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 export const redirectToCheckout = async (items) => {

@@ -1,5 +1,6 @@
 import React from "react";
 
+// Construye un srcset básico para aprovechar varias resoluciones en imágenes remotas.
 function buildSrcSet(url, widths = [300, 500, 800]) {
   try {
     // Build a valid srcset list with width descriptors.
@@ -14,6 +15,7 @@ function buildSrcSet(url, widths = [300, 500, 800]) {
   }
 }
 
+// Ajusta el formato de la imagen en cada entrada del srcset.
 function appendFormat(srcSetValue, format) {
   return srcSetValue
     .split(", ")

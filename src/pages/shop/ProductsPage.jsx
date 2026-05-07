@@ -6,6 +6,7 @@ import { MOCK_PRODUCTS } from "../../data/mockData";
 import { localizeProduct } from "../../data/i18n";
 import OptimizedImage from "../../components/OptimizedImage";
 
+// Vista de catálogo: combina filtros, ordenación y quick view en una sola pantalla.
 const ProductsPage = ({
   changePage,
   cartCount,
@@ -35,7 +36,7 @@ const ProductsPage = ({
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [showUserProducts, setShowUserProducts] = useState(true);
 
-  // Combina productos de tienda con productos de usuarios
+  // Base del catálogo. Ahora mismo solo usa productos estáticos, pero aquí se podría mezclar inventario real.
   const combinedBaseProducts = useMemo(() => {
     return MOCK_PRODUCTS;
   }, []);
@@ -99,9 +100,11 @@ const ProductsPage = ({
     setMaxPrice(categoryMaxPrice);
   };
 
+  // Si el padre no define títulos, usamos textos por defecto traducibles.
   const resolvedCollectionKicker = collectionKicker || t("products.collection.newSeason", "NEW SEASON");
   const resolvedCollectionTitle = collectionTitle || t("products.collection.readyToWear", "READY TO WEAR");
 
+  // Chips que resumen los filtros activos para poder quitarlos rápido.
   const activeFilterChips = [
     selectedBrand !== "all" && {
       key: "brand",
@@ -143,6 +146,7 @@ const ProductsPage = ({
       <div className="shop-toolbar">
       </div>
 
+      {/* Introducción de la colección y contador de resultados. */}
       <section className="collection-intro">
         <p className="collection-kicker">{resolvedCollectionKicker}</p>
         <h2 className="collection-title">{resolvedCollectionTitle}</h2>
@@ -164,6 +168,7 @@ const ProductsPage = ({
         </div>
       )}
 
+      {/* Grid principal del catálogo con tarjetas clicables. */}
       <div className="products-grid">
         {sortedProducts.map((product) => (
           (() => {

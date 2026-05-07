@@ -1,5 +1,6 @@
 import { supabase } from "../config/supabase";
 
+// Gestión de hilos y mensajes de la parte social privada.
 export const messageService = {
   async getThreads() {
     const { data, error } = await supabase

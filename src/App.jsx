@@ -59,6 +59,48 @@ const PROTECTED_PAGES = new Set(["socials", "saved-looks", "messages", "user-pro
 const VALID_THEMES = new Set(["auto", "light", "dark"]);
 const VALID_LANGUAGES = new Set(["ca", "es", "en", "fr"]);
 
+// Mapa único de rutas para no repetir la relación "pantalla -> URL" en varios sitios.
+const ROUTE_MAP = {
+  landing: "/",
+  shop: "/shop",
+  products: "/products",
+  men: "/shop/men",
+  women: "/shop/women",
+  kids: "/shop/kids",
+  bags: "/shop/bags",
+  accessories: "/shop/accessories",
+  home: "/shop/home",
+  cart: "/cart",
+  wishlist: "/wishlist",
+  settings: "/settings",
+  "product-detail": "/products",
+  auth: "/auth",
+  socials: "/social",
+  "saved-looks": "/social/saved",
+  messages: "/social/messages",
+  "user-profile": "/profile",
+  news: "/news",
+};
+
+// Convierte una URL del navegador en la pantalla lógica que usa la app.
+const resolvePageFromPath = (path) => {
+  const segments = path.split("/").filter(Boolean);
+
+  if (segments.length === 0) return "landing";
+  if (segments[0] === "shop") {
+    return segments[1] || "shop";
+  }
+  if (segments[0] === "social") {
+    if (segments[1] === "saved") return "saved-looks";
+    if (segments[1] === "messages") return "messages";
+    return "socials";
+  }
+  if (segments[0] === "profile") return "user-profile";
+  if (segments[0] === "product") return "product-detail";
+
+  return segments[0];
+};
+
 const normalizeTheme = (value) => {
   if (value === "editorial") return "light";
   if (value === "contrast") return "dark";
@@ -73,53 +115,16 @@ const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const getPageFromPath = (path) => {
-    const segments = path.split("/").filter(Boolean);
-    if (segments.length === 0) return "landing";
-    if (segments[0] === "shop") {
-      if (segments[1]) return segments[1];
-      return "shop";
-    }
-    if (segments[0] === "social") {
-      if (segments[1] === "saved") return "saved-looks";
-      if (segments[1] === "messages") return "messages";
-      return "socials";
-    }
-    if (segments[0] === "profile") return "user-profile";
-    if (segments[0] === "product") return "product-detail";
-    return segments[0];
-  };
-
-  const currentPage = getPageFromPath(location.pathname);
+  const currentPage = resolvePageFromPath(location.pathname);
 
   const clearPendingContact = () => setPendingContact(null);
 
   const setCurrentPage = (page) => {
-    const routeMap = {
-      landing: "/",
-      shop: "/shop",
-      products: "/products",
-      men: "/shop/men",
-      women: "/shop/women",
-      kids: "/shop/kids",
-      bags: "/shop/bags",
-      accessories: "/shop/accessories",
-      home: "/shop/home",
-      cart: "/cart",
-      wishlist: "/wishlist",
-      settings: "/settings",
-      "product-detail": "/products",
-      auth: "/auth",
-      socials: "/social",
-      "saved-looks": "/social/saved",
-      messages: "/social/messages",
-      "user-profile": "/profile",
-      news: "/news",
-    };
-    const target = routeMap[page] || "/";
+    const target = ROUTE_MAP[page] || "/";
     navigate(target);
   };
 
+  // Estado principal de la app: se inicializa desde localStorage para que la sesión sobreviva al refresco.
   const [isGuest, setIsGuest] = useState(() => {
     try { return localStorage.getItem("rtf_is_guest") === "true"; } catch { return false; }
   });
@@ -184,12 +189,42 @@ const App = () => {
       return normalizeLanguage(savedLanguage);
     } catch { return DEFAULT_LANGUAGE; }
   });
+
+  // Mensaje temporal que se muestra cuando se añade un producto al carrito.
   const [cartToast, setCartToast] = useState("");
   const [currentUser, setCurrentUser] = useState(() => authService.loadCurrentUser());
   const [pendingProtectedPage, setPendingProtectedPage] = useState("shop");
   const t = createTranslator(language);
 
-  // Profile management state
+  useEffect(() => {
+    const root = document.documentElement;
+    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const applyTheme = () => {
+      const resolvedTheme = theme === "auto" ? (systemPrefersDark.matches ? "dark" : "light") : theme;
+
+      if (resolvedTheme === "dark") {
+        root.setAttribute("data-theme", "dark");
+      } else {
+        root.removeAttribute("data-theme");
+      }
+
+      localStorage.setItem("rtf_theme", theme);
+    };
+
+    applyTheme();
+
+    if (theme !== "auto") return;
+
+    const handleSystemThemeChange = () => {
+      applyTheme();
+    };
+
+    systemPrefersDark.addEventListener("change", handleSystemThemeChange);
+    return () => systemPrefersDark.removeEventListener("change", handleSystemThemeChange);
+  }, [theme]);
+
+  // Estado específico del editor de perfil.
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [profileDraftBio, setProfileDraftBio] = useState("");
   const [profileDraftAvatar, setProfileDraftAvatar] = useState("");
@@ -205,6 +240,7 @@ const App = () => {
     } catch (e) { console.warn("Could not sync app data:", e); }
   };
 
+  // Carrito y wishlist se actualizan primero en estado local y luego se sincronizan con Supabase si hay usuario.
   const addToCart = (product) => {
     setCartItems((prev) => {
       const next = [...prev, product];
@@ -294,7 +330,7 @@ const App = () => {
     } catch (e) { console.error("Could not mark as read", e); }
   };
 
-  // Social Methods
+  // Posts sociales: carga inicial, paginación y creación de contenido.
   const loadSocialPosts = async (isMore = false) => {
     if (isLoadingSocialPosts || (!hasMorePosts && isMore)) return;
     setIsLoadingSocialPosts(true);
@@ -317,6 +353,7 @@ const App = () => {
     finally { setIsCreatingSocialPost(false); }
   };
 
+  // Likes y comentarios se guardan en Supabase y luego se reflejan en el estado local.
   const toggleSocialLike = async (postId) => {
     const normalizedId = String(postId);
     const isLiked = likedPostIds.includes(normalizedId);
@@ -332,7 +369,7 @@ const App = () => {
     } catch (err) { throw err; }
   };
 
-  // Profile Methods
+  // Perfil social: helpers para abrir perfiles, borrar contenido y normalizar handles.
   const normalizeHandle = (value) => String(value || "").trim().replace(/^@/, "");
 
   const deleteSocialPost = async (postId) => {

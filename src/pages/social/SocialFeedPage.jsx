@@ -3,6 +3,7 @@ import { Bookmark, Heart, ImagePlus, MessageCircle, ShoppingCart, X, Newspaper, 
 import { GlobalFooter, GlobalHeader, SocialSidebar } from "../../components/Layout";
 import { localizePost } from "../../data/i18n";
 
+// Feed social con publicación de posts, comentarios y carga infinita.
 const SocialFeedPage = ({
   changePage,
   currentUser,
@@ -32,6 +33,7 @@ const SocialFeedPage = ({
   language = "ca",
   t,
 }) => {
+    // Formatea la fecha en estilo relativo para que el feed se lea como una red social real.
     const formatRelativeTime = (isoDate) => {
       const timestamp = Date.parse(isoDate || "");
       if (Number.isNaN(timestamp)) return "";
@@ -54,6 +56,7 @@ const SocialFeedPage = ({
       return new Date(timestamp).toLocaleDateString();
     };
 
+    // Un comentario solo se puede borrar si pertenece al usuario actual.
     const canDeleteComment = (comment) => {
       const currentName = String(currentUser?.name || "").trim().toLowerCase();
       const commentUser = String(comment?.user || "").trim().toLowerCase();
@@ -72,6 +75,7 @@ const SocialFeedPage = ({
   const observerTarget = useRef(null);
 
   useEffect(() => {
+    // Observador de intersección para pedir más posts al llegar al final del feed.
     if (!hasMore || isLoadingPosts) return;
 
     const observer = new IntersectionObserver(
@@ -96,6 +100,7 @@ const SocialFeedPage = ({
       ? posts.filter((post) => savedLookIds.includes(String(post.id)))
       : posts;
 
+  // Imagen temporal para previsualizar antes de publicar.
   const handleImageSelect = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -187,6 +192,7 @@ const SocialFeedPage = ({
           t={t} 
         />
         <div className="social-feed">
+        {/* Cabecera del feed con acceso al guardado de looks y formulario rápido de publicación. */}
         <div className="social-feed-header">
           <div className="social-feed-title-row">
             <h1 className="social-feed-title">{t("social.feed.title", "SOCIAL FEED")}</h1>

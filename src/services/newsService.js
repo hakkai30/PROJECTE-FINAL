@@ -1,8 +1,8 @@
 export const getFashionNews = async (lang = "es") => {
   const safeLang = ["en", "es", "fr"].includes(lang) ? lang : "en";
 
-  // En producción usa la Serverless Function de Vercel (evita CORS)
-  // En local usa la API directamente
+  // En producción se usa la función serverless de Vercel para evitar problemas de CORS.
+  // En local se llama a GNews directamente para simplificar la depuración.
   const isLocal = window.location.hostname === "localhost";
 
   let url;

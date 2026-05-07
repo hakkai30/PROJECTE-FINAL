@@ -6,6 +6,7 @@ import { LANGUAGE_OPTIONS, getLanguageLabel } from "../data/i18n";
 import { localizeProduct } from "../data/i18n";
 import OptimizedImage from "./OptimizedImage";
 
+// Mini ventana flotante que se usa en la landing para mostrar moda o noticias.
 export const WindowOverlay = ({ label, offsetClass, article }) => {
   const [isVisible, setIsVisible] = useState(true);
   const closeWindow = (e) => {
@@ -61,6 +62,7 @@ export const WindowOverlay = ({ label, offsetClass, article }) => {
   );
 };
 
+// Selector global de idioma reutilizable en varias pantallas.
 export const LanguageSwitcher = ({ language, onChangeLanguage, t }) => {
   return (
     <div className="language-switcher" aria-label={t("language.label", "Language")}>
@@ -76,6 +78,7 @@ export const LanguageSwitcher = ({ language, onChangeLanguage, t }) => {
   );
 };
 
+// Barra lateral de navegación para la parte social.
 export const SocialSidebar = ({ isSidebarOpen, setIsSidebarOpen, changePage, t }) => {
   return (
     <aside className={`social-side-nav ${isSidebarOpen ? 'expanded' : 'collapsed'}`}>
@@ -143,6 +146,7 @@ export const SocialSidebar = ({ isSidebarOpen, setIsSidebarOpen, changePage, t }
   );
 };
 
+// Cabecera global: menú lateral, buscador, notificaciones y accesos rápidos.
 export const GlobalHeader = ({
   changePage,
   cartCount,
@@ -176,6 +180,7 @@ export const GlobalHeader = ({
   const quickSearches = ["Jaqueta", "Bandolera", "Cadena", "Home"];
 
   useEffect(() => {
+    // Cuando cambia el texto o se abre/cierra la búsqueda, reseteamos el foco de resultados.
     setActiveResultIndex(-1);
   }, [searchTerm, isSearchOpen]);
 
@@ -482,6 +487,7 @@ export const GlobalHeader = ({
   );
 };
 
+// Pie global compartido por shop y social.
 export const GlobalFooter = ({ t }) => (
   <footer className="main-app-footer">
     <div className="footer-column">
@@ -526,6 +532,7 @@ const tokenize = (value = "") => {
     .filter((token) => token.length > 2);
 };
 
+// Widget flotante de ayuda que guía al usuario con acciones rápidas.
 const OFF_SCOPE_TERMS = [
   "tiempo",
   "clima",

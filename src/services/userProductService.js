@@ -1,5 +1,6 @@
 import { supabase } from "../config/supabase";
 
+// CRUD de los productos publicados por usuarios dentro de la comunidad.
 export const userProductService = {
   async getAllUserProducts() {
     const { data, error } = await supabase

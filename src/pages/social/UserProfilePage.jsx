@@ -3,6 +3,7 @@ import { Heart, Trash2, Plus, MessageCircle, Bookmark, MessageSquare } from "luc
 import { GlobalFooter, GlobalHeader, SocialSidebar } from "../../components/Layout";
 import { localizePost } from "../../data/i18n";
 
+// Perfil del usuario: muestra datos básicos y el contenido que ha publicado.
 const UserProfilePage = ({
   changePage,
   cartCount,
@@ -46,7 +47,7 @@ const UserProfilePage = ({
           t={t} 
         />
         <main className="user-profile-container">
-        {/* Profile Header */}
+        {/* Cabecera con avatar, nombre, correo y bio. */}
         <section className="profile-header">
           <div className="profile-avatar">
             {currentUser?.avatar ? (
@@ -76,7 +77,7 @@ const UserProfilePage = ({
            </button>
         </section>
 
-        {/* User Posts Feed */}
+        {/* Posts del usuario actual con opción de borrado. */}
         <section className="user-posts-section">
           <h2 className="section-title">{t("profile.yourPosts", "YOUR POSTS")}</h2>
           

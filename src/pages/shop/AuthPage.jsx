@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { LogIn, UserPlus, ShoppingBag } from "lucide-react";
 
+// Estilos de avatar para que el registro tenga una identidad visual rápida.
 const AVATAR_STYLES = [
   { id: "midnight", label: "MIDNIGHT", from: "#111111", to: "#4a4a4a" },
   { id: "ember", label: "EMBER", from: "#9f1d14", to: "#ff8a3d" },
@@ -23,6 +24,7 @@ const getInitials = (value) => {
     .toUpperCase();
 };
 
+// Genera un avatar SVG local sin depender de imágenes externas.
 const buildAvatar = (seed, style) => {
   const initials = getInitials(seed);
   const svg = `
@@ -42,6 +44,7 @@ const buildAvatar = (seed, style) => {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 };
 
+// Pantalla de acceso: bienvenida, login, registro y modo invitado.
 const AuthPage = ({
   changePage,
   onLogin,
@@ -71,6 +74,7 @@ const AuthPage = ({
     }
 
     if (view === "register") {
+      // Validaciones básicas antes de mandar el registro al servicio.
       if (!name.trim()) {
         setFeedback(t("auth.errors.nameRequired", "Enter a username."));
         return;

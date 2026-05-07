@@ -2,6 +2,7 @@ import { supabase } from "../config/supabase";
 import { authService } from "./authService";
 import { notificationService } from "./notificationService";
 
+// Acciones de red social que no pertenecen al post en sí: seguir, guardar y ver perfiles.
 export const socialService = {
   async getProfile(handle) {
     const { data, error } = await supabase

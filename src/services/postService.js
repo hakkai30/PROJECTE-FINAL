@@ -21,6 +21,7 @@ const uploadImage = async (file) => {
   return urlData.publicUrl;
 };
 
+// Servicio central del feed social: posts, likes, comentarios y borrado.
 export const postService = {
   uploadImage,
 
