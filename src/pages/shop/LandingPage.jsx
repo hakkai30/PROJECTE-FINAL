@@ -8,6 +8,7 @@ const LandingPage = ({
   onLogout,
   cartCount = 0, 
   wishlistCount = 0, 
+  products = [],
 }) => {
   const [news, setNews] = useState([]);
 
@@ -40,6 +41,7 @@ const LandingPage = ({
         onLogout={onLogout}
         cartCount={cartCount} 
         wishlistCount={wishlistCount}
+        products={products}
       />
 
       <div className="windows-absolute-wrapper" aria-hidden="true">

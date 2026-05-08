@@ -11,6 +11,9 @@ const ProductDetailPage = ({
   onOpenProductDetail,
   theme,
   onToggleTheme,
+  currentUser,
+  onLogout,
+  products = [],
 }) => {
   const isWishlisted = wishlistIds.includes(product.id);
 
@@ -23,6 +26,9 @@ const ProductDetailPage = ({
         onOpenProductDetail={onOpenProductDetail}
         theme={theme}
         onToggleTheme={onToggleTheme}
+        currentUser={currentUser}
+        onLogout={onLogout}
+        products={products}
       />
 
       <main className="product-detail-layout">

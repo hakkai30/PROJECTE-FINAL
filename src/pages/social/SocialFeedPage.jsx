@@ -27,6 +27,7 @@ const SocialFeedPage = ({
   wishlistCount = 0,
   theme,
   onToggleTheme,
+  products = [],
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [localView, setLocalView] = useState("all");
@@ -79,7 +80,7 @@ const SocialFeedPage = ({
 
   return (
     <div className="category-page">
-      <GlobalHeader {...{ changePage, cartCount, wishlistCount, currentUser, onLogout, theme }} />
+      <GlobalHeader {...{ changePage, cartCount, wishlistCount, currentUser, onLogout, theme, products }} />
       
       <div className="social-layout">
         <SocialSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} changePage={changePage} />

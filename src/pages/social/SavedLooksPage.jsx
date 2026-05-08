@@ -21,6 +21,7 @@ const SavedLooksPage = ({
   wishlistCount = 0,
   theme,
   onToggleTheme,
+  products = [],
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openCommentPostIds, setOpenCommentPostIds] = useState([]);
@@ -106,6 +107,7 @@ const SavedLooksPage = ({
         onLogout={onLogout}
         theme={theme}
         onToggleTheme={onToggleTheme}
+        products={products}
       />
       <div className="social-layout">
         <SocialSidebar 

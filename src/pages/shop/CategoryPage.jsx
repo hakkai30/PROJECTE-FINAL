@@ -9,6 +9,7 @@ const CategoryPage = ({
   onToggleTheme,
   currentUser,
   onLogout,
+  products = [],
 }) => {
   const categories = [
     { label: "HOMBRE", page: "men" },
@@ -30,6 +31,7 @@ const CategoryPage = ({
         onToggleTheme={onToggleTheme}
         currentUser={currentUser}
         onLogout={onLogout}
+        products={products}
       />
       <main className="category-content-area">
         <p className="category-kicker">COLECCIONES</p>

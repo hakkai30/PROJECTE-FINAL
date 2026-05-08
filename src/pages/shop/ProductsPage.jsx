@@ -139,6 +139,7 @@ const ProductsPage = ({
         theme={theme}
         onToggleTheme={onToggleTheme}
         onLogout={onLogout}
+        products={products}
       />
 
       <div className="shop-toolbar">

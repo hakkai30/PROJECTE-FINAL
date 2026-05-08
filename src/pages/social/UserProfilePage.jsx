@@ -12,7 +12,8 @@ const UserProfilePage = ({
   posts = [],
   onDeletePost,
   onUpdateUser,
-  viewedUser, // Usuario que estamos visualizando
+  viewedUser,
+  products = [],
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -61,7 +62,7 @@ const UserProfilePage = ({
 
   return (
     <div className="category-page">
-      <GlobalHeader {...{ changePage, cartCount, wishlistCount, theme, currentUser }} />
+      <GlobalHeader {...{ changePage, cartCount, wishlistCount, theme, currentUser, products }} />
       <div className="social-layout">
         <SocialSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} changePage={changePage} />
         <main className="user-profile-container">

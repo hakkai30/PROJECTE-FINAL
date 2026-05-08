@@ -10,6 +10,7 @@ const NewsPage = ({
   onToggleTheme,
   currentUser,
   onLogout,
+  products = [],
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [articles, setArticles] = useState([]);
@@ -44,6 +45,7 @@ const NewsPage = ({
         onToggleTheme={onToggleTheme}
         currentUser={currentUser}
         onLogout={onLogout}
+        products={products}
       />
       <div className="social-layout">
         <SocialSidebar 
