@@ -489,13 +489,22 @@ body {
 }
 
 .bottom-action-btn {
+  font-family: var(--font-mono);
   font-size: 0.74rem;
+  font-weight: 700;
   letter-spacing: 0.16em;
-  color: #444;
+  color: #111;
+  background: #fff;
+  border: 1px solid #111;
+  padding: 0.8rem 2.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.bottom-action-btn.is-close {
-  color: #111;
+.bottom-action-btn:hover {
+  background: #111;
+  color: #fff;
 }
 
 .main-app-footer {
