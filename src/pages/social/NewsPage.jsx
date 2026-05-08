@@ -88,7 +88,7 @@ const NewsPage = ({
                 >
                   <div className="product-image-wrapper" style={{ height: "200px" }}>
                     <img
-                      src={article.image || "https://via.placeholder.com/400x300?text=No+Image"}
+                      src={article.image || "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=80"}
                       alt={article.title}
                       className="product-image"
                       style={{ objectFit: "cover", width: "100%", height: "100%" }}
