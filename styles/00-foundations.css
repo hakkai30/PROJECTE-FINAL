@@ -1403,3 +1403,28 @@ button:not(.sort-option-btn):not(.post-user-handle):not(.social-comment-user):no
   color: inherit !important;
   stroke: currentColor !important;
 }
+
+/* HARD RESET FOR SIDEBAR BUTTONS */
+.sidebar-header button,
+.sidebar-nav-group button,
+.sidebar-nav-group.bottom-group button {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0.6rem 0 !important;
+  text-align: left !important;
+  width: 100% !important;
+  font-size: 0.95rem !important;
+  letter-spacing: 0.1em !important;
+  color: inherit !important;
+}
+
+.sidebar-header button:hover,
+.sidebar-nav-group button:hover,
+.sidebar-nav-group.bottom-group button:hover {
+  background: transparent !important;
+  text-decoration: underline !important;
+  color: #111 !important;
+  transform: none !important;
+}
