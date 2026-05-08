@@ -193,6 +193,10 @@ const SavedLooksPage = ({
                 alt={`Publicación de ${post.user || post.user_email}`}
                 className="post-img"
               />
+              <div className="social-post-caption">
+                <strong>{post.user || post.user_email?.split('@')[0] || "usuario"}</strong> {post.description}
+              </div>
+
               <div className="post-actions">
                 <button
                   type="button"
@@ -238,9 +242,6 @@ const SavedLooksPage = ({
                   <Bookmark size={16} fill="currentColor" aria-hidden="true" />
                   GUARDADO
                 </button>
-              </div>
-              <div className="social-post-caption">
-                <strong>{post.user || post.user_email?.split('@')[0]}</strong> {post.description}
               </div>
 
               {isCommentsOpen && (

@@ -37,6 +37,10 @@ const SocialPost = ({
         <img src={post.img} alt={`Publicación de ${post.user || post.user_email || "usuario"}`} className="post-img" />
       )}
 
+      <div className="social-post-caption">
+        <strong>{post.user || post.user_email?.split('@')[0]}</strong> {post.description}
+      </div>
+
       <div className="post-actions">
         <button
           className={`icon-action-btn ${isLiked ? "active" : ""}`}
@@ -67,9 +71,6 @@ const SocialPost = ({
         </button>
       </div>
 
-      <div className="social-post-caption">
-        <strong>{post.user || post.user_email?.split('@')[0]}</strong> {post.description}
-      </div>
 
       {isCommentsOpen && (
         <div className="social-comments-panel">
