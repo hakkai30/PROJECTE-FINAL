@@ -669,6 +669,12 @@ body {
   flex-shrink: 0;
 }
 
+/* Remover bordes negros de los botones del sidebar */
+.side-nav-toggle,
+.side-nav-item {
+  border: none !important;
+}
+
 .social-feed {
   flex: 1;
   padding: 4rem 2rem;
