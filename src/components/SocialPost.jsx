@@ -65,10 +65,6 @@ const SocialPost = ({
         </button>
 
 
-        <button type="button" className="shop-look-btn">
-          <ShoppingBag size={16} />
-          {t("social.actions.shopLook", "SHOP LOOK")}
-        </button>
 
         <button
           type="button"
