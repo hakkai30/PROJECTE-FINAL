@@ -312,75 +312,27 @@ const ProductsPage = ({
         <div className="filter-overlay bottom-sheet-overlay">
           <div className="bottom-sheet-panel">
             <div className="bottom-sheet-grid">
-              <div className="bottom-col">
-                <h3>CATEGORÍAS</h3>
-                <p>{activeCategory === "all" || activeCategory === "shop" ? "TODAS" : activeCategory.toUpperCase()}</p>
-              </div>
-              <div className="bottom-col">
-                <h3>MARCA</h3>
-                <button
-                  className={`sort-option-btn ${selectedBrand === "all" ? "active" : ""}`}
-                  onClick={() => setSelectedBrand("all")}
-                >
-                  TODAS LAS MARCAS
-                </button>
-                {availableBrands.map((brand) => (
+              <div className="bottom-col" style={{ gridColumn: "1 / -1", textAlign: "center" }}>
+                <h3 style={{ fontSize: "1.2rem", marginBottom: "1.5rem" }}>FILTRAR POR TALLA</h3>
+                <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "1rem" }}>
                   <button
-                    key={brand}
-                    className={`sort-option-btn ${selectedBrand === brand ? "active" : ""}`}
-                    onClick={() => setSelectedBrand(brand)}
+                    className={`sort-option-btn ${selectedSize === "all" ? "active" : ""}`}
+                    onClick={() => setSelectedSize("all")}
+                    style={{ padding: "1rem 2rem", border: "1px solid #111" }}
                   >
-                    {brand}
+                    TODAS LAS TALLAS
                   </button>
-                ))}
-              </div>
-              <div className="bottom-col">
-                <h3>COLORES</h3>
-                <button
-                  className={`sort-option-btn ${selectedColor === "all" ? "active" : ""}`}
-                  onClick={() => setSelectedColor("all")}
-                >
-                  TODOS LOS COLORES
-                </button>
-                {availableColors.map((color) => (
-                  <button
-                    key={color}
-                    className={`sort-option-btn ${selectedColor === color ? "active" : ""}`}
-                    onClick={() => setSelectedColor(color)}
-                  >
-                    {color.toUpperCase()}
-                  </button>
-                ))}
-              </div>
-              <div className="bottom-col">
-                <h3>TALLA</h3>
-                <button
-                  className={`sort-option-btn ${selectedSize === "all" ? "active" : ""}`}
-                  onClick={() => setSelectedSize("all")}
-                >
-                  TODAS LAS TALLAS
-                </button>
-                {availableSizes.map((size) => (
-                  <button
-                    key={size}
-                    className={`sort-option-btn ${selectedSize === size ? "active" : ""}`}
-                    onClick={() => setSelectedSize(size)}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-              <div className="bottom-col">
-                <h3>PRECIO MÁXIMO</h3>
-                <p className="filter-price-readout">{maxPrice.toFixed(2)} EUR</p>
-                <input
-                  className="filter-price-slider"
-                  type="range"
-                  min="0"
-                  max={categoryMaxPrice || 0}
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(Number(e.target.value))}
-                />
+                  {availableSizes.map((size) => (
+                    <button
+                      key={size}
+                      className={`sort-option-btn ${selectedSize === size ? "active" : ""}`}
+                      onClick={() => setSelectedSize(size)}
+                      style={{ padding: "1rem 2rem", border: "1px solid #111" }}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
