@@ -47,6 +47,7 @@ const LandingPage = ({
         wishlistCount={wishlistCount}
         t={t} 
         language={language}
+        setLanguage={setLanguage}
         notifications={notifications}
         unreadNotificationsCount={unreadNotificationsCount}
         onMarkNotificationRead={onMarkNotificationRead}

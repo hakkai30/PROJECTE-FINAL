@@ -34,6 +34,7 @@ const CartPage = ({
         theme={theme}
         onToggleTheme={onToggleTheme}
         language={language}
+        setLanguage={setLanguage}
         t={t}
         currentUser={currentUser}
         onLogout={onLogout}

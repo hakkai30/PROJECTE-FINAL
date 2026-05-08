@@ -143,6 +143,7 @@ const ProductsPage = ({
         theme={theme}
         onToggleTheme={onToggleTheme}
         language={language}
+        setLanguage={setLanguage}
         t={t}
         onLogout={onLogout}
       />

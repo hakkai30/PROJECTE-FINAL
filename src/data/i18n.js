@@ -1,6 +1,8 @@
 export const LANGUAGE_OPTIONS = [
   { code: "ca", label: "Català" },
   { code: "es", label: "Castellano" },
+  { code: "en", label: "English" },
+  { code: "fr", label: "Français" },
 ];
 
 export const DEFAULT_LANGUAGE = "ca";
@@ -336,13 +338,33 @@ const TRANSLATIONS = {
     },
     notifications: { title: "NOTIFICACIONES", empty: "No hay notificaciones todavía." },
   },
+  en: {
+    brand: "ROB THE FAB",
+    language: { label: "Language", ca: "Catalan", es: "Spanish", en: "English", fr: "French" },
+    header: { menu: "MENU", close: "CLOSE", search: "SEARCH", wishlist: "WISHLIST", bag: "BAG", currency: "SPAIN / EUR" },
+    nav: { home: "HOME", shop: "SHOP", socials: "SOCIAL FEED", news: "NEWS", wishlist: "WISHLIST", profile: "PROFILE", logout: "LOGOUT" },
+    products: { results: "RESULTS", filters: "FILTERS", sort: "SORT", actions: { add: "+ ADD", detail: "DETAIL" } },
+    cart: { title: "YOUR BAG", empty: "Your bag is empty.", checkout: "CHECKOUT", total: "TOTAL" },
+    social: { feed: { title: "SOCIAL FEED", publish: "PUBLISH" } },
+    auth: { submit: { login: "LOGIN", register: "REGISTER" } },
+  },
+  fr: {
+    brand: "ROB THE FAB",
+    language: { label: "Langue", ca: "Catalan", es: "Espagnol", en: "Anglais", fr: "Français" },
+    header: { menu: "MENU", close: "FERMER", search: "RECHERCHER", wishlist: "WISHLIST", bag: "SAC", currency: "ESPAGNE / EUR" },
+    nav: { home: "ACCUEIL", shop: "BOUTIQUE", socials: "SOCIAL FEED", news: "NOUVELLES", wishlist: "WISHLIST", profile: "PROFIL", logout: "DÉCONNEXION" },
+    products: { results: "RÉSULTATS", filters: "FILTRES", sort: "TRIER", actions: { add: "+ AJOUTER", detail: "DÉTAIL" } },
+    cart: { title: "VOTRE SAC", empty: "Votre sac est vide.", checkout: "PAIEMENT", total: "TOTAL" },
+    social: { feed: { title: "SOCIAL FEED", publish: "PUBLIER" } },
+    auth: { submit: { login: "CONNEXION", register: "S'INSCRIRE" } },
+  },
 };
 
 const readValue = (source, path) =>
   path.split(".").reduce((current, segment) => current?.[segment], source);
 
 export const normalizeLanguage = (value) => {
-  return ["ca", "es"].includes(value) ? value : DEFAULT_LANGUAGE;
+  return ["ca", "es", "en", "fr"].includes(value) ? value : DEFAULT_LANGUAGE;
 };
 
 export const getLanguageLabel = (language) => {

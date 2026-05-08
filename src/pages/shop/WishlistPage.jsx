@@ -12,6 +12,7 @@ const WishlistPage = ({
   theme,
   onToggleTheme,
   language,
+  setLanguage,
   t,
   currentUser,
   onLogout,
@@ -26,6 +27,7 @@ const WishlistPage = ({
         theme={theme}
         onToggleTheme={onToggleTheme}
         language={language}
+        setLanguage={setLanguage}
         t={t}
         currentUser={currentUser}
         onLogout={onLogout}

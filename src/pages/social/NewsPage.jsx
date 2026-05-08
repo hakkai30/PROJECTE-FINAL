@@ -12,9 +12,8 @@ const NewsPage = ({
   onToggleTheme,
   currentUser,
   onLogout,
-  notifications = [],
-  unreadNotificationsCount = 0,
   onMarkNotificationRead,
+  setLanguage,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [articles, setArticles] = useState([]);
@@ -47,6 +46,7 @@ const NewsPage = ({
         theme={theme}
         onToggleTheme={onToggleTheme}
         language={language}
+        setLanguage={setLanguage}
         t={t}
         currentUser={currentUser}
         onLogout={onLogout}

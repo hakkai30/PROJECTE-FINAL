@@ -28,6 +28,7 @@ const SocialFeedPage = ({
   theme,
   onToggleTheme,
   language = "ca",
+  setLanguage,
   t,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -81,7 +82,7 @@ const SocialFeedPage = ({
 
   return (
     <div className="category-page">
-      <GlobalHeader {...{ changePage, cartCount, wishlistCount, currentUser, onLogout, theme, onToggleTheme, language, t }} />
+      <GlobalHeader {...{ changePage, cartCount, wishlistCount, currentUser, onLogout, theme, language, setLanguage, t }} />
       
       <div className="social-layout">
         <SocialSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} changePage={changePage} t={t} />

@@ -19,7 +19,7 @@ const UserProfilePage = ({
 
   return (
     <div className="category-page">
-      <GlobalHeader {...{ changePage, cartCount, wishlistCount, theme, onToggleTheme, language, t, currentUser }} />
+      <GlobalHeader {...{ changePage, cartCount, wishlistCount, theme, language, setLanguage, t, currentUser }} />
       <div className="social-layout">
         <SocialSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} changePage={changePage} t={t} />
         <main className="user-profile-container">

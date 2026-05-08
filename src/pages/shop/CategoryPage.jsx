@@ -11,6 +11,7 @@ const CategoryPage = ({
   t,
   currentUser,
   onLogout,
+  setLanguage,
 }) => {
   const categories = [
     { label: t("category.categories.men", "MENS"), page: "men" },
@@ -31,6 +32,7 @@ const CategoryPage = ({
         theme={theme}
         onToggleTheme={onToggleTheme}
         language={language}
+        setLanguage={setLanguage}
         t={t}
         currentUser={currentUser}
         onLogout={onLogout}

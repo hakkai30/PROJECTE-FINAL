@@ -23,6 +23,7 @@ const SavedLooksPage = ({
   theme,
   onToggleTheme,
   language = "ca",
+  setLanguage,
   t,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -110,6 +111,7 @@ const SavedLooksPage = ({
         theme={theme}
         onToggleTheme={onToggleTheme}
         language={language}
+        setLanguage={setLanguage}
         t={t}
       />
       <div className="social-layout">

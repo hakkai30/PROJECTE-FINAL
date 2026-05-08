@@ -6,7 +6,6 @@ import ProductsPage from "./pages/shop/ProductsPage";
 import CartPage from "./pages/shop/CartPage";
 import WishlistPage from "./pages/shop/WishlistPage";
 import ProductDetailPage from "./pages/shop/ProductDetailPage";
-import SettingsPage from "./pages/shop/SettingsPage";
 import SocialFeedPage from "./pages/social/SocialFeedPage";
 import SavedLooksPage from "./pages/social/SavedLooksPage";
 import AuthPage from "./pages/shop/AuthPage";
@@ -23,15 +22,14 @@ import { supabase } from "./config/supabase";
 
 // Páginas que requieren inicio de sesión.
 const PROTECTED_PAGES = new Set(["socials", "saved-looks", "user-profile"]);
-const VALID_THEMES = new Set(["auto", "light", "dark"]);
-const VALID_LANGUAGES = new Set(["ca", "es"]);
+const VALID_LANGUAGES = new Set(["ca", "es", "en", "fr"]);
 
 // Mapa de rutas: asocia cada pantalla lógica con su URL.
 const ROUTE_MAP = {
   landing: "/", shop: "/shop", products: "/products",
   men: "/shop/men", women: "/shop/women", kids: "/shop/kids",
   bags: "/shop/bags", accessories: "/shop/accessories", home: "/shop/home",
-  cart: "/cart", wishlist: "/wishlist", settings: "/settings",
+  cart: "/cart", wishlist: "/wishlist",
   "product-detail": "/products", auth: "/auth",
   socials: "/social", "saved-looks": "/social/saved",
   "user-profile": "/profile", news: "/news",
@@ -98,12 +96,6 @@ const App = () => {
   const [selectedProductId, setSelectedProductId] = useState(() => {
     try { const saved = localStorage.getItem("rtf_selected_product_id"); return saved ? Number(saved) : null; } catch { return null; }
   });
-  const [theme, setTheme] = useState(() => {
-    try {
-      const saved = localStorage.getItem("rtf_theme");
-      return VALID_THEMES.has(saved) ? saved : "auto";
-    } catch { return "auto"; }
-  });
   const [language, setLanguage] = useState(() => {
     try {
       const saved = localStorage.getItem("rtf_language");
@@ -114,24 +106,15 @@ const App = () => {
   const [products, setProducts] = useState([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
+  const theme = "light";
   const [cartToast, setCartToast] = useState("");
   const [currentUser, setCurrentUser] = useState(() => authService.loadCurrentUser());
   const t = createTranslator(language);
 
   // Aplicar tema visual (claro/oscuro/auto).
   useEffect(() => {
-    const root = document.documentElement;
-    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)");
-    const applyTheme = () => {
-      const resolved = theme === "auto" ? (systemPrefersDark.matches ? "dark" : "light") : theme;
-      if (resolved === "dark") { root.setAttribute("data-theme", "dark"); } else { root.removeAttribute("data-theme"); }
-      localStorage.setItem("rtf_theme", theme);
-    };
-    applyTheme();
-    if (theme !== "auto") return;
-    systemPrefersDark.addEventListener("change", applyTheme);
-    return () => systemPrefersDark.removeEventListener("change", applyTheme);
-  }, [theme]);
+    document.documentElement.removeAttribute("data-theme");
+  }, []);
 
   // Persistir carrito y wishlist en localStorage.
   useEffect(() => { localStorage.setItem("rtf_cart_items", JSON.stringify(cartItems)); }, [cartItems]);
@@ -177,6 +160,8 @@ const App = () => {
       const { user, error } = await authService.login({ email, password });
       if (error) return { ok: false, error };
       setCurrentUser(user);
+      setIsGuest(false);
+      localStorage.removeItem("rtf_is_guest");
       navigate("/shop");
       return { ok: true };
     } catch (e) { return { ok: false, error: e.message }; }
@@ -187,6 +172,8 @@ const App = () => {
       const { user, error } = await authService.register({ name, email, password, bio, avatar });
       if (error) return { ok: false, error };
       setCurrentUser(user);
+      setIsGuest(false);
+      localStorage.removeItem("rtf_is_guest");
       navigate("/shop");
       return { ok: true };
     } catch (e) { return { ok: false, error: e.message }; }
@@ -287,10 +274,11 @@ const App = () => {
 
   // Proteger páginas que requieren login.
   useEffect(() => {
-    if (PROTECTED_PAGES.has(currentPage) && (!currentUser || isGuest)) {
+    // Si la página está protegida y no hay usuario (y no es invitado permitido)
+    if (PROTECTED_PAGES.has(currentPage) && !currentUser && !isGuest) {
       navigate("/auth");
     }
-  }, [currentPage, currentUser, isGuest]);
+  }, [currentPage, currentUser, isGuest, navigate]);
 
   // Props comunes que se pasan a casi todas las páginas.
   const commonProps = {
@@ -298,9 +286,10 @@ const App = () => {
     cartCount: cartItems.length,
     cartToast,
     wishlistCount: wishlistIds.length,
-    theme,
     language,
+    setLanguage,
     t,
+    theme,
     currentUser,
     onLogout: handleLogout,
   };
@@ -315,7 +304,6 @@ const App = () => {
           <Route path="/shop/:cat" element={<ProductsPage {...commonProps} products={products} addToCart={addToCart} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} onOpenProductDetail={openProductDetail} />} />
           <Route path="/cart" element={<CartPage {...commonProps} cartItems={cartItems} onOpenProductDetail={openProductDetail} onRemoveFromCart={removeFromCart} />} />
           <Route path="/wishlist" element={<WishlistPage {...commonProps} wishlistItems={wishlistItems} onToggleWishlist={toggleWishlist} onAddToCart={addToCart} onOpenProductDetail={openProductDetail} />} />
-          <Route path="/settings" element={<SettingsPage {...commonProps} setTheme={setTheme} setLanguage={setLanguage} />} />
           <Route path="/news" element={<NewsPage {...commonProps} />} />
           <Route path="/auth" element={
             <AuthPage

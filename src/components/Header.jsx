@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { X, Search, Menu, ShoppingBag, Heart, Palette } from "lucide-react";
+import { X, Search, Menu, ShoppingBag, Heart, Palette, Globe, ChevronDown } from "lucide-react";
+import { LANGUAGE_OPTIONS, getLanguageLabel } from "../data/i18n";
 import SearchOverlay from "./SearchOverlay";
 
 // Cabecera global: menú lateral, buscador, y accesos rápidos a carrito y wishlist.
@@ -12,10 +13,12 @@ const Header = ({
   onLogout = null,
   onOpenProductDetail = null,
   language = "ca",
+  setLanguage = () => {},
   t,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isLangOpen, setIsLangOpen] = useState(false);
 
   return (
     <>
@@ -98,13 +101,6 @@ const Header = ({
                       {t("auth.submit.loginRegister", "INICIA SESIÓN / REGISTRAR-SE")}
                     </button>
                   )}
-                  <button
-                    type="button"
-                    className="settings-menu-btn"
-                    onClick={() => { setIsMenuOpen(false); changePage("settings"); }}
-                  >
-                    <Palette size={14} /> {t("nav.settings", "SETTINGS")}
-                  </button>
                   <button type="button">{t("header.currency", "SPAIN / EUR")}</button>
                 </div>
               </div>
@@ -126,6 +122,36 @@ const Header = ({
           >
             <Search size={18} />
           </button>
+
+          {/* Selector de Idioma Desplegable */}
+          <div className="language-dropdown-wrapper">
+            <button
+              className="header-icon-btn lang-toggle"
+              onClick={() => setIsLangOpen(!isLangOpen)}
+              aria-label="Change Language"
+            >
+              <Globe size={18} />
+              <span className="lang-code-text">{language.toUpperCase()}</span>
+              <ChevronDown size={12} className={`chevron-icon ${isLangOpen ? 'open' : ''}`} />
+            </button>
+            
+            {isLangOpen && (
+              <div className="lang-dropdown-menu">
+                {LANGUAGE_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.code}
+                    className={`lang-option ${language === opt.code ? 'active' : ''}`}
+                    onClick={() => {
+                      setLanguage(opt.code);
+                      setIsLangOpen(false);
+                    }}
+                  >
+                    {getLanguageLabel(opt.code)}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <button
             className="header-icon-btn"
             onClick={() => changePage("wishlist")}

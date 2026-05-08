@@ -28,6 +28,7 @@ const ProductDetailPage = ({
         theme={theme}
         onToggleTheme={onToggleTheme}
         language={language}
+        setLanguage={setLanguage}
         t={t}
       />
 
