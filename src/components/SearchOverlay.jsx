@@ -5,16 +5,23 @@ import { X } from "lucide-react";
 const SearchOverlay = ({ isOpen, onClose, onOpenProductDetail, changePage, products = [] }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
+  console.log("Productos en el buscador:", products);
+
   if (!isOpen) return null;
 
   const normalizedTerm = searchTerm.trim().toLowerCase();
   const searchResults = normalizedTerm
-    ? products.filter(
-        (product) =>
-          product.name.toLowerCase().includes(normalizedTerm) ||
-          product.brand.toLowerCase().includes(normalizedTerm) ||
-          product.category.toLowerCase().includes(normalizedTerm)
-      ).slice(0, 6)
+    ? products.filter((product) => {
+        const name = (product.name || "").toLowerCase();
+        const brand = (product.brand || "").toLowerCase();
+        const category = (product.category || "").toLowerCase();
+        
+        return (
+          name.includes(normalizedTerm) ||
+          brand.includes(normalizedTerm) ||
+          category.includes(normalizedTerm)
+        );
+      }).slice(0, 6)
     : [];
 
   const handleResultOpen = (product) => {
