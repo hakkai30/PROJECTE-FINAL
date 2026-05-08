@@ -1,7 +1,7 @@
 import { ChevronRight, ChevronLeft, ShoppingCart, Newspaper, LayoutGrid, Bookmark, User } from "lucide-react";
 
 // Barra lateral de navegación para la parte social.
-const SocialSidebar = ({ isSidebarOpen, setIsSidebarOpen, changePage }) => {
+const SocialSidebar = ({ isSidebarOpen, setIsSidebarOpen, changePage, onGoToMyProfile }) => {
   return (
     <aside className={`social-side-nav ${isSidebarOpen ? 'expanded' : 'collapsed'}`}>
       <button
@@ -36,7 +36,7 @@ const SocialSidebar = ({ isSidebarOpen, setIsSidebarOpen, changePage }) => {
 
         <div className="side-nav-spacer" style={{ flex: 1 }}></div>
 
-        <button type="button" className="side-nav-item" onClick={() => changePage("user-profile")} title="PERFIL">
+        <button type="button" className="side-nav-item" onClick={() => onGoToMyProfile ? onGoToMyProfile() : changePage("user-profile")} title="PERFIL">
           <User size={20} />
           {isSidebarOpen && <span>PERFIL</span>}
         </button>

@@ -21,6 +21,12 @@ const UserProfilePage = ({
   const [previewAvatar, setPreviewAvatar] = useState(null);
   const fileInputRef = useRef(null);
 
+  // Sincronizar bio cuando cambia el usuario visualizado
+  React.useEffect(() => {
+    setEditBio(viewedUser?.bio || "");
+    setIsEditing(false); // Salir de modo edición al cambiar de perfil
+  }, [viewedUser]);
+
   const isOwnProfile = currentUser?.email === viewedUser?.email;
   const userPosts = posts.filter(post => post.user_email === viewedUser?.email);
 

@@ -51,9 +51,14 @@ const App = () => {
   const currentPage = resolvePageFromPath(location.pathname);
 
   const setCurrentPage = (page) => {
-    if (page === "user-profile") setViewedUser(null); // Reset para ver mi propio perfil
     const target = ROUTE_MAP[page] || "/";
     navigate(target);
+  };
+
+  // Función específica para ir a MI perfil (reseteando el visto)
+  const goToMyProfile = () => {
+    setViewedUser(null);
+    navigate("/profile");
   };
 
   // Estado principal: se guarda en localStorage para persistir entre recargas.
@@ -323,6 +328,7 @@ const App = () => {
     currentUser,
     products,
     onLogout: handleLogout,
+    onGoToMyProfile: goToMyProfile,
   };
 
   return (
