@@ -28,6 +28,18 @@ const SocialSidebar = ({ isSidebarOpen, setIsSidebarOpen, changePage, t }) => {
           <Newspaper size={20} />
           {isSidebarOpen && <span>{t("nav.news", "FASHION NEWS")}</span>}
         </button>
+
+        <button type="button" className="side-nav-item" onClick={() => changePage("saved-looks")} title={t("nav.saved", "SAVED LOOKS")}>
+          <Bookmark size={20} />
+          {isSidebarOpen && <span>{t("nav.saved", "SAVED LOOKS")}</span>}
+        </button>
+
+        <div className="side-nav-spacer" style={{ flex: 1 }}></div>
+
+        <button type="button" className="side-nav-item" onClick={() => changePage("user-profile")} title={t("nav.profile", "PROFILE")}>
+          <User size={20} />
+          {isSidebarOpen && <span>{t("nav.profile", "PROFILE")}</span>}
+        </button>
       </nav>
     </aside>
   );

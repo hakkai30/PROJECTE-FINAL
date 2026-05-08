@@ -220,7 +220,18 @@ const App = () => {
   const toggleSocialLike = async (postId) => {
     const normalizedId = String(postId);
     const isLiked = likedPostIds.includes(normalizedId);
+    
+    // 1. Actualizar lista de IDs con like
     setLikedPostIds((prev) => isLiked ? prev.filter((id) => id !== normalizedId) : [...prev, normalizedId]);
+    
+    // 2. Actualizar contador en socialPosts para feedback inmediato
+    setSocialPosts((prev) => prev.map(p => {
+      if (String(p.id) === normalizedId) {
+        return { ...p, likes: isLiked ? (p.likes || 1) - 1 : (p.likes || 0) + 1 };
+      }
+      return p;
+    }));
+
     try { await postService.toggleLikePost(normalizedId); } catch (err) { console.error(err); }
   };
 
@@ -320,9 +331,9 @@ const App = () => {
           } />
           <Route path="/product/:id" element={<ProductDetailPage {...commonProps} product={selectedProduct} addToCart={addToCart} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} />} />
           <Route path="/social" element={
-            <SocialFeedPage {...commonProps} posts={socialPosts} isLoadingPosts={isLoadingSocialPosts} feedError={socialFeedError} activeView={socialFeedFilter} onViewChange={setSocialFeedFilter} savedLookIds={savedLookIds} onToggleSavedLook={toggleSavedLook} onToggleLikePost={toggleSocialLike} onAddComment={addSocialComment} onDeleteComment={deleteSocialComment} loadMorePosts={() => loadSocialPosts(true)} refreshPosts={() => loadSocialPosts(false)} onCreatePost={createSocialPost} onOpenProfile={openProfile} />
+            <SocialFeedPage {...commonProps} posts={socialPosts} isLoadingPosts={isLoadingSocialPosts} feedError={socialFeedError} activeView={socialFeedFilter} onViewChange={setSocialFeedFilter} savedLookIds={savedLookIds} likedPostIds={likedPostIds} onToggleSavedLook={toggleSavedLook} onToggleLikePost={toggleSocialLike} onAddComment={addSocialComment} onDeleteComment={deleteSocialComment} loadMorePosts={() => loadSocialPosts(true)} refreshPosts={() => loadSocialPosts(false)} onCreatePost={createSocialPost} onOpenProfile={openProfile} />
           } />
-          <Route path="/social/saved" element={<SavedLooksPage {...commonProps} savedLooks={socialPosts} savedLookIds={savedLookIds} onToggleSavedLook={toggleSavedLook} onToggleLikePost={toggleSocialLike} onAddComment={addSocialComment} onDeleteComment={deleteSocialComment} />} />
+          <Route path="/social/saved" element={<SavedLooksPage {...commonProps} savedLooks={socialPosts} savedLookIds={savedLookIds} likedPostIds={likedPostIds} onToggleSavedLook={toggleSavedLook} onToggleLikePost={toggleSocialLike} onAddComment={addSocialComment} onDeleteComment={deleteSocialComment} />} />
           <Route path="/profile" element={
             <UserProfilePage {...commonProps} posts={socialPosts} onDeletePost={deleteSocialPost} onDeleteComment={deleteSocialComment} />
           } />
