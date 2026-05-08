@@ -62,26 +62,49 @@ export const socialService = {
 
   async toggleSavedLook(postId) {
     const currentUser = authService.loadCurrentUser();
-    if (!currentUser) return;
+    if (!currentUser) throw new Error("No hay sesión activa.");
 
-    const { data: user, error: fetchError } = await supabase
-      .from('users')
-      .select('saved_post_ids')
-      .eq('id', currentUser.id)
-      .single();
+    const normalizedPostId = String(postId);
 
-    if (fetchError) throw new Error("No se pudo cargar la lista de guardados.");
+    // 1. Verificar si ya está guardado
+    const { data: existing, error: checkError } = await supabase
+      .from('saved_looks')
+      .select('id')
+      .eq('user_id', currentUser.id)
+      .eq('post_id', normalizedPostId)
+      .maybeSingle();
 
-    const currentSaved = user.saved_post_ids || [];
-    const isSaved = currentSaved.includes(postId);
-    const newSaved = isSaved ? currentSaved.filter(id => id !== postId) : [...currentSaved, postId];
+    if (checkError) throw new Error("Error al verificar guardado.");
 
-    const { error } = await supabase
-      .from('users')
-      .update({ saved_post_ids: newSaved })
-      .eq('id', currentUser.id);
+    if (existing) {
+      // 2. Si existe, lo borramos (Unsave)
+      const { error: deleteError } = await supabase
+        .from('saved_looks')
+        .delete()
+        .eq('id', existing.id);
+      if (deleteError) throw new Error("No se pudo quitar de guardados.");
+      return { isSaved: false };
+    } else {
+      // 3. Si no existe, lo insertamos (Save)
+      const { error: insertError } = await supabase
+        .from('saved_looks')
+        .insert([{ user_id: currentUser.id, post_id: normalizedPostId }]);
+      if (insertError) throw new Error("No se pudo guardar el look.");
+      return { isSaved: true };
+    }
+  },
 
-    if (error) throw new Error("No se pudo actualizar la lista de guardados.");
-    return newSaved;
+  async getSavedLookIds(userId) {
+    if (!userId) return [];
+    const { data, error } = await supabase
+      .from('saved_looks')
+      .select('post_id')
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error("Error cargando guardados:", error);
+      return [];
+    }
+    return data.map(item => String(item.post_id));
   }
 };

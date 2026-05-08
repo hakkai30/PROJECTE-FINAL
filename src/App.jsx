@@ -132,8 +132,15 @@ const App = () => {
   // Guardar/quitar looks del feed social.
   const toggleSavedLook = async (postId) => {
     const normalizedId = String(postId);
+    // Optimistic UI update
     setSavedLookIds((prev) => prev.includes(normalizedId) ? prev.filter((id) => id !== normalizedId) : [...prev, normalizedId]);
-    try { await socialService.toggleSavedLook(normalizedId); } catch (err) { console.error("Error guardando look:", err); }
+    try { 
+      await socialService.toggleSavedLook(normalizedId); 
+    } catch (err) { 
+      console.error("Error guardando look:", err);
+      // Revert if error
+      setSavedLookIds((prev) => prev.includes(normalizedId) ? prev.filter((id) => id !== normalizedId) : [...prev, normalizedId]);
+    }
   };
 
   // Abrir detalle de un producto.
@@ -150,6 +157,8 @@ const App = () => {
       setCurrentUser(user);
       setIsGuest(false);
       localStorage.removeItem("rtf_is_guest");
+      const savedIds = await socialService.getSavedLookIds(user.id);
+      setSavedLookIds(savedIds);
       navigate("/shop");
       return { ok: true };
     } catch (e) { return { ok: false, error: e.message }; }
@@ -162,6 +171,8 @@ const App = () => {
       setCurrentUser(user);
       setIsGuest(false);
       localStorage.removeItem("rtf_is_guest");
+      const savedIds = await socialService.getSavedLookIds(user.id);
+      setSavedLookIds(savedIds);
       navigate("/shop");
       return { ok: true };
     } catch (e) { return { ok: false, error: e.message }; }
@@ -256,11 +267,20 @@ const App = () => {
   const selectedProduct = products.find((p) => String(p.id) === String(selectedProductId));
   const wishlistItems = products.filter((p) => wishlistIds.includes(String(p.id)));
 
-  // Restaurar sesión y pre-cargar posts al iniciar.
+  // Restaurar sesión y pre-cargar datos al iniciar.
   useEffect(() => {
-    authService.restoreSession().then((user) => { if (user) setCurrentUser(user); });
-    loadSocialPosts();
-    loadProducts();
+    const initApp = async () => {
+      const user = await authService.restoreSession();
+      if (user) {
+        setCurrentUser(user);
+        // Cargar favoritos de la DB
+        const savedIds = await socialService.getSavedLookIds(user.id);
+        if (savedIds.length > 0) setSavedLookIds(savedIds);
+      }
+      loadSocialPosts();
+      loadProducts();
+    };
+    initApp();
   }, []);
 
   // Si se navega a /product/:id directamente, extraer el ID de la URL.
