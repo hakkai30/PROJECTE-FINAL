@@ -313,23 +313,21 @@ const ProductsPage = ({
           <div className="bottom-sheet-panel">
             <div className="bottom-sheet-grid">
               <div className="bottom-col" style={{ gridColumn: "1 / -1", textAlign: "center" }}>
-                <h3 style={{ fontSize: "1.2rem", marginBottom: "1.5rem" }}>FILTRAR POR TALLA</h3>
-                <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "1rem" }}>
+                <h3 style={{ fontSize: "0.68rem", letterSpacing: "0.14em", marginBottom: "1rem" }}>FILTRAR POR TALLA</h3>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
                   <button
                     className={`sort-option-btn ${selectedSize === "all" ? "active" : ""}`}
                     onClick={() => setSelectedSize("all")}
-                    style={{ padding: "1rem 2rem", border: "1px solid #111" }}
                   >
-                    TODAS LAS TALLAS
+                    {selectedSize === "all" ? "- TODAS LAS TALLAS" : "TODAS LAS TALLAS"}
                   </button>
                   {availableSizes.map((size) => (
                     <button
                       key={size}
                       className={`sort-option-btn ${selectedSize === size ? "active" : ""}`}
                       onClick={() => setSelectedSize(size)}
-                      style={{ padding: "1rem 2rem", border: "1px solid #111" }}
                     >
-                      {size}
+                      {selectedSize === size ? `- ${size}` : size}
                     </button>
                   ))}
                 </div>
