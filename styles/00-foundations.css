@@ -1385,3 +1385,21 @@ body {
     font-size: 0.58rem;
   }
 }
+
+/* GLOBAL BUTTON THEME: WHITE BG, BLACK TEXT */
+button:not(.sort-option-btn):not(.post-user-handle):not(.social-comment-user):not(.product-name-btn) {
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  border: 1px solid #111111 !important;
+  transition: all 0.2s ease !important;
+}
+
+button:not(.sort-option-btn):not(.post-user-handle):not(.social-comment-user):not(.product-name-btn):hover {
+  background-color: #111111 !important;
+  color: #ffffff !important;
+}
+
+button:not(.sort-option-btn):not(.post-user-handle):not(.social-comment-user):not(.product-name-btn) svg {
+  color: inherit !important;
+  stroke: currentColor !important;
+}

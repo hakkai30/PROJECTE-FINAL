@@ -137,8 +137,8 @@ body {
 }
 
 .clear-all-filters-chip {
-  background: #111;
-  color: #fff;
+  background: #fff;
+  color: #111;
   border-color: #111;
 }
 
@@ -222,8 +222,9 @@ body {
 }
 
 .wishlist-card-btn.active {
-  background: #111;
-  color: #fff;
+  background: #fff;
+  color: #111;
+  border-color: #111;
 }
 
 .quick-view-overlay {
@@ -291,8 +292,9 @@ body {
 }
 
 .quick-view-wishlist.active {
-  background: #111;
-  color: #fff;
+  background: #fff;
+  color: #111;
+  border-color: #111;
 }
 
 .product-detail-layout {
@@ -376,17 +378,15 @@ body {
   font-size: 0.72rem;
   letter-spacing: 0.2em;
   color: #111;
-  background: rgba(120, 120, 120, 0.28);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background: #fff;
 }
 
 .filter-bottom-btn.is-filter {
-  background: rgba(120, 120, 120, 0.28);
+  background: #fff;
 }
 
 .filter-bottom-btn.is-sort {
-  background: rgba(120, 120, 120, 0.28);
+  background: #fff;
 }
 
 .filter-bottom-btn:hover {
@@ -988,11 +988,15 @@ body {
 }
 
 .post-actions .icon-action-btn {
+  background: #fff;
   color: #111;
+  border: 1px solid #111;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
 }
 
 .post-actions .icon-action-btn.active {
-  color: #b32828;
+  color: #111;
 }
 
 .post-actions button svg {
@@ -1002,8 +1006,9 @@ body {
 
 .post-actions .shop-look-btn {
   margin-left: auto;
-  background: var(--brand-black);
-  color: var(--bg-primary);
+  background: #fff;
+  color: #111;
+  border: 1px solid #111;
   padding: 0.8rem 2rem;
   border-radius: 0;
   font-family: var(--font-mono);
@@ -1554,13 +1559,15 @@ body {
 .suggestion-tags button,
 .sidebar-link,
 .bottom-action-btn,
-.shop-look-btn {
-  transition:
-    transform var(--dur-1) var(--ease-soft-spring),
-    box-shadow var(--dur-2) var(--ease-out-expo),
-    background-color var(--dur-2) var(--ease-out-expo),
-    color var(--dur-2) var(--ease-out-expo),
-    border-color var(--dur-2) var(--ease-out-expo);
+.shop-look-btn,
+.social-publish-btn,
+.social-add-img-btn,
+.save-profile-btn,
+.edit-profile-btn {
+  background: #fff;
+  color: #111;
+  border: 1px solid #111;
+  transition: all 0.2s ease;
 }
 
 .add-btn:hover,
@@ -1575,7 +1582,13 @@ body {
 .quick-view-wishlist:hover,
 .suggestion-tags button:hover,
 .bottom-action-btn:hover,
-.shop-look-btn:hover {
+.shop-look-btn:hover,
+.social-publish-btn:hover,
+.social-add-img-btn:hover,
+.save-profile-btn:hover,
+.edit-profile-btn:hover {
+  background: #111;
+  color: #fff;
   transform: translateY(-2px);
 }
 
