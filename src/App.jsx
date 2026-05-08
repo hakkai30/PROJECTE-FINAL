@@ -339,7 +339,7 @@ const App = () => {
           <Route path="/shop" element={<CategoryPage {...commonProps} />} />
           <Route path="/products" element={<ProductsPage {...commonProps} products={products} addToCart={addToCart} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} onOpenProductDetail={openProductDetail} />} />
           <Route path="/shop/:cat" element={<ProductsPage {...commonProps} products={products} addToCart={addToCart} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} onOpenProductDetail={openProductDetail} />} />
-          <Route path="/cart" element={<CartPage {...commonProps} cartItems={cartItems} onOpenProductDetail={openProductDetail} onRemoveFromCart={removeFromCart} />} />
+          <Route path="/cart" element={<CartPage {...commonProps} cartItems={cartItems} onOpenProductDetail={openProductDetail} removeFromCart={removeFromCart} />} />
           <Route path="/wishlist" element={<WishlistPage {...commonProps} wishlistItems={wishlistItems} onToggleWishlist={toggleWishlist} onAddToCart={addToCart} onOpenProductDetail={openProductDetail} />} />
           <Route path="/news" element={<NewsPage {...commonProps} />} />
           <Route path="/auth" element={
