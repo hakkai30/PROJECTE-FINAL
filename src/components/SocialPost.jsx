@@ -26,7 +26,7 @@ const SocialPost = ({
   const localizedPost = localizePost(post, language);
 
   return (
-    <div className="social-post">
+    <div className={`social-post ${!post.img ? "text-only-post" : ""}`}>
       <div className="post-header">
         <div className="user-avatar"></div>
         <button
@@ -38,12 +38,14 @@ const SocialPost = ({
         </button>
       </div>
 
-      <img
-        src={localizedPost.img}
-        alt={`${t("social.postAlt", "Post by")} ${post.user}`}
-        className="post-img"
-        loading="lazy"
-      />
+      {post.img && (
+        <img
+          src={localizedPost.img}
+          alt={`${t("social.postAlt", "Post by")} ${post.user}`}
+          className="post-img"
+          loading="lazy"
+        />
+      )}
 
       <div className="post-actions">
         <button
@@ -77,7 +79,9 @@ const SocialPost = ({
       </div>
 
       <div className="social-post-caption">
-        <strong>{post.user}</strong> {localizedPost.desc}
+        {!post.img ? localizedPost.desc : (
+          <><strong>{post.user}</strong> {localizedPost.desc}</>
+        )}
       </div>
 
       {isCommentsOpen && (
