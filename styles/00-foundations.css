@@ -1387,19 +1387,19 @@ body {
 }
 
 /* GLOBAL BUTTON THEME: WHITE BG, BLACK TEXT */
-button:not(.sort-option-btn):not(.post-user-handle):not(.social-comment-user):not(.product-name-btn):not(.sidebar-link) {
+button:not(.sort-option-btn):not(.post-user-handle):not(.social-comment-user):not(.product-name-btn):not(.sidebar-link):not(.sidebar-logout-btn):not(.sidebar-login-btn) {
   background-color: #ffffff !important;
   color: #111111 !important;
   border: 1px solid #111111 !important;
   transition: all 0.2s ease !important;
 }
 
-button:not(.sort-option-btn):not(.post-user-handle):not(.social-comment-user):not(.product-name-btn):not(.sidebar-link):hover {
+button:not(.sort-option-btn):not(.post-user-handle):not(.social-comment-user):not(.product-name-btn):not(.sidebar-link):not(.sidebar-logout-btn):not(.sidebar-login-btn):hover {
   background-color: #111111 !important;
   color: #ffffff !important;
 }
 
-button:not(.sort-option-btn):not(.post-user-handle):not(.social-comment-user):not(.product-name-btn):not(.sidebar-link) svg {
+button:not(.sort-option-btn):not(.post-user-handle):not(.social-comment-user):not(.product-name-btn):not(.sidebar-link):not(.sidebar-logout-btn):not(.sidebar-login-btn) svg {
   color: inherit !important;
   stroke: currentColor !important;
 }
@@ -1407,7 +1407,9 @@ button:not(.sort-option-btn):not(.post-user-handle):not(.social-comment-user):no
 /* HARD RESET FOR SIDEBAR BUTTONS */
 .sidebar-header button,
 .sidebar-nav-group button,
-.sidebar-nav-group.bottom-group button {
+.sidebar-nav-group.bottom-group button,
+.sidebar-logout-btn,
+.sidebar-login-btn {
   background: transparent !important;
   background-color: transparent !important;
   border: none !important;
