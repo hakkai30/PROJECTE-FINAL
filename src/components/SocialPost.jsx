@@ -38,7 +38,12 @@ const SocialPost = ({
       )}
 
       <div className="social-post-caption">
-        <strong>{post.user || post.user_email?.split('@')[0]}</strong> {post.description}
+        <button 
+          className="post-user-handle-inline" 
+          onClick={() => onOpenProfile?.(post)}
+        >
+          <strong>{post.user || post.user_email?.split('@')[0] || "usuario"}</strong>
+        </button> {post.description}
       </div>
 
       <div className="post-actions">
@@ -71,7 +76,6 @@ const SocialPost = ({
         </button>
       </div>
 
-
       {isCommentsOpen && (
         <div className="social-comments-panel">
           <div className="social-comments-list">
@@ -84,7 +88,12 @@ const SocialPost = ({
             {Array.isArray(post.comments) && post.comments.map((comment, idx) => (
               <div key={comment.id || idx} className="social-comment-item">
                 <div className="social-comment-meta">
-                  <span className="social-comment-user">@{comment.user || "USER"}</span>
+                  <button 
+                    className="social-comment-user"
+                    onClick={() => onOpenProfile?.({ user_email: comment.user_email, user: comment.user })}
+                  >
+                    @{comment.user || comment.user_email?.split('@')[0] || "USER"}
+                  </button>
                   <span className="social-comment-time">{formatRelativeTime(comment.createdAt)}</span>
                 </div>
                 <p className="social-comment-text">{comment.text}</p>
