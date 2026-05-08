@@ -92,7 +92,7 @@ const NewsPage = ({
                       alt={article.title}
                       className="product-image"
                       style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                      onError={(e) => { e.target.style.display = "none"; }}
+                      onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=80"; }}
                     />
                   </div>
                   <div className="product-info" style={{ flex: 1, display: "flex", flexDirection: "column" }}>

@@ -32,7 +32,13 @@ export const WindowOverlay = ({ label, offsetClass, article }) => {
         <a href={article.url} target="_blank" rel="noopener noreferrer" className="window-body" style={{ textDecoration: "none", color: "inherit", display: "flex", flexDirection: "column", cursor: "pointer" }}>
           <div className="window-url">{article.source.name.substring(0, 20)}</div>
           <div className="window-preview" style={{ padding: 0, gap: 0, overflow: "hidden" }}>
-            <img src={article.image || "https://via.placeholder.com/150?w=400&q=80"} alt={article.title || "Noticia"} loading="lazy" style={{ width: "100%", height: "80px", objectFit: "cover" }} />
+            <img 
+              src={article.image || "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=80"} 
+              alt={article.title || "Noticia"} 
+              loading="lazy" 
+              style={{ width: "100%", height: "80px", objectFit: "cover" }} 
+              onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=80"; }}
+            />
             <div style={{ padding: "4px", fontSize: "0.55rem", fontWeight: "bold", color: "#333" }}>
               {article.title.length > 50 ? article.title.substring(0, 50) + "..." : article.title}
             </div>
