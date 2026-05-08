@@ -12,6 +12,7 @@ const UserProfilePage = ({
   posts = [],
   onDeletePost,
   language,
+  setLanguage,
   t,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
