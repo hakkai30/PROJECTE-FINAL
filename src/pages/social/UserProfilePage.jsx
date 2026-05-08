@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Heart, Trash2, ShoppingBag } from "lucide-react";
+import React, { useState, useRef } from "react";
+import { Heart, Trash2, Camera, Check, X } from "lucide-react";
 import { GlobalFooter, GlobalHeader, SocialSidebar } from "../../components/Layout";
+import { authService } from "../../services/authService";
 
 const UserProfilePage = ({
   changePage,
@@ -11,9 +12,45 @@ const UserProfilePage = ({
   onToggleTheme,
   posts = [],
   onDeletePost,
+  onUpdateUser, // Prop para notificar a App.jsx del cambio
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editBio, setEditBio] = useState(currentUser?.bio || "");
+  const [isSaving, setIsSaving] = useState(false);
+  const [previewAvatar, setPreviewAvatar] = useState(null);
+  const fileInputRef = useRef(null);
+
   const userPosts = posts.filter(post => post.user_email === currentUser?.email);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPreviewAvatar(file);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    setIsSaving(true);
+    try {
+      const result = await authService.updateProfile({
+        bio: editBio,
+        avatar: currentUser?.avatar,
+        avatarFile: previewAvatar
+      });
+      if (result.ok) {
+        onUpdateUser?.(result.user);
+        setIsEditing(false);
+        setPreviewAvatar(null);
+      } else {
+        alert("Error: " + result.error);
+      }
+    } catch (err) {
+      alert("Error al guardar: " + err.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="category-page">
@@ -22,13 +59,60 @@ const UserProfilePage = ({
         <SocialSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} changePage={changePage} />
         <main className="user-profile-container">
           <section className="profile-header">
-            <div className="profile-avatar">
-              {currentUser?.avatar ? <img src={currentUser.avatar} alt="" /> : <div className="avatar-placeholder">{(currentUser?.name || "U")[0]}</div>}
+            <div className="profile-avatar-container">
+              <div className="profile-avatar">
+                {previewAvatar ? (
+                  <img src={URL.createObjectURL(previewAvatar)} alt="Vista previa" />
+                ) : (
+                  currentUser?.avatar ? <img src={currentUser.avatar} alt="" /> : <div className="avatar-placeholder">{(currentUser?.name || "U")[0]}</div>
+                )}
+              </div>
+              {isEditing && (
+                <button 
+                  className="edit-avatar-overlay" 
+                  onClick={() => fileInputRef.current.click()}
+                  disabled={isSaving}
+                >
+                  <Camera size={20} />
+                </button>
+              )}
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleFileChange} 
+                style={{ display: 'none' }} 
+                accept="image/*"
+              />
             </div>
+            
             <div className="profile-info">
-              <h1>{currentUser?.name || "Mi Perfil"}</h1>
+              <div className="profile-title-row">
+                <h1>{currentUser?.name || "Mi Perfil"}</h1>
+                {!isEditing ? (
+                  <button className="edit-profile-btn" onClick={() => setIsEditing(true)}>EDITAR PERFIL</button>
+                ) : (
+                  <div className="edit-actions">
+                    <button className="save-profile-btn" onClick={handleSaveProfile} disabled={isSaving}>
+                      {isSaving ? "GUARDANDO..." : <Check size={18} />}
+                    </button>
+                    <button className="cancel-edit-btn" onClick={() => { setIsEditing(false); setPreviewAvatar(null); }} disabled={isSaving}>
+                      <X size={18} />
+                    </button>
+                  </div>
+                )}
+              </div>
               <p className="profile-email">{currentUser?.email}</p>
-              {currentUser?.bio && <p className="profile-bio">{currentUser.bio}</p>}
+              
+              {isEditing ? (
+                <textarea 
+                  className="edit-bio-input" 
+                  value={editBio} 
+                  onChange={(e) => setEditBio(e.target.value)}
+                  placeholder="Escribe algo sobre ti..."
+                />
+              ) : (
+                currentUser?.bio && <p className="profile-bio">{currentUser.bio}</p>
+              )}
             </div>
           </section>
 

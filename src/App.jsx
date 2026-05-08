@@ -340,7 +340,7 @@ const App = () => {
           } />
           <Route path="/social/saved" element={<SavedLooksPage {...commonProps} savedLooks={socialPosts} savedLookIds={savedLookIds} likedPostIds={likedPostIds} onToggleSavedLook={toggleSavedLook} onToggleLikePost={toggleSocialLike} onAddComment={addSocialComment} onDeleteComment={deleteSocialComment} />} />
           <Route path="/profile" element={
-            <UserProfilePage {...commonProps} posts={socialPosts} onDeletePost={deleteSocialPost} onDeleteComment={deleteSocialComment} />
+            <UserProfilePage {...commonProps} posts={socialPosts} onDeletePost={deleteSocialPost} onDeleteComment={deleteSocialComment} onUpdateUser={setCurrentUser} />
           } />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
