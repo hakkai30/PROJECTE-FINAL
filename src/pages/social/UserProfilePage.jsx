@@ -9,19 +9,20 @@ const UserProfilePage = ({
   wishlistCount,
   currentUser,
   theme,
-  onToggleTheme,
   posts = [],
   onDeletePost,
-  onUpdateUser, // Prop para notificar a App.jsx del cambio
+  onUpdateUser,
+  viewedUser, // Usuario que estamos visualizando
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editBio, setEditBio] = useState(currentUser?.bio || "");
+  const [editBio, setEditBio] = useState(viewedUser?.bio || "");
   const [isSaving, setIsSaving] = useState(false);
   const [previewAvatar, setPreviewAvatar] = useState(null);
   const fileInputRef = useRef(null);
 
-  const userPosts = posts.filter(post => post.user_email === currentUser?.email);
+  const isOwnProfile = currentUser?.email === viewedUser?.email;
+  const userPosts = posts.filter(post => post.user_email === viewedUser?.email);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -64,10 +65,10 @@ const UserProfilePage = ({
                 {previewAvatar ? (
                   <img src={URL.createObjectURL(previewAvatar)} alt="Vista previa" />
                 ) : (
-                  currentUser?.avatar ? <img src={currentUser.avatar} alt="" /> : <div className="avatar-placeholder">{(currentUser?.name || "U")[0]}</div>
+                  viewedUser?.avatar ? <img src={viewedUser.avatar} alt="" /> : <div className="avatar-placeholder">{(viewedUser?.name || "U")[0]}</div>
                 )}
               </div>
-              {isEditing && (
+              {isOwnProfile && isEditing && (
                 <button 
                   className="edit-avatar-overlay" 
                   onClick={() => fileInputRef.current.click()}
@@ -87,21 +88,23 @@ const UserProfilePage = ({
             
             <div className="profile-info">
               <div className="profile-title-row">
-                <h1>{currentUser?.name || "Mi Perfil"}</h1>
-                {!isEditing ? (
-                  <button className="edit-profile-btn" onClick={() => setIsEditing(true)}>EDITAR PERFIL</button>
-                ) : (
-                  <div className="edit-actions">
-                    <button className="save-profile-btn" onClick={handleSaveProfile} disabled={isSaving}>
-                      {isSaving ? "GUARDANDO..." : <Check size={18} />}
-                    </button>
-                    <button className="cancel-edit-btn" onClick={() => { setIsEditing(false); setPreviewAvatar(null); }} disabled={isSaving}>
-                      <X size={18} />
-                    </button>
-                  </div>
+                <h1>{viewedUser?.name || "Perfil"}</h1>
+                {isOwnProfile && (
+                  !isEditing ? (
+                    <button className="edit-profile-btn" onClick={() => setIsEditing(true)}>EDITAR PERFIL</button>
+                  ) : (
+                    <div className="edit-actions">
+                      <button className="save-profile-btn" onClick={handleSaveProfile} disabled={isSaving}>
+                        {isSaving ? "GUARDANDO..." : <Check size={18} />}
+                      </button>
+                      <button className="cancel-edit-btn" onClick={() => { setIsEditing(false); setPreviewAvatar(null); }} disabled={isSaving}>
+                        <X size={18} />
+                      </button>
+                    </div>
+                  )
                 )}
               </div>
-              <p className="profile-email">{currentUser?.email}</p>
+              <p className="profile-email">{viewedUser?.email}</p>
               
               {isEditing ? (
                 <textarea 
@@ -111,16 +114,16 @@ const UserProfilePage = ({
                   placeholder="Escribe algo sobre ti..."
                 />
               ) : (
-                currentUser?.bio && <p className="profile-bio">{currentUser.bio}</p>
+                viewedUser?.bio && <p className="profile-bio">{viewedUser.bio}</p>
               )}
             </div>
           </section>
 
           <section className="user-posts-section">
-            <h2 className="section-title">MIS PUBLICACIONES ({userPosts.length})</h2>
+            <h2 className="section-title">PUBLICACIONES ({userPosts.length})</h2>
             <div className="profile-posts-grid">
               {userPosts.length === 0 ? (
-                <p className="empty-state">Aún no has publicado nada.</p>
+                <p className="empty-state">No hay publicaciones todavía.</p>
               ) : (
                 userPosts.map(post => (
                   <div key={post.id} className="profile-post-card">
@@ -135,9 +138,11 @@ const UserProfilePage = ({
                       <div className="post-stats">
                         <span><Heart size={14} fill="currentColor" /> {post.likes || 0}</span>
                       </div>
-                      <button className="delete-post-btn" onClick={() => onDeletePost?.(post.id)}>
-                        <Trash2 size={16} />
-                      </button>
+                      {isOwnProfile && (
+                        <button className="delete-post-btn" onClick={() => onDeletePost?.(post.id)}>
+                          <Trash2 size={16} />
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))

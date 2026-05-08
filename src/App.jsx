@@ -51,6 +51,7 @@ const App = () => {
   const currentPage = resolvePageFromPath(location.pathname);
 
   const setCurrentPage = (page) => {
+    if (page === "user-profile") setViewedUser(null); // Reset para ver mi propio perfil
     const target = ROUTE_MAP[page] || "/";
     navigate(target);
   };
@@ -257,11 +258,23 @@ const App = () => {
     } catch (err) { console.error("Error eliminando comentario:", err); }
   };
 
+  const [viewedUser, setViewedUser] = useState(null);
+
   // Abrir el perfil de un usuario desde el feed social.
-  const openProfile = (profile) => {
-    const handle = String(profile?.user || profile?.handle || "").trim().replace(/^@/, "");
+  const openProfile = async (profile) => {
+    const handle = String(profile?.user || profile?.user_email || "").trim();
     if (!handle) return;
-    setCurrentPage("user-profile");
+    
+    setIsLoadingSocialPosts(true);
+    try {
+      const userData = await socialService.getProfile(handle);
+      setViewedUser(userData);
+      setCurrentPage("user-profile");
+    } catch (err) {
+      console.error("Error al cargar perfil:", err);
+    } finally {
+      setIsLoadingSocialPosts(false);
+    }
   };
 
   const selectedProduct = products.find((p) => String(p.id) === String(selectedProductId));
@@ -340,7 +353,7 @@ const App = () => {
           } />
           <Route path="/social/saved" element={<SavedLooksPage {...commonProps} savedLooks={socialPosts} savedLookIds={savedLookIds} likedPostIds={likedPostIds} onToggleSavedLook={toggleSavedLook} onToggleLikePost={toggleSocialLike} onAddComment={addSocialComment} onDeleteComment={deleteSocialComment} />} />
           <Route path="/profile" element={
-            <UserProfilePage {...commonProps} posts={socialPosts} onDeletePost={deleteSocialPost} onDeleteComment={deleteSocialComment} onUpdateUser={setCurrentUser} />
+            <UserProfilePage {...commonProps} posts={socialPosts} viewedUser={viewedUser || currentUser} onDeletePost={deleteSocialPost} onDeleteComment={deleteSocialComment} onUpdateUser={setCurrentUser} />
           } />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
