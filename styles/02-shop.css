@@ -482,7 +482,7 @@ body {
 .bottom-action-btn {
   font-size: 0.74rem;
   letter-spacing: 0.16em;
-  color: #999;
+  color: #444;
 }
 
 .bottom-action-btn.is-close {
@@ -540,7 +540,7 @@ body {
 }
 
 .sidebar-link:hover {
-  opacity: 0.5;
+  opacity: 0.9;
 }
 
 .sidebar-link.active {
@@ -551,7 +551,7 @@ body {
 .sidebar-logout {
   margin-top: 1rem;
   color: var(--brand-black) !important;
-  opacity: 0.4;
+  opacity: 0.85;
   font-family: var(--font-mono) !important;
   font-size: 0.65rem !important;
   letter-spacing: 0.25em !important;
@@ -781,7 +781,7 @@ body {
 
 .social-feed-subtitle {
   margin: 0.45rem 0 0;
-  color: #666;
+  color: #333;
   letter-spacing: 0.04em;
   font-size: 0.9rem;
 }
@@ -816,7 +816,7 @@ body {
   padding: 0.28rem 0.62rem;
   font-size: 0.63rem;
   letter-spacing: 0.12em;
-  color: #666;
+  color: #333;
 }
 
 .social-create-post-form {
@@ -861,7 +861,7 @@ body {
 }
 
 .social-publish-btn:disabled {
-  opacity: 0.3;
+  opacity: 0.8;
   cursor: not-allowed;
 }
 
@@ -1035,7 +1035,7 @@ body {
 .social-comments-empty {
   margin: 0;
   font-size: 0.86rem;
-  color: #666;
+  color: #333;
 }
 
 .social-comment-item {
@@ -1110,7 +1110,7 @@ body {
   margin: 1rem 0 0;
   font-size: 0.7rem;
   letter-spacing: 0.2em;
-  color: #666;
+  color: #333;
 }
 
 .profile-modal-avatar {
@@ -1171,7 +1171,7 @@ body {
 .profile-avatar-picker-label {
   font-size: 0.66rem;
   letter-spacing: 0.12em;
-  color: #666;
+  color: #333;
 }
 
 .profile-avatar-options {
@@ -1214,7 +1214,7 @@ body {
   gap: 0.35rem;
   font-size: 0.66rem;
   letter-spacing: 0.12em;
-  color: #666;
+  color: #333;
 }
 
 .profile-modal-editor textarea,
@@ -1270,7 +1270,7 @@ body {
 .profile-modal-metric-label {
   font-size: 0.62rem;
   letter-spacing: 0.16em;
-  color: #666;
+  color: #333;
 }
 
 .profile-modal-metric-value {
@@ -1338,7 +1338,7 @@ body {
 
 .profile-modal-actions .shop-look-btn:disabled,
 .profile-modal-actions .save-look-btn:disabled {
-  opacity: 0.55;
+  opacity: 0.95;
   cursor: not-allowed;
 }
 
@@ -1422,7 +1422,7 @@ body {
 
 .saved-looks-empty p {
   margin: 0.7rem 0 1rem;
-  color: #666;
+  color: #333;
   letter-spacing: 0.04em;
 }
 

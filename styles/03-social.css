@@ -79,7 +79,7 @@
 
 .thread-meta span {
   font-size: 0.74rem;
-  color: #666;
+  color: #333;
 }
 
 .thread-item p {
@@ -93,7 +93,7 @@
   margin-top: 0.45rem;
   font-size: 0.68rem;
   letter-spacing: 0.1em;
-  color: #666;
+  color: #333;
 }
 
 .thread-presence {
@@ -114,7 +114,7 @@
 
 .threads-empty-state {
   margin: 1rem 0 0;
-  color: #666;
+  color: #333;
   font-size: 0.84rem;
 }
 
@@ -140,7 +140,7 @@
 
 .chat-topbar span {
   font-size: 0.74rem;
-  color: #666;
+  color: #333;
   letter-spacing: 0.1em;
 }
 
@@ -188,7 +188,7 @@
 
 .msg-bubble time {
   font-size: 0.68rem;
-  color: #666;
+  color: #333;
 }
 
 .message-meta-row {
@@ -259,7 +259,7 @@
   80%,
   100% {
     transform: scale(0.8);
-    opacity: 0.45;
+    opacity: 0.855;
   }
 
   40% {
@@ -304,7 +304,7 @@
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #666;
+  color: #333;
 }
 
 .sidebar-logout {
@@ -710,6 +710,8 @@
 .search-result-item span {
   font-size: 0.92rem;
   letter-spacing: 0.03em;
+  font-weight: 700;
+  color: #000;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -717,7 +719,7 @@
 
 .search-result-item small {
   font-size: 0.66rem;
-  color: #777;
+  color: #222; /* Más oscuro */
   letter-spacing: 0.12em;
   margin-top: 0.12rem;
   white-space: nowrap;
@@ -736,7 +738,8 @@
 
 .search-no-results {
   margin: 0.6rem 0 0;
-  color: #666;
+  color: #000;
+  font-weight: 800;
   letter-spacing: 0.06em;
   font-size: 0.82rem;
 }
@@ -853,7 +856,8 @@
 }
 
 .search-content input::placeholder {
-  color: #ccc;
+  color: #222;
+  opacity: 0.9;
 }
 
 .search-suggestions {
@@ -864,7 +868,7 @@
 .search-suggestions p {
   font-weight: bold;
   letter-spacing: 0.1em;
-  color: #666;
+  color: #333;
   font-size: 0.9rem;
   margin-bottom: 1.5rem;
 }

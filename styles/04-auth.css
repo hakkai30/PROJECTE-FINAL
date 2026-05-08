@@ -195,7 +195,7 @@
 
 .auth-avatar-help {
   margin: 0;
-  color: #666;
+  color: #333;
   font-size: 0.72rem;
   line-height: 1.35;
 }
@@ -488,7 +488,7 @@
 
 .settings-card p {
   margin: 0.5rem 0 1rem;
-  color: #666;
+  color: #333;
 }
 
 .theme-options-grid {
@@ -536,7 +536,7 @@
 
 .theme-option-card span {
   font-size: 0.82rem;
-  color: #666;
+  color: #333;
 }
 
 .theme-option-card small {
