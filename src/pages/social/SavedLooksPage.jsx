@@ -1,7 +1,6 @@
-import { Bookmark, Heart, MessageCircle, ShoppingCart } from "lucide-react";
+import { Bookmark, Heart, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { GlobalFooter, GlobalHeader, SocialSidebar } from "../../components/Layout";
-import { localizePost } from "../../data/i18n";
 
 const SavedLooksPage = ({
   changePage,
@@ -22,9 +21,6 @@ const SavedLooksPage = ({
   wishlistCount = 0,
   theme,
   onToggleTheme,
-  language = "ca",
-  setLanguage,
-  t,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openCommentPostIds, setOpenCommentPostIds] = useState([]);
@@ -40,7 +36,7 @@ const SavedLooksPage = ({
     const diffMs = Date.now() - timestamp;
     const diffMinutes = Math.max(0, Math.floor(diffMs / 60000));
 
-    if (diffMinutes < 1) return t("social.comments.now", "just now");
+    if (diffMinutes < 1) return "ahora";
     if (diffMinutes < 60) return `${diffMinutes}m`;
 
     const diffHours = Math.floor(diffMinutes / 60);
@@ -110,38 +106,31 @@ const SavedLooksPage = ({
         onLogout={onLogout}
         theme={theme}
         onToggleTheme={onToggleTheme}
-        language={language}
-        setLanguage={setLanguage}
-        t={t}
       />
       <div className="social-layout">
         <SocialSidebar 
           isSidebarOpen={isSidebarOpen} 
           setIsSidebarOpen={setIsSidebarOpen} 
           changePage={changePage} 
-          t={t} 
         />
         <div className="social-feed">
         <div className="social-feed-header">
           <div className="social-feed-title-row">
-            <h1 className="social-feed-title">{t("social.savedLooks.title", "SAVED LOOKS")}</h1>
+            <h1 className="social-feed-title">LOOKS GUARDADOS</h1>
             <button
               type="button"
               className="social-feed-count-chip"
               onClick={() => changePage("socials")}
             >
-              {t("social.feed.title", "SOCIAL FEED")}
+              SOCIAL FEED
             </button>
           </div>
           <p className="social-feed-subtitle">
-            {t(
-              "social.savedLooks.subtitle",
-              "Your collected looks from the social community."
-            )}
+            Tus looks guardados de la comunidad social.
           </p>
           <div className="social-feed-toolbar">
             <span className="social-feed-stat">
-              {t("social.feed.statsSaved", "SAVED")}: {savedLooksCount}
+              GUARDADOS: {savedLooksCount}
             </span>
             <span className="social-feed-stat">LIKES: {totalLikes}</span>
           </div>
@@ -149,28 +138,24 @@ const SavedLooksPage = ({
 
         {feedError && (
           <div className="saved-looks-empty">
-            <h2>{t("social.feed.errorTitle", "FEED ERROR")}</h2>
+            <h2>ERROR EN EL FEED</h2>
             <p>{feedError}</p>
           </div>
         )}
 
         {savedLooks.length === 0 && (
           <div className="saved-looks-empty">
-            <h2>{t("social.savedLooks.emptyTitle", "NO SAVED LOOKS YET")}</h2>
+            <h2>AÚN NO HAS GUARDADO LOOKS</h2>
             <p>
-              {t(
-                "social.savedLooks.emptyDescription",
-                "Save looks from Social Feed and they will appear here."
-              )}
+              Guarda looks desde Social Feed y aparecerán aquí.
             </p>
             <button type="button" className="shop-look-btn" onClick={() => changePage("socials")}>
-              {t("social.savedLooks.backToFeed", "GO TO SOCIAL FEED")}
+              IR A SOCIAL FEED
             </button>
           </div>
         )}
 
         {savedLooks.map((post) => {
-          const localizedPost = localizePost(post, language);
           const isSaved = savedLookIds.includes(String(post.id));
           const isLiked = likedPostIds.includes(String(post.id));
           const commentsCount = Array.isArray(post.comments) ? post.comments.length : 0;
@@ -187,9 +172,9 @@ const SavedLooksPage = ({
                   type="button"
                   className="post-user-handle post-user-handle-btn"
                   onClick={() => onOpenProfile?.(post)}
-                  aria-label={t("social.actions.viewProfile", "VIEW PROFILE")}
+                  aria-label="VER PERFIL"
                 >
-                  @{post.user}
+                  @{post.user || post.user_email?.split('@')[0] || "usuario"}
                 </button>
 
                 {currentUser?.email === post.user_email && (
@@ -199,20 +184,20 @@ const SavedLooksPage = ({
                     style={{ marginLeft: 'auto', marginRight: '1rem', border: '1px solid var(--border-color)', padding: '2px 8px' }}
                     onClick={() => onDeletePost?.(post.id)}
                   >
-                    {t("social.feed.deletePost", "DELETE POST")}
+                    ELIMINAR
                   </button>
                 )}
               </div>
               <img
-                src={localizedPost.img}
-                alt={`${t("social.postAlt", "Post by")} ${post.user}`}
+                src={post.img}
+                alt={`Publicación de ${post.user || post.user_email}`}
                 className="post-img"
               />
               <div className="post-actions">
                 <button
                   type="button"
                   className={`icon-action-btn ${isLiked ? "active" : ""}`}
-                  aria-label={t("social.actions.like", "LIKE POST")}
+                  aria-label="ME GUSTA"
                   aria-pressed={isLiked}
                   onClick={() => onToggleLikePost?.(post.id)}
                 >
@@ -227,39 +212,35 @@ const SavedLooksPage = ({
                 <button
                   type="button"
                   className="icon-action-btn"
-                  aria-label={t("social.actions.comment", "COMMENT")}
+                  aria-label="COMENTA"
                   aria-expanded={isCommentsOpen}
                   onClick={() => toggleCommentsPanel(post.id)}
                 >
                   <MessageCircle size={16} aria-hidden="true" />
-                  {t("social.actions.comment", "COMMENT")} ({commentsCount})
+                  COMENTA ({commentsCount})
                 </button>
                 <button
                   type="button"
                   className="icon-action-btn"
-                  aria-label={t("social.actions.messageAuthor", "MESSAGE AUTHOR")}
+                  aria-label="ENVIAR MENSAJE"
                   onClick={() => onMessageAuthor?.(post)}
                 >
                   <MessageCircle size={16} aria-hidden="true" />
-                  {t("social.actions.messageAuthor", "MESSAGE")}
-                </button>
-                <button type="button" className="shop-look-btn" aria-label={t("social.actions.shopLook", "SHOP THIS LOOK")}>
-                  <ShoppingCart size={16} aria-hidden="true" />
-                  {t("social.actions.shopLook", "SHOP THIS LOOK")}
+                  MENSAJE
                 </button>
                 <button
                   type="button"
                   className={`save-look-btn ${isSaved ? "active" : ""}`}
-                  aria-label={t("social.actions.unsaveLook", "REMOVE FROM SAVED LOOKS")}
+                  aria-label="QUITAR DE GUARDADOS"
                   aria-pressed={isSaved}
                   onClick={() => onToggleSavedLook?.(post.id)}
                 >
                   <Bookmark size={16} fill="currentColor" aria-hidden="true" />
-                  {t("social.actions.saved", "SAVED")}
+                  GUARDADO
                 </button>
               </div>
               <div className="social-post-caption">
-                <strong>{post.user}</strong> {localizedPost.desc}
+                <strong>{post.user || post.user_email?.split('@')[0]}</strong> {post.description}
               </div>
 
               {isCommentsOpen && (
@@ -267,7 +248,7 @@ const SavedLooksPage = ({
                   <div className="social-comments-list" aria-live="polite">
                     {commentsCount === 0 && (
                       <p className="social-comments-empty">
-                        {t("social.comments.empty", "No comments yet. Be the first one.")}
+                        No hay comentarios todavía.
                       </p>
                     )}
 
@@ -281,7 +262,7 @@ const SavedLooksPage = ({
                             type="button"
                             className="social-comment-user social-comment-user-btn"
                             onClick={() => onOpenProfile?.({ user: comment.user })}
-                            aria-label={t("social.actions.viewProfile", "VIEW PROFILE")}
+                            aria-label="VER PERFIL"
                           >
                             @{comment.user || "USER"}
                           </button>
@@ -301,7 +282,7 @@ const SavedLooksPage = ({
                               }
                             }}
                           >
-                            {t("social.comments.delete", "DELETE")}
+                            ELIMINAR
                           </button>
                         )}
                       </div>
@@ -314,8 +295,8 @@ const SavedLooksPage = ({
                       className="social-comment-input"
                       value={commentDraft}
                       onChange={(event) => updateCommentDraft(post.id, event.target.value)}
-                      placeholder={t("social.feed.commentPrompt", "Write your comment")}
-                      aria-label={t("social.feed.commentPrompt", "Write your comment")}
+                      placeholder="Escribe tu comentario"
+                      aria-label="Escribe tu comentario"
                     />
                     <button
                       type="submit"
@@ -323,8 +304,8 @@ const SavedLooksPage = ({
                       disabled={isSubmittingComment || !commentDraft.trim()}
                     >
                       {isSubmittingComment
-                        ? t("social.comments.sending", "SENDING...")
-                        : t("social.comments.send", "SEND")}
+                        ? "ENVIANDO..."
+                        : "ENVIAR"}
                     </button>
                   </form>
                 </div>
@@ -334,7 +315,7 @@ const SavedLooksPage = ({
         })}
       </div>
       </div>
-      <GlobalFooter t={t} />
+      <GlobalFooter />
     </div>
   );
 };

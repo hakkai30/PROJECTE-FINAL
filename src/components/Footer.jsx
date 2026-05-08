@@ -1,28 +1,28 @@
 // Pie de página global compartido por las secciones de tienda y social.
-const Footer = ({ t }) => (
+const Footer = () => (
   <footer className="main-app-footer">
     <div className="footer-column">
-      <h3>{t("footer.guideTitle", "GUÍA DE COMPRA")}</h3>
+      <h3>GUÍA DE COMPRA</h3>
       <ul>
-        {t("footer.guide", []).map((item) => (
-          <li key={item}>{item}</li>
-        ))}
+        <li>ENVÍOS</li>
+        <li>DEVOLUCIONES</li>
+        <li>PAGOS</li>
       </ul>
     </div>
     <div className="footer-column">
-      <h3>{t("footer.membersTitle", "MIEMBROS")}</h3>
+      <h3>MIEMBROS</h3>
       <ul>
-        {t("footer.members", []).map((item) => (
-          <li key={item}>{item}</li>
-        ))}
+        <li>ÚNETE</li>
+        <li>VENTAJAS</li>
+        <li>PERFIL</li>
       </ul>
     </div>
     <div className="footer-column">
-      <h3>{t("footer.aboutTitle", "SOBRE NOSOTROS")}</h3>
+      <h3>SOBRE NOSOTROS</h3>
       <ul>
-        {t("footer.about", []).map((item) => (
-          <li key={item}>{item}</li>
-        ))}
+        <li>HISTORIA</li>
+        <li>SOSTENIBILIDAD</li>
+        <li>PRENSA</li>
       </ul>
     </div>
   </footer>

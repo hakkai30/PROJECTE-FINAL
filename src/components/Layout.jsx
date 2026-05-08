@@ -63,19 +63,4 @@ export const WindowOverlay = ({ label, offsetClass, article }) => {
   );
 };
 
-// Selector de idioma reutilizable.
-export const LanguageSwitcher = ({ language, onChangeLanguage, t }) => {
-  const { LANGUAGE_OPTIONS, getLanguageLabel } = require("../data/i18n");
-  return (
-    <div className="language-switcher" aria-label={t("language.label", "Idioma")}>
-      <span>{t("language.label", "Idioma")}</span>
-      <select value={language} onChange={(event) => onChangeLanguage(event.target.value)}>
-        {LANGUAGE_OPTIONS.map((option) => (
-          <option key={option.code} value={option.code}>
-            {getLanguageLabel(option.code)}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-};
+// Selector de idioma eliminado. Todo es español ahora.

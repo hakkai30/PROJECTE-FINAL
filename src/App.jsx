@@ -16,12 +16,9 @@ import { authService } from "./services/authService";
 import { postService } from "./services/postService";
 import { socialService } from "./services/socialService";
 import { productService } from "./services/productService";
-import { createTranslator, DEFAULT_LANGUAGE } from "./data/i18n";
 import { supabase } from "./config/supabase";
 
-// Páginas que requieren inicio de sesión.
 const PROTECTED_PAGES = new Set(["socials", "saved-looks", "user-profile"]);
-const VALID_LANGUAGES = new Set(["ca", "es", "en", "fr"]);
 
 // Mapa de rutas: asocia cada pantalla lógica con su URL.
 const ROUTE_MAP = {
@@ -95,12 +92,6 @@ const App = () => {
   const [selectedProductId, setSelectedProductId] = useState(() => {
     try { const saved = localStorage.getItem("rtf_selected_product_id"); return saved ? Number(saved) : null; } catch { return null; }
   });
-  const [language, setLanguage] = useState(() => {
-    try {
-      const saved = localStorage.getItem("rtf_language");
-      return VALID_LANGUAGES.has(saved) ? saved : DEFAULT_LANGUAGE;
-    } catch { return DEFAULT_LANGUAGE; }
-  });
 
   const [products, setProducts] = useState([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
@@ -108,7 +99,6 @@ const App = () => {
   const theme = "light";
   const [cartToast, setCartToast] = useState("");
   const [currentUser, setCurrentUser] = useState(() => authService.loadCurrentUser());
-  const t = createTranslator(language);
 
   // Aplicar tema visual (claro/oscuro/auto).
   useEffect(() => {
@@ -121,12 +111,11 @@ const App = () => {
   useEffect(() => { localStorage.setItem("rtf_saved_look_ids", JSON.stringify(savedLookIds)); }, [savedLookIds]);
   useEffect(() => { localStorage.setItem("rtf_liked_post_ids", JSON.stringify(likedPostIds)); }, [likedPostIds]);
   useEffect(() => { if (selectedProductId) localStorage.setItem("rtf_selected_product_id", selectedProductId); }, [selectedProductId]);
-  useEffect(() => { localStorage.setItem("rtf_language", language); }, [language]);
 
   // Carrito: añadir y eliminar productos.
   const addToCart = (product) => {
     setCartItems((prev) => [...prev, product]);
-    setCartToast(`${t("cart.toastAdded", "Añadido al carrito:")} ${product.name}`);
+    setCartToast(`Añadido al carrito: ${product.name}`);
   };
   const removeFromCart = (indexToRemove) => {
     setCartItems((prev) => prev.filter((_, index) => index !== indexToRemove));
@@ -243,7 +232,7 @@ const App = () => {
   };
 
   const deleteSocialPost = async (postId) => {
-    if (!window.confirm(t("social.confirmDelete", "¿Estás seguro de que quieres eliminar esta publicación?"))) return;
+    if (!window.confirm("¿Estás seguro de que quieres eliminar esta publicación?")) return;
     try {
       await postService.deletePost(postId);
       setSocialPosts((prev) => prev.filter((p) => String(p.id) !== String(postId)));
@@ -297,9 +286,6 @@ const App = () => {
     cartCount: cartItems.length,
     cartToast,
     wishlistCount: wishlistIds.length,
-    language,
-    setLanguage,
-    t,
     theme,
     currentUser,
     products,
@@ -326,7 +312,6 @@ const App = () => {
                 localStorage.setItem("rtf_is_guest", "true");
                 navigate("/shop");
               }}
-              t={t}
             />
           } />
           <Route path="/product/:id" element={<ProductDetailPage {...commonProps} product={selectedProduct} addToCart={addToCart} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} />} />
@@ -341,7 +326,7 @@ const App = () => {
         </Routes>
 
         {!location.pathname.includes("/auth") && (
-          <Chatbot t={t} currentPage={currentPage} changePage={setCurrentPage} cartCount={cartItems.length} wishlistCount={wishlistIds.length} products={products} socialPosts={socialPosts} savedLookCount={savedLookIds.length} isAuthenticated={Boolean(currentUser)} />
+          <Chatbot currentPage={currentPage} changePage={setCurrentPage} cartCount={cartItems.length} wishlistCount={wishlistIds.length} products={products} socialPosts={socialPosts} savedLookCount={savedLookIds.length} isAuthenticated={Boolean(currentUser)} />
         )}
 
         {cartToast && <div className="app-toast">{cartToast}</div>}

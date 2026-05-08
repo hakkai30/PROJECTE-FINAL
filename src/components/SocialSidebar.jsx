@@ -1,44 +1,44 @@
 import { ChevronRight, ChevronLeft, ShoppingCart, Newspaper, LayoutGrid, Bookmark, User } from "lucide-react";
 
 // Barra lateral de navegación para la parte social.
-const SocialSidebar = ({ isSidebarOpen, setIsSidebarOpen, changePage, t }) => {
+const SocialSidebar = ({ isSidebarOpen, setIsSidebarOpen, changePage }) => {
   return (
     <aside className={`social-side-nav ${isSidebarOpen ? 'expanded' : 'collapsed'}`}>
       <button
         type="button"
         className="side-nav-toggle"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+        aria-label={isSidebarOpen ? "Contraer barra" : "Expandir barra"}
       >
         {isSidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
       </button>
 
       <nav className="side-nav-content">
-        <button type="button" className="side-nav-item" onClick={() => changePage("shop")} title={t("nav.shop", "SHOP")}>
+        <button type="button" className="side-nav-item" onClick={() => changePage("shop")} title="TIENDA">
           <ShoppingCart size={20} />
-          {isSidebarOpen && <span>{t("nav.shop", "SHOP")}</span>}
+          {isSidebarOpen && <span>TIENDA</span>}
         </button>
 
-        <button type="button" className="side-nav-item" onClick={() => changePage("socials")} title={t("nav.socials", "SOCIAL FEED")}>
+        <button type="button" className="side-nav-item" onClick={() => changePage("socials")} title="SOCIAL FEED">
           <LayoutGrid size={20} />
-          {isSidebarOpen && <span>{t("nav.socials", "SOCIAL FEED")}</span>}
+          {isSidebarOpen && <span>SOCIAL FEED</span>}
         </button>
 
-        <button type="button" className="side-nav-item" onClick={() => changePage("news")} title={t("nav.news", "FASHION NEWS")}>
+        <button type="button" className="side-nav-item" onClick={() => changePage("news")} title="NOTICIAS MODA">
           <Newspaper size={20} />
-          {isSidebarOpen && <span>{t("nav.news", "FASHION NEWS")}</span>}
+          {isSidebarOpen && <span>NOTICIAS MODA</span>}
         </button>
 
-        <button type="button" className="side-nav-item" onClick={() => changePage("saved-looks")} title={t("nav.saved", "SAVED LOOKS")}>
+        <button type="button" className="side-nav-item" onClick={() => changePage("saved-looks")} title="LOOKS GUARDADOS">
           <Bookmark size={20} />
-          {isSidebarOpen && <span>{t("nav.saved", "SAVED LOOKS")}</span>}
+          {isSidebarOpen && <span>LOOKS GUARDADOS</span>}
         </button>
 
         <div className="side-nav-spacer" style={{ flex: 1 }}></div>
 
-        <button type="button" className="side-nav-item" onClick={() => changePage("user-profile")} title={t("nav.profile", "PROFILE")}>
+        <button type="button" className="side-nav-item" onClick={() => changePage("user-profile")} title="PERFIL">
           <User size={20} />
-          {isSidebarOpen && <span>{t("nav.profile", "PROFILE")}</span>}
+          {isSidebarOpen && <span>PERFIL</span>}
         </button>
       </nav>
     </aside>

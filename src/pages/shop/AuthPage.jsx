@@ -5,7 +5,6 @@ const AuthPage = ({
   onLogin,
   onRegister,
   onContinueAsGuest,
-  t,
 }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
@@ -38,41 +37,41 @@ const AuthPage = ({
   return (
     <section className="auth-screen">
       <div className="auth-card">
-        <h1>{isLogin ? t("auth.title.login", "INICIA SESSIÓ") : t("auth.title.register", "REGISTRE")}</h1>
+        <h1>{isLogin ? "INICIAR SESIÓN" : "REGISTRO"}</h1>
         <p className="auth-description">
-          {isLogin ? "Benvingut de nou a ROB THE FAB." : "Crea un compte i uneix-te a la comunitat."}
+          {isLogin ? "Bienvenido de nuevo a ROB THE FAB." : "Crea una cuenta y únete a la comunidad."}
         </p>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           {!isLogin && (
             <label>
-              {t("auth.fields.name", "Nom d'usuari")}
+              Nombre de usuario
               <input value={name} onChange={(e) => setName(e.target.value)} required />
             </label>
           )}
           <label>
-            {t("auth.fields.email", "Correu electrònic")}
+            Correo electrónico
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           </label>
           <label>
-            {t("auth.fields.password", "Contrasenya")}
+            Contraseña
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </label>
 
           {feedback && <p className="auth-feedback">{feedback}</p>}
 
           <button type="submit" className="auth-submit-btn" disabled={loading}>
-            {loading ? "..." : (isLogin ? t("auth.submit.login", "ENTRAR") : t("auth.submit.register", "REGISTRAR-SE"))}
+            {loading ? "..." : (isLogin ? "ENTRAR" : "REGISTRARSE")}
           </button>
         </form>
 
         <div className="auth-options-divider">
           <button className="auth-toggle-btn" onClick={() => setIsLogin(!isLogin)}>
-            {isLogin ? t("auth.switch.register", "No tens compte? Registra't") : t("auth.switch.login", "Ja tens compte? Entra")}
+            {isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Entra"}
           </button>
           
           <button className="auth-guest-btn" onClick={onContinueAsGuest}>
-            <ShoppingBag size={18} /> {t("auth.welcome.guest", "CONTINUAR COM A CONVIDAT")}
+            <ShoppingBag size={18} /> CONTINUAR COMO INVITADO
           </button>
         </div>
       </div>

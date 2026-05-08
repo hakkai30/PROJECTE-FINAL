@@ -893,3 +893,35 @@
   color: white;
 }
 
+
+.profile-post-text-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--brand-black);
+  text-align: center;
+  overflow: hidden;
+}
+
+.profile-post-text-fallback p {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--brand-black);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .profile-post-text-fallback {
+  background: #1a1a1a;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .profile-post-text-fallback p {
+  color: #fff;
+}

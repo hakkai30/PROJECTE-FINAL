@@ -11,39 +11,42 @@ const UserProfilePage = ({
   onToggleTheme,
   posts = [],
   onDeletePost,
-  language,
-  setLanguage,
-  t,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const userPosts = posts.filter(post => post.user_email === currentUser?.email);
 
   return (
     <div className="category-page">
-      <GlobalHeader {...{ changePage, cartCount, wishlistCount, theme, language, setLanguage, t, currentUser }} />
+      <GlobalHeader {...{ changePage, cartCount, wishlistCount, theme, currentUser }} />
       <div className="social-layout">
-        <SocialSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} changePage={changePage} t={t} />
+        <SocialSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} changePage={changePage} />
         <main className="user-profile-container">
           <section className="profile-header">
             <div className="profile-avatar">
               {currentUser?.avatar ? <img src={currentUser.avatar} alt="" /> : <div className="avatar-placeholder">{(currentUser?.name || "U")[0]}</div>}
             </div>
             <div className="profile-info">
-              <h1>{currentUser?.name || "El meu Perfil"}</h1>
+              <h1>{currentUser?.name || "Mi Perfil"}</h1>
               <p className="profile-email">{currentUser?.email}</p>
               {currentUser?.bio && <p className="profile-bio">{currentUser.bio}</p>}
             </div>
           </section>
 
           <section className="user-posts-section">
-            <h2 className="section-title">{t("profile.yourPosts", "LES MEVES PUBLICACIONS")} ({userPosts.length})</h2>
+            <h2 className="section-title">MIS PUBLICACIONES ({userPosts.length})</h2>
             <div className="profile-posts-grid">
               {userPosts.length === 0 ? (
-                <p className="empty-state">{t("profile.noPosts", "Encara no has publicat res.")}</p>
+                <p className="empty-state">Aún no has publicado nada.</p>
               ) : (
                 userPosts.map(post => (
                   <div key={post.id} className="profile-post-card">
-                    <img src={post.img} alt="" />
+                    {post.img ? (
+                      <img src={post.img} alt="" />
+                    ) : (
+                      <div className="profile-post-text-fallback">
+                        <p>{post.description}</p>
+                      </div>
+                    )}
                     <div className="post-overlay">
                       <div className="post-stats">
                         <span><Heart size={14} fill="currentColor" /> {post.likes || 0}</span>
@@ -59,7 +62,7 @@ const UserProfilePage = ({
           </section>
         </main>
       </div>
-      <GlobalFooter t={t} />
+      <GlobalFooter />
     </div>
   );
 };

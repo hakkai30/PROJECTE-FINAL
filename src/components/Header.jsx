@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { X, Search, Menu, ShoppingBag, Heart, Palette, Globe, ChevronDown } from "lucide-react";
-import { LANGUAGE_OPTIONS, getLanguageLabel } from "../data/i18n";
+import { X, Search, Menu, ShoppingBag, Heart } from "lucide-react";
 import SearchOverlay from "./SearchOverlay";
 
 // Cabecera global: menú lateral, buscador, y accesos rápidos a carrito y wishlist.
@@ -13,13 +12,9 @@ const Header = ({
   onLogout = null,
   onOpenProductDetail = null,
   products = [],
-  language = "ca",
-  setLanguage = () => {},
-  t,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isLangOpen, setIsLangOpen] = useState(false);
 
   return (
     <>
@@ -28,8 +23,8 @@ const Header = ({
           <button
             className="burger-menu-btn header-icon-btn"
             onClick={() => setIsMenuOpen(true)}
-            aria-label={t("header.menu", "MENÚ")}
-            title={t("header.menu", "MENÚ")}
+            aria-label="MENÚ"
+            title="MENÚ"
           >
             <Menu size={18} />
           </button>
@@ -41,56 +36,56 @@ const Header = ({
                 className="sidebar-menu"
                 role="dialog"
                 aria-modal="true"
-                aria-label={t("nav.sidebar", "Menú principal")}
+                aria-label="Menú principal"
                 onClick={(e) => e.stopPropagation()}
                 tabIndex={-1}
               >
                 <div className="sidebar-intro">
-                  <p className="sidebar-kicker">{t("nav.explore", "EXPLORAR")}</p>
+                  <p className="sidebar-kicker">EXPLORAR</p>
                   <p className="sidebar-note">
-                    {t("nav.sidebarNote", "Navega por el catálogo, feed social y ajustes.")}
+                    Navega por el catálogo, feed social y noticias.
                   </p>
                 </div>
 
                 <div className="sidebar-header">
                   <button type="button" onClick={() => setIsMenuOpen(false)}>
-                    <X size={16} /> {t("header.close", "CERRAR")}
+                    <X size={16} /> CERRAR
                   </button>
                   <button type="button" onClick={() => { setIsMenuOpen(false); setIsSearchOpen(true); }}>
-                    <Search size={16} /> {t("header.search", "BUSCAR")}
+                    <Search size={16} /> BUSCAR
                   </button>
                 </div>
 
                 <div className="sidebar-nav-group">
-                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("landing"); }}>{t("nav.home", "INICIO")}</button>
-                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("men"); }}>{t("nav.men", "MEN")}</button>
-                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("women"); }}>{t("nav.women", "WOMEN")}</button>
-                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("kids"); }}>{t("nav.kids", "KIDS")}</button>
-                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("bags"); }}>{t("nav.bags", "BAGS")}</button>
-                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("accessories"); }}>{t("nav.accessories", "ACCESSORIES")}</button>
-                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("home"); }}>{t("nav.homeDecor", "HOME")}</button>
-                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("news"); }}>{t("nav.news", "NOTICIAS MODA")}</button>
+                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("landing"); }}>INICIO</button>
+                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("men"); }}>HOMBRE</button>
+                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("women"); }}>MUJER</button>
+                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("kids"); }}>NIÑOS</button>
+                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("bags"); }}>BOLSOS</button>
+                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("accessories"); }}>ACCESORIOS</button>
+                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("home"); }}>HOGAR</button>
+                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("news"); }}>NOTICIAS MODA</button>
                 </div>
 
                 <div className="sidebar-nav-group">
-                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("socials"); }}>{t("nav.socials", "SOCIAL FEED")}</button>
+                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("socials"); }}>SOCIAL FEED</button>
                 </div>
 
                 <div className="sidebar-nav-group bottom-group">
                   <button type="button" onClick={() => { setIsMenuOpen(false); changePage("wishlist"); }}>
-                    {t("nav.wishlist", "WISHLIST")} [ {wishlistCount} ]
+                    FAVORITOS [ {wishlistCount} ]
                   </button>
                   {currentUser ? (
                     <>
                       <button type="button" onClick={() => { setIsMenuOpen(false); changePage("user-profile"); }}>
-                        {t("nav.profile", "MI PERFIL")}
+                        MI PERFIL
                       </button>
                       <button
                         type="button"
                         className="sidebar-logout-btn"
                         onClick={() => { setIsMenuOpen(false); if (onLogout) onLogout(); }}
                       >
-                        {t("nav.logout", "CERRAR SESIÓN")}
+                        CERRAR SESIÓN
                       </button>
                     </>
                   ) : (
@@ -99,10 +94,10 @@ const Header = ({
                       className="sidebar-login-btn"
                       onClick={() => { setIsMenuOpen(false); changePage("auth"); }}
                     >
-                      {t("auth.submit.loginRegister", "INICIA SESIÓN / REGISTRAR-SE")}
+                      INICIAR SESIÓN / REGISTRO
                     </button>
                   )}
-                  <button type="button">{t("header.currency", "SPAIN / EUR")}</button>
+                  <button type="button">ESPAÑA / EUR</button>
                 </div>
               </div>
             </div>
@@ -118,46 +113,17 @@ const Header = ({
           <button
             className="header-icon-btn"
             onClick={() => setIsSearchOpen(true)}
-            aria-label={t("header.search", "BUSCAR")}
-            title={t("header.search", "BUSCAR")}
+            aria-label="BUSCAR"
+            title="BUSCAR"
           >
             <Search size={18} />
           </button>
 
-          {/* Selector de Idioma Desplegable */}
-          <div className="language-dropdown-wrapper">
-            <button
-              className="header-icon-btn lang-toggle"
-              onClick={() => setIsLangOpen(!isLangOpen)}
-              aria-label="Change Language"
-            >
-              <Globe size={18} />
-              <span className="lang-code-text">{language.toUpperCase()}</span>
-              <ChevronDown size={12} className={`chevron-icon ${isLangOpen ? 'open' : ''}`} />
-            </button>
-            
-            {isLangOpen && (
-              <div className="lang-dropdown-menu">
-                {LANGUAGE_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.code}
-                    className={`lang-option ${language === opt.code ? 'active' : ''}`}
-                    onClick={() => {
-                      setLanguage(opt.code);
-                      setIsLangOpen(false);
-                    }}
-                  >
-                    {getLanguageLabel(opt.code)}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
           <button
             className="header-icon-btn"
             onClick={() => changePage("wishlist")}
-            aria-label={`${t("nav.wishlist", "WISHLIST")} (${wishlistCount})`}
-            title={`${t("nav.wishlist", "WISHLIST")} (${wishlistCount})`}
+            aria-label={`FAVORITOS (${wishlistCount})`}
+            title={`FAVORITOS (${wishlistCount})`}
           >
             <Heart size={18} />
             {wishlistCount > 0 && (
@@ -169,8 +135,8 @@ const Header = ({
           <button
             className={`header-icon-btn ${cartToast ? "cart-icon-animate" : ""}`}
             onClick={() => changePage("cart")}
-            aria-label={`${t("header.bag", "BOLSA")} (${cartCount})`}
-            title={`${t("header.bag", "BOLSA")} (${cartCount})`}
+            aria-label={`BOLSA (${cartCount})`}
+            title={`BOLSA (${cartCount})`}
           >
             <ShoppingBag size={18} />
             {cartCount > 0 && (
@@ -187,9 +153,7 @@ const Header = ({
         onClose={() => setIsSearchOpen(false)}
         onOpenProductDetail={onOpenProductDetail}
         changePage={changePage}
-        language={language}
         products={products}
-        t={t}
       />
     </>
   );

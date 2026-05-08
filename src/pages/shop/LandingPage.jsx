@@ -8,16 +8,13 @@ const LandingPage = ({
   onLogout,
   cartCount = 0, 
   wishlistCount = 0, 
-  t, 
-  language = "es",
-  setLanguage,
 }) => {
   const [news, setNews] = useState([]);
 
   useEffect(() => {
     let isMounted = true;
 
-    getFashionNews(language)
+    getFashionNews("es")
       .then((articles) => {
         if (!isMounted) return;
         if (Array.isArray(articles) && articles.length >= 3) {
@@ -33,7 +30,7 @@ const LandingPage = ({
     return () => {
       isMounted = false;
     };
-  }, [language]);
+  }, []);
 
   return (
     <div className="landing-page-brutalist">
@@ -43,11 +40,6 @@ const LandingPage = ({
         onLogout={onLogout}
         cartCount={cartCount} 
         wishlistCount={wishlistCount}
-        t={t} 
-        language={language}
-        setLanguage={setLanguage}
-        language={language}
-        setLanguage={setLanguage}
       />
 
       <div className="windows-absolute-wrapper" aria-hidden="true">
@@ -59,7 +51,7 @@ const LandingPage = ({
       <div className="main-logo-container">
         <h1 className="main-logo-glitch-text">ROB THE FAB</h1>
         <p className="landing-tagline">
-          {t("landing.tagline", "Wear the Story. Share the Change.")}
+          Viste la Historia. Comparte el Cambio.
         </p>
       </div>
 
@@ -69,9 +61,9 @@ const LandingPage = ({
             type="button"
             onClick={() => changePage("shop")}
             className="nav-btn-brutalist glitch-text"
-            data-text="SHOP"
+            data-text="TIENDA"
           >
-            {t("landing.shop", "SHOP")}
+            TIENDA
           </button>
         </div>
         <div className="nav-btn-container">
@@ -79,9 +71,9 @@ const LandingPage = ({
             type="button"
             onClick={() => changePage("socials")}
             className="nav-btn-brutalist glitch-text"
-            data-text="SOCIALS"
+            data-text="COMUNIDAD"
           >
-            {t("landing.socials", "SOCIALS")}
+            COMUNIDAD
           </button>
         </div>
       </footer>

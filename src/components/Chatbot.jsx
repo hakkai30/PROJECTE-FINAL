@@ -25,7 +25,6 @@ const normalize = (text = "") =>
 const hasAny = (text, terms) => terms.some((term) => text.includes(term));
 
 const Chatbot = ({
-  t = (_key, fallback) => fallback || "",
   changePage,
   cartCount = 0,
   wishlistCount = 0,
@@ -34,10 +33,7 @@ const Chatbot = ({
   savedLookCount = 0,
   isAuthenticated = false,
 }) => {
-  const greeting = t(
-    "chatbot.greeting",
-    "¡Hola! Soy el asistente de ROB THE FAB. Puedo ayudarte con productos, pedidos, carrito, wishlist y más. ¿Qué necesitas?"
-  );
+  const greeting = "¡Hola! Soy el asistente de ROB THE FAB. Puedo ayudarte con productos, pedidos, carrito, wishlist y más. ¿Qué necesitas?";
 
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([{ sender: "ai", text: greeting }]);
@@ -73,7 +69,7 @@ const Chatbot = ({
 
     // Fuera de alcance
     if (OFF_SCOPE_TERMS.some((term) => q.includes(term))) {
-      return { text: t("chatbot.outOfScope", "Solo puedo ayudarte con temas relacionados con esta tienda de moda."), suggestion: null };
+      return { text: "Solo puedo ayudarte con temas relacionados con esta tienda de moda.", suggestion: null };
     }
 
     // Productos por categoría
@@ -88,7 +84,7 @@ const Chatbot = ({
 
     // Total de productos
     if (hasAny(q, ["cuantos productos", "total productos", "catalogo"])) {
-      return { text: `Ahora mismo hay ${stats.total} productos en el catálogo.`, suggestion: { label: "SHOP", page: "shop" } };
+      return { text: `Ahora mismo hay ${stats.total} productos en el catálogo.`, suggestion: { label: "TIENDA", page: "shop" } };
     }
 
     // Precio medio
@@ -131,14 +127,14 @@ const Chatbot = ({
     // Login
     if (hasAny(q, ["login", "sesion", "cuenta", "registr"])) {
       const msg = isAuthenticated
-        ? "Ya tienes sesión activa. Puedes acceder a Social Feed, Mensajes y tu Perfil."
-        : "Necesitas iniciar sesión para acceder al Social Feed, Mensajes y tu Perfil.";
-      return { text: msg, suggestion: { label: "AUTH", page: "auth" } };
+        ? "Ya tienes sesión activa. Puedes acceder a Social Feed y tu Perfil."
+        : "Necesitas iniciar sesión para acceder al Social Feed y tu Perfil.";
+      return { text: msg, suggestion: { label: "ENTRAR", page: "auth" } };
     }
 
-    // Ajustes
-    if (hasAny(q, ["idioma", "tema", "dark", "light", "settings", "ajustes"])) {
-      return { text: "Puedes cambiar idioma y tema visual en la sección de SETTINGS.", suggestion: { label: "SETTINGS", page: "settings" } };
+    // Ajustes (ahora solo tema)
+    if (hasAny(q, ["tema", "dark", "light", "oscuro", "claro"])) {
+      return { text: "Puedes cambiar el tema visual en el icono de la cabecera.", suggestion: null };
     }
 
     // Buscar
@@ -148,17 +144,17 @@ const Chatbot = ({
 
     // Envío
     if (hasAny(q, ["envio", "shipping", "impuestos"])) {
-      return { text: t("cart.taxNotice", "Impuestos incluidos. Gastos de envío calculados al final."), suggestion: { label: "BOLSA", page: "cart" } };
+      return { text: "Impuestos incluidos. Gastos de envío calculados al finalizar la compra.", suggestion: { label: "BOLSA", page: "cart" } };
     }
 
     // Ayuda general
     if (hasAny(q, ["ayuda", "help", "que puedes"])) {
-      return { text: "Puedo responder sobre: productos, precios, marcas, carrito, wishlist, social feed, ajustes y envíos.", suggestion: null };
+      return { text: "Puedo responder sobre: productos, precios, marcas, carrito, wishlist, social feed y envíos.", suggestion: null };
     }
 
     // Respuesta por defecto
     return {
-      text: t("chatbot.outOfScope", "Solo puedo ayudarte con temas relacionados con esta tienda de moda. Prueba a preguntar sobre productos, carrito o la red social."),
+      text: "Solo puedo ayudarte con temas relacionados con esta tienda de moda. Prueba a preguntar sobre productos, carrito o la red social.",
       suggestion: null,
     };
   };
@@ -187,7 +183,7 @@ const Chatbot = ({
         type="button"
         className="chatbot-floating-bubble"
         onClick={() => setIsOpen(!isOpen)}
-        aria-label={t("chatbot.trigger", "¿NECESITAS AYUDA?")}
+        aria-label="¿NECESITAS AYUDA?"
       >
         <span>CHAT</span>
       </button>
@@ -196,9 +192,9 @@ const Chatbot = ({
         <div className="chatbot-window">
           <div className="chatbot-header">
             <div className="chatbot-title">
-              <span className="chatbot-title-text">{t("chatbot.title", "ROB AI STYLIST")}</span>
+              <span className="chatbot-title-text">ROB AI STYLIST</span>
               <span className="chatbot-subtitle">
-                {t("chatbot.subtitle", "ASISTENTE DE MODA")}
+                ASISTENTE DE MODA
                 <span className="chatbot-cursor" aria-hidden="true">|</span>
               </span>
             </div>
@@ -231,7 +227,7 @@ const Chatbot = ({
                   setSuggestion(null);
                 }}
               >
-                {t("chatbot.goTo", "Abrir")}: {suggestion.label}
+                Abrir: {suggestion.label}
               </button>
             </div>
           )}
@@ -239,7 +235,7 @@ const Chatbot = ({
           <div className="chatbot-input">
             <input
               type="text"
-              placeholder={t("chatbot.placeholder", "Pregunta sobre productos, carrito, envíos...")}
+              placeholder="Pregunta sobre productos, carrito, envíos..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}

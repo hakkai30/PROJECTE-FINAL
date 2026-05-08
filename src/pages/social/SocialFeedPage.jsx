@@ -27,9 +27,6 @@ const SocialFeedPage = ({
   wishlistCount = 0,
   theme,
   onToggleTheme,
-  language = "ca",
-  setLanguage,
-  t,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [localView, setLocalView] = useState("all");
@@ -46,7 +43,7 @@ const SocialFeedPage = ({
     if (isNaN(timestamp)) return "";
     const diffMs = Date.now() - timestamp;
     const diffHours = Math.floor(diffMs / 3600000);
-    if (diffHours < 1) return t("social.comments.now", "ara");
+    if (diffHours < 1) return "ahora";
     if (diffHours < 24) return `${diffHours}h`;
     return new Date(timestamp).toLocaleDateString();
   };
@@ -82,14 +79,14 @@ const SocialFeedPage = ({
 
   return (
     <div className="category-page">
-      <GlobalHeader {...{ changePage, cartCount, wishlistCount, currentUser, onLogout, theme, language, setLanguage, t }} />
+      <GlobalHeader {...{ changePage, cartCount, wishlistCount, currentUser, onLogout, theme }} />
       
       <div className="social-layout">
-        <SocialSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} changePage={changePage} t={t} />
+        <SocialSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} changePage={changePage} />
         
         <main className="social-feed">
           <header className="social-feed-header">
-            <h1 className="social-feed-title">{t("social.feed.title", "SOCIAL FEED")}</h1>
+            <h1 className="social-feed-title">SOCIAL FEED</h1>
             
             <form className="social-create-post-form" onSubmit={handleCreatePost}>
               <div className="social-input-group">
@@ -98,14 +95,14 @@ const SocialFeedPage = ({
                   className="threads-search-input"
                   value={postText}
                   onChange={(e) => setPostText(e.target.value)}
-                  placeholder={t("social.feed.postPlaceholder", "Escriu un post...")}
+                  placeholder="Escribe un nuevo post..."
                 />
                 <input type="file" ref={fileInputRef} hidden onChange={handleImageSelect} accept="image/*" />
                 <button type="button" className="social-add-img-btn" onClick={() => fileInputRef.current?.click()}>
                   <ImagePlus size={16} />
                 </button>
                 <button type="submit" className="social-publish-btn" disabled={isPosting || !postText.trim()}>
-                  {isPosting ? "..." : t("social.feed.publish", "PUBLICAR")}
+                  {isPosting ? "..." : "PUBLICAR"}
                 </button>
               </div>
               {postImagePreview && (
@@ -118,10 +115,10 @@ const SocialFeedPage = ({
 
             <div className="social-feed-toolbar">
               <button className={`social-filter-chip ${localView === "all" ? "active" : ""}`} onClick={() => setLocalView("all")}>
-                {t("social.feed.allLooks", "TOTS")}
+                TODOS LOS LOOKS
               </button>
               <button className={`social-filter-chip ${localView === "saved" ? "active" : ""}`} onClick={() => setLocalView("saved")}>
-                {t("social.sidebar.savedLooks", "DESATS")} ({savedLookIds.length})
+                GUARDADOS ({savedLookIds.length})
               </button>
             </div>
           </header>
@@ -133,8 +130,6 @@ const SocialFeedPage = ({
               <SocialPost
                 key={post.id}
                 post={post}
-                language={language}
-                t={t}
                 isLiked={likedPostIds.includes(String(post.id))}
                 isSaved={savedLookIds.includes(String(post.id))}
                 onToggleLike={onToggleLikePost}
@@ -167,13 +162,13 @@ const SocialFeedPage = ({
 
           {hasMore && (
             <button className="load-more-btn" onClick={onLoadMore} disabled={isLoadingPosts}>
-              {isLoadingPosts ? "..." : t("social.feed.loadingMore", "CARREGAR MÉS")}
+              {isLoadingPosts ? "..." : "CARGAR MÁS"}
             </button>
           )}
         </main>
       </div>
 
-      <GlobalFooter t={t} />
+      <GlobalFooter />
     </div>
   );
 };

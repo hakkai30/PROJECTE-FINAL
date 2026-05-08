@@ -7,19 +7,16 @@ const CategoryPage = ({
   onOpenProductDetail,
   theme,
   onToggleTheme,
-  language,
-  t,
   currentUser,
   onLogout,
-  setLanguage,
 }) => {
   const categories = [
-    { label: t("category.categories.men", "MENS"), page: "men" },
-    { label: t("category.categories.women", "WOMENS"), page: "women" },
-    { label: t("category.categories.kids", "KIDS"), page: "kids" },
-    { label: t("category.categories.bags", "BAGS"), page: "bags" },
-    { label: t("category.categories.accessories", "ACCESSORIES"), page: "accessories" },
-    { label: t("category.categories.home", "HOME"), page: "home" },
+    { label: "HOMBRE", page: "men" },
+    { label: "MUJER", page: "women" },
+    { label: "NIÑOS", page: "kids" },
+    { label: "BOLSOS", page: "bags" },
+    { label: "ACCESORIOS", page: "accessories" },
+    { label: "HOGAR", page: "home" },
   ];
 
   return (
@@ -31,17 +28,14 @@ const CategoryPage = ({
         onOpenProductDetail={onOpenProductDetail}
         theme={theme}
         onToggleTheme={onToggleTheme}
-        language={language}
-        setLanguage={setLanguage}
-        t={t}
         currentUser={currentUser}
         onLogout={onLogout}
       />
       <main className="category-content-area">
-        <p className="category-kicker">{t("category.kicker", "COLLECTIONS")}</p>
-        <h1 className="category-title">{t("category.title", "ROB THE FAB")}</h1>
+        <p className="category-kicker">COLECCIONES</p>
+        <h1 className="category-title">ROB THE FAB</h1>
         <p className="category-title gray-text" aria-hidden="true">
-          {t("category.title", "ROB THE FAB")}
+          ROB THE FAB
         </p>
         <div className="category-buttons-grid">
           {categories.map((cat) => (
@@ -55,7 +49,7 @@ const CategoryPage = ({
           ))}
         </div>
       </main>
-      <GlobalFooter t={t} />
+      <GlobalFooter />
     </div>
   );
 };

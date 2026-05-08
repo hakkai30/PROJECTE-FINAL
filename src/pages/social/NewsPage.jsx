@@ -4,15 +4,12 @@ import { GlobalHeader, GlobalFooter, SocialSidebar } from "../../components/Layo
 
 const NewsPage = ({ 
   changePage, 
-  language = "ca", 
-  t, 
   cartCount, 
   wishlistCount, 
   theme, 
   onToggleTheme,
   currentUser,
   onLogout,
-  setLanguage,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [articles, setArticles] = useState([]);
@@ -21,16 +18,17 @@ const NewsPage = ({
 
   useEffect(() => {
     loadNews();
-  }, [language]);
+  }, []);
 
   const loadNews = async () => {
     setIsLoading(true);
     setError("");
     try {
-      const news = await getFashionNews(language);
+      // Forzamos español para las noticias
+      const news = await getFashionNews("es");
       setArticles(news);
     } catch (err) {
-      setError(t("news.error", "No se pudieron cargar las noticias."));
+      setError("No se pudieron cargar las noticias.");
     } finally {
       setIsLoading(false);
     }
@@ -44,9 +42,6 @@ const NewsPage = ({
         wishlistCount={wishlistCount}
         theme={theme}
         onToggleTheme={onToggleTheme}
-        language={language}
-        setLanguage={setLanguage}
-        t={t}
         currentUser={currentUser}
         onLogout={onLogout}
       />
@@ -55,20 +50,19 @@ const NewsPage = ({
           isSidebarOpen={isSidebarOpen} 
           setIsSidebarOpen={setIsSidebarOpen} 
           changePage={changePage} 
-          t={t} 
         />
         <main className="social-feed" style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
         <div style={{ flex: 1 }}>
           <div className="social-feed-header">
-            <h1 className="social-feed-title">{t("news.title", "FASHION NEWS")}</h1>
+            <h1 className="social-feed-title">NOTICIAS DE MODA</h1>
             <p className="social-feed-subtitle">
-              {t("news.subtitle", "Tendencias y noticias actuales del mundo de la moda.")}
+              Tendencias y noticias actuales del mundo de la moda.
             </p>
           </div>
 
           {isLoading ? (
             <div className="saved-looks-empty">
-              <h2>{t("news.loading", "LOADING NEWS...")}</h2>
+              <h2>CARGANDO NOTICIAS...</h2>
             </div>
           ) : error ? (
             <div className="saved-looks-empty">
@@ -77,7 +71,7 @@ const NewsPage = ({
             </div>
           ) : articles.length === 0 ? (
             <div className="saved-looks-empty">
-              <h2>{t("news.noResults", "No news found.")}</h2>
+              <h2>No se han encontrado noticias.</h2>
             </div>
           ) : (
             <div className="news-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px", marginTop: "20px" }}>
@@ -114,7 +108,7 @@ const NewsPage = ({
         </div>
         </main>
       </div>
-      <GlobalFooter t={t} />
+      <GlobalFooter />
     </div>
   );
 };
