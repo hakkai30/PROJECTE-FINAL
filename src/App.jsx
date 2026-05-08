@@ -273,11 +273,12 @@ const App = () => {
 
   // Proteger páginas que requieren login.
   useEffect(() => {
-    // Si la página está protegida y no hay usuario (y no es invitado permitido)
-    if (PROTECTED_PAGES.has(currentPage) && !currentUser && !isGuest) {
+    // Si la página está protegida y NO hay un usuario real logueado, redirigir a Auth.
+    // Los invitados (isGuest) tampoco pueden ver el contenido protegido (Social Feed, etc.)
+    if (PROTECTED_PAGES.has(currentPage) && !currentUser) {
       navigate("/auth");
     }
-  }, [currentPage, currentUser, isGuest, navigate]);
+  }, [currentPage, currentUser, navigate]);
 
   // Props comunes que se pasan a casi todas las páginas.
   const commonProps = {
