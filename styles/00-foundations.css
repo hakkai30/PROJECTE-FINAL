@@ -1289,7 +1289,7 @@ body {
   height: 18px;
   padding: 0 4px;
   border-radius: 999px;
-  background: var(--brand-accent);
+  background: #d32f2f;
   color: #fff;
   border: 1px solid #fff;
   display: inline-flex;
