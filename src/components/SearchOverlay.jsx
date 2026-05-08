@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { X } from "lucide-react";
-import { MOCK_PRODUCTS } from "../data/mockData";
 import { localizeProduct } from "../data/i18n";
 
 // Overlay de búsqueda a pantalla completa con resultados filtrados del catálogo.
-const SearchOverlay = ({ isOpen, onClose, onOpenProductDetail, changePage, language, t }) => {
+const SearchOverlay = ({ isOpen, onClose, onOpenProductDetail, changePage, language, t, products = [] }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   if (!isOpen) return null;
 
   const normalizedTerm = searchTerm.trim().toLowerCase();
   const searchResults = normalizedTerm
-    ? MOCK_PRODUCTS.filter(
+    ? products.filter(
         (product) =>
           localizeProduct(product, language).name.toLowerCase().includes(normalizedTerm) ||
           product.brand.toLowerCase().includes(normalizedTerm) ||

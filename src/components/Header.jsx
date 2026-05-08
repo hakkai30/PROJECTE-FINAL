@@ -12,6 +12,7 @@ const Header = ({
   currentUser = null,
   onLogout = null,
   onOpenProductDetail = null,
+  products = [],
   language = "ca",
   setLanguage = () => {},
   t,
@@ -187,6 +188,7 @@ const Header = ({
         onOpenProductDetail={onOpenProductDetail}
         changePage={changePage}
         language={language}
+        products={products}
         t={t}
       />
     </>

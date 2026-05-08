@@ -12,7 +12,6 @@ import AuthPage from "./pages/shop/AuthPage";
 import UserProfilePage from "./pages/social/UserProfilePage";
 import NewsPage from "./pages/social/NewsPage";
 import Chatbot from "./components/Chatbot";
-import { MOCK_PRODUCTS } from "./data/mockData";
 import { authService } from "./services/authService";
 import { postService } from "./services/postService";
 import { socialService } from "./services/socialService";
@@ -291,6 +290,7 @@ const App = () => {
     t,
     theme,
     currentUser,
+    products,
     onLogout: handleLogout,
   };
 
