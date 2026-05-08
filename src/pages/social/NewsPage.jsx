@@ -86,15 +86,17 @@ const NewsPage = ({
                   className="user-product-card"
                   style={{ textDecoration: "none", color: "inherit", display: "flex", flexDirection: "column" }}
                 >
-                  <div className="product-image-wrapper" style={{ height: "200px" }}>
-                    <img
-                      src={article.image || "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=80"}
-                      alt={article.title}
-                      className="product-image"
-                      style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                      onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=80"; }}
-                    />
-                  </div>
+                  {article.image && (
+                    <div className="product-image-wrapper" style={{ height: "200px" }}>
+                      <img
+                        src={article.image}
+                        alt={article.title}
+                        className="product-image"
+                        style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                        onError={(e) => { e.currentTarget.parentElement.style.display = "none"; }}
+                      />
+                    </div>
+                  )}
                   <div className="product-info" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
                     <h3 style={{ fontSize: "16px", marginBottom: "8px" }}>{article.title}</h3>
                     <p className="product-description" style={{ flex: 1 }}>{article.description}</p>
