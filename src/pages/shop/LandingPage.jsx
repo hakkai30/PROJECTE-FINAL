@@ -10,9 +10,6 @@ const LandingPage = ({
   wishlistCount = 0, 
   t, 
   language = "es",
-  notifications = [],
-  unreadNotificationsCount = 0,
-  onMarkNotificationRead,
   setLanguage,
 }) => {
   const [news, setNews] = useState([]);
@@ -49,9 +46,8 @@ const LandingPage = ({
         t={t} 
         language={language}
         setLanguage={setLanguage}
-        notifications={notifications}
-        unreadNotificationsCount={unreadNotificationsCount}
-        onMarkNotificationRead={onMarkNotificationRead}
+        language={language}
+        setLanguage={setLanguage}
       />
 
       <div className="windows-absolute-wrapper" aria-hidden="true">

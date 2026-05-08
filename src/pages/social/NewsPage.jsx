@@ -12,7 +12,6 @@ const NewsPage = ({
   onToggleTheme,
   currentUser,
   onLogout,
-  onMarkNotificationRead,
   setLanguage,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -50,9 +49,6 @@ const NewsPage = ({
         t={t}
         currentUser={currentUser}
         onLogout={onLogout}
-        notifications={notifications}
-        unreadNotificationsCount={unreadNotificationsCount}
-        onMarkNotificationRead={onMarkNotificationRead}
       />
       <div className="social-layout">
         <SocialSidebar 
