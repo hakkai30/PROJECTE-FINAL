@@ -143,28 +143,38 @@ const SavedLooksPage = ({
           </div>
         )}
 
-        {savedLooks.length === 0 && (
-          <div className="saved-looks-empty">
-            <h2>AÚN NO HAS GUARDADO LOOKS</h2>
-            <p>
-              Guarda looks desde Social Feed y aparecerán aquí.
-            </p>
-            <button type="button" className="shop-look-btn" onClick={() => changePage("socials")}>
-              IR A SOCIAL FEED
-            </button>
-          </div>
-        )}
+        {/* Filtrar solo los posts cuyos IDs están en la lista de guardados */}
+        {(() => {
+          const visibleSavedLooks = savedLooks.filter((post) =>
+            savedLookIds.includes(String(post.id))
+          );
 
-        {savedLooks.map((post) => {
-          const isSaved = savedLookIds.includes(String(post.id));
-          const isLiked = likedPostIds.includes(String(post.id));
-          const commentsCount = Array.isArray(post.comments) ? post.comments.length : 0;
-          const normalizedPostId = String(post.id);
-          const isCommentsOpen = openCommentPostIds.includes(normalizedPostId);
-          const commentDraft = commentDrafts[normalizedPostId] || "";
-          const isSubmittingComment = submittingCommentIds.includes(normalizedPostId);
+          if (visibleSavedLooks.length === 0) {
+            return (
+              <div className="saved-looks-empty">
+                <h2>AÚN NO HAS GUARDADO LOOKS</h2>
+                <p>Guarda looks desde Social Feed y aparecerán aquí.</p>
+                <button
+                  type="button"
+                  className="shop-look-btn"
+                  onClick={() => changePage("socials")}
+                >
+                  IR A SOCIAL FEED
+                </button>
+              </div>
+            );
+          }
 
-          return (
+          return visibleSavedLooks.map((post) => {
+            const isSaved = savedLookIds.includes(String(post.id));
+            const isLiked = likedPostIds.includes(String(post.id));
+            const commentsCount = Array.isArray(post.comments) ? post.comments.length : 0;
+            const normalizedPostId = String(post.id);
+            const isCommentsOpen = openCommentPostIds.includes(normalizedPostId);
+            const commentDraft = commentDrafts[normalizedPostId] || "";
+            const isSubmittingComment = submittingCommentIds.includes(normalizedPostId);
+
+            return (
             <div key={post.id} className="social-post">
               <div className="post-header">
                 <div className="user-avatar"></div>
@@ -188,11 +198,13 @@ const SavedLooksPage = ({
                   </button>
                 )}
               </div>
-              <img
-                src={post.img}
-                alt={`Publicación de ${post.user || post.user_email}`}
-                className="post-img"
-              />
+              {post.img && (
+                <img
+                  src={post.img}
+                  alt={`Publicación de ${post.user || post.user_email || "usuario"}`}
+                  className="post-img"
+                />
+              )}
               <div className="social-post-caption">
                 <strong>{post.user || post.user_email?.split('@')[0] || "usuario"}</strong> {post.description}
               </div>
@@ -312,8 +324,9 @@ const SavedLooksPage = ({
                 </div>
               )}
             </div>
-          );
-        })}
+            );
+          });
+        })()}
       </div>
       </div>
       <GlobalFooter />
