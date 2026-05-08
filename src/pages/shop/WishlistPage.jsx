@@ -16,7 +16,6 @@ const WishlistPage = ({
   t,
   currentUser,
   onLogout,
-  setLanguage,
 }) => {
   return (
     <div className="category-page">
