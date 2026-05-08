@@ -259,12 +259,12 @@
 }
 .logo-center-subtitle {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
-  font-weight: 400;
-  letter-spacing: 0.4em;
+  font-size: 0.8rem; /* Aumentado de 0.6rem */
+  font-weight: 700; /* Más peso para leer mejor */
+  letter-spacing: 0.2em; /* Reducido un poco para legibilidad */
   color: #000;
   text-transform: uppercase;
-  margin-top: -4px;
+  margin-top: 2px;
 }
 .search-result-item span {
   font-weight: 700;
@@ -382,9 +382,9 @@
 }
 .product-brand {
   font-family: var(--font-mono);
-  font-weight: 400;
-  font-size: 0.75rem; /* Un poco más grande */
-  color: #1a1a1a; /* Mucho más oscuro que antes */
+  font-weight: 700;
+  font-size: 0.85rem; /* Aumentado de 0.75rem */
+  color: #000;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }

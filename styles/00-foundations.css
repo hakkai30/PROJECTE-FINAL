@@ -38,6 +38,11 @@
   --font-mono: "Space Mono", monospace; 
   --letter-spacing-tight: -0.04em;
   --letter-spacing-wide: 0.25em; 
+
+  /* Control Surfaces (High Contrast) */
+  --control-unified-bg: var(--brand-black);
+  --control-unified-border: var(--brand-black);
+  --control-radius: 0px;
 }
 
 @import url("https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Inter:wght@100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
@@ -147,6 +152,7 @@ body {
 .window-action {
   background: var(--control-unified-bg);
   border: 1px solid var(--control-unified-border);
+  color: #ffffff; /* Texto blanco asegurado */
   border-radius: var(--control-radius);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -165,6 +171,7 @@ body {
 .bottom-action-btn:hover,
 .settings-return-btn:hover {
   background: #ffffff;
+  color: #000000; /* Invertir color en hover para legibilidad */
 }
 
 .header-actions button,
