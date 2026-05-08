@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Heart } from "lucide-react";
-import FocusTrap from "focus-trap-react";
+
 import { GlobalFooter, GlobalHeader } from "../../components/Layout";
-import { MOCK_PRODUCTS } from "../../data/mockData";
 import { localizeProduct } from "../../data/i18n";
-import OptimizedImage from "../../components/OptimizedImage";
+
 
 // Vista de catálogo: combina filtros, ordenación y quick view en una sola pantalla.
 const ProductsPage = ({
@@ -23,9 +23,13 @@ const ProductsPage = ({
   currentUser = null,
   onLogout = () => {},
   userProducts = [],
+  products = [],
   language,
   t,
 }) => {
+  const { cat } = useParams();
+  const activeCategory = cat || categoryKey;
+
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [sortBy, setSortBy] = useState("featured");
@@ -38,13 +42,13 @@ const ProductsPage = ({
 
   // Base del catálogo. Ahora mismo solo usa productos estáticos, pero aquí se podría mezclar inventario real.
   const combinedBaseProducts = useMemo(() => {
-    return MOCK_PRODUCTS;
-  }, []);
+    return products;
+  }, [products]);
 
   const baseProducts =
-    categoryKey === "all"
+    activeCategory === "all" || activeCategory === "shop"
       ? combinedBaseProducts
-      : combinedBaseProducts.filter((product) => product.category === categoryKey);
+      : combinedBaseProducts.filter((product) => product.category === activeCategory);
 
   const categoryMaxPrice = useMemo(() => {
     if (baseProducts.length === 0) return 0;
@@ -70,7 +74,7 @@ const ProductsPage = ({
     setSelectedColor("all");
     setSelectedSize("all");
     setMaxPrice(categoryMaxPrice);
-  }, [categoryKey, categoryMaxPrice]);
+  }, [activeCategory, categoryMaxPrice]);
 
   const filteredProducts = baseProducts.filter((product) => {
     const brandOk = selectedBrand === "all" || product.brand === selectedBrand;
@@ -204,11 +208,11 @@ const ProductsPage = ({
               />
             </button>
             <div className="product-img">
-              <OptimizedImage
+              <img
                 src={localizedProduct.img}
                 alt={localizedProduct.name}
                 className="product-placeholder"
-                sizes="(max-width:600px) 100vw, 25vw"
+                loading="lazy"
               />
             </div>
             <div className="product-info">
@@ -258,45 +262,43 @@ const ProductsPage = ({
 
       {quickViewProduct && (
         <div className="quick-view-overlay" onClick={() => setQuickViewProduct(null)}>
-          <FocusTrap active={Boolean(quickViewProduct)} focusTrapOptions={{ clickOutsideDeactivates: true }}>
-            <div className="quick-view-modal" role="dialog" aria-modal="true" aria-label={t("products.quickView.title", "Quick view")} onClick={(e) => e.stopPropagation()}>
-              <button className="quick-view-close" onClick={() => setQuickViewProduct(null)}>
-                {t("products.quickView.close", "CLOSE")}
-              </button>
-              <div className="quick-view-grid">
-                <OptimizedImage src={localizeProduct(quickViewProduct, language).img} alt={localizeProduct(quickViewProduct, language).name} className="quick-view-img" sizes="(max-width:600px) 100vw, 40vw" />
-                <div className="quick-view-content">
-                  <p className="product-brand">{quickViewProduct.brand}</p>
-                  <h3>{localizeProduct(quickViewProduct, language).name}</h3>
-                  <p className="quick-view-price">{quickViewProduct.price.toFixed(2)}€</p>
-                  <p>{t("products.quickView.color", "Color")}: {quickViewProduct.color.toUpperCase()}</p>
-                  <p>{t("products.quickView.sizes", "Sizes")}: {(quickViewProduct.sizes || []).join(", ")}</p>
-                  <div className="quick-view-actions">
-                    <button className="add-btn" onClick={() => addToCart(quickViewProduct)}>
-                      {t("products.quickView.addToBag", "+ ADD TO BAG")}
-                    </button>
-                    <button
-                      className={`quick-view-wishlist ${wishlistIds.includes(quickViewProduct.id) ? "active" : ""}`}
-                      onClick={() => onToggleWishlist(quickViewProduct)}
-                    >
-                      {wishlistIds.includes(quickViewProduct.id)
-                        ? t("products.quickView.removeFromWishlist", "REMOVE FROM WISHLIST")
-                        : t("products.quickView.addToWishlist", "ADD TO WISHLIST")}
-                    </button>
-                    <button
-                      className="quick-view-wishlist"
-                      onClick={() => {
-                        setQuickViewProduct(null);
-                        onOpenProductDetail(quickViewProduct);
-                      }}
-                    >
-                      {t("products.quickView.viewDetails", "VIEW DETAILS")}
-                    </button>
-                  </div>
+          <div className="quick-view-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+            <button className="quick-view-close" onClick={() => setQuickViewProduct(null)}>
+              {t("products.quickView.close", "CLOSE")}
+            </button>
+            <div className="quick-view-grid">
+              <img src={localizeProduct(quickViewProduct, language).img} alt={localizeProduct(quickViewProduct, language).name} className="quick-view-img" loading="lazy" />
+              <div className="quick-view-content">
+                <p className="product-brand">{quickViewProduct.brand}</p>
+                <h3>{localizeProduct(quickViewProduct, language).name}</h3>
+                <p className="quick-view-price">{quickViewProduct.price.toFixed(2)}€</p>
+                <p>{t("products.quickView.color", "Color")}: {quickViewProduct.color.toUpperCase()}</p>
+                <p>{t("products.quickView.sizes", "Sizes")}: {(quickViewProduct.sizes || []).join(", ")}</p>
+                <div className="quick-view-actions">
+                  <button className="add-btn" onClick={() => addToCart(quickViewProduct)}>
+                    {t("products.quickView.addToBag", "+ ADD TO BAG")}
+                  </button>
+                  <button
+                    className={`quick-view-wishlist ${wishlistIds.includes(quickViewProduct.id) ? "active" : ""}`}
+                    onClick={() => onToggleWishlist(quickViewProduct)}
+                  >
+                    {wishlistIds.includes(quickViewProduct.id)
+                      ? t("products.quickView.removeFromWishlist", "REMOVE FROM WISHLIST")
+                      : t("products.quickView.addToWishlist", "ADD TO WISHLIST")}
+                  </button>
+                  <button
+                    className="quick-view-wishlist"
+                    onClick={() => {
+                      setQuickViewProduct(null);
+                      onOpenProductDetail(quickViewProduct);
+                    }}
+                  >
+                    {t("products.quickView.viewDetails", "VIEW DETAILS")}
+                  </button>
                 </div>
               </div>
             </div>
-          </FocusTrap>
+          </div>
         </div>
       )}
 
@@ -324,7 +326,7 @@ const ProductsPage = ({
             <div className="bottom-sheet-grid">
               <div className="bottom-col">
                 <h3>{t("products.categories", "CATEGORIES")}</h3>
-                <p>{categoryKey === "all" ? t("products.all", "ALL") : categoryKey.toUpperCase()}</p>
+                <p>{activeCategory === "all" || activeCategory === "shop" ? t("products.all", "ALL") : activeCategory.toUpperCase()}</p>
               </div>
               <div className="bottom-col">
                 <h3>{t("products.brand", "BRAND")}</h3>

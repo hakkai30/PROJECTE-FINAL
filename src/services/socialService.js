@@ -1,8 +1,7 @@
 import { supabase } from "../config/supabase";
 import { authService } from "./authService";
-import { notificationService } from "./notificationService";
 
-// Acciones de red social que no pertenecen al post en sí: seguir, guardar y ver perfiles.
+// Acciones de red social: seguir/dejar de seguir perfiles y guardar looks.
 export const socialService = {
   async getProfile(handle) {
     const { data, error } = await supabase
@@ -11,7 +10,7 @@ export const socialService = {
       .eq('email', handle)
       .single();
 
-    if (error) throw new Error("Could not load profile.");
+    if (error) throw new Error("No se pudo cargar el perfil.");
     return data;
   },
 
@@ -35,20 +34,6 @@ export const socialService = {
       .eq('email', currentUser.email);
 
     if (error) throw new Error("No se pudo seguir el perfil.");
-
-    // Trigger notification
-    try {
-      const { data: targetUser } = await supabase.from('users').select('id').eq('email', handle).single();
-      if (targetUser) {
-        await notificationService.createNotification({
-          userId: targetUser.id,
-          actorId: currentUser.id,
-          type: 'follow',
-          content: 'ha empezado a seguirte'
-        });
-      }
-    } catch (e) { console.warn("Follow notif error", e); }
-
     return true;
   },
 
@@ -89,10 +74,7 @@ export const socialService = {
 
     const currentSaved = user.saved_post_ids || [];
     const isSaved = currentSaved.includes(postId);
-    
-    const newSaved = isSaved 
-      ? currentSaved.filter(id => id !== postId)
-      : [...currentSaved, postId];
+    const newSaved = isSaved ? currentSaved.filter(id => id !== postId) : [...currentSaved, postId];
 
     const { error } = await supabase
       .from('users')

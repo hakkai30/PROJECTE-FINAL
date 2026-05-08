@@ -1,9 +1,7 @@
-import { useState, useEffect } from "react";
-import { Heart, Trash2, Plus, MessageCircle, Bookmark, MessageSquare } from "lucide-react";
+import React, { useState } from "react";
+import { Heart, Trash2, ShoppingBag } from "lucide-react";
 import { GlobalFooter, GlobalHeader, SocialSidebar } from "../../components/Layout";
-import { localizePost } from "../../data/i18n";
 
-// Perfil del usuario: muestra datos básicos y el contenido que ha publicado.
 const UserProfilePage = ({
   changePage,
   cartCount,
@@ -12,113 +10,54 @@ const UserProfilePage = ({
   theme,
   onToggleTheme,
   posts = [],
-  likedPostIds = [],
-  onToggleLikePost,
-  onAddComment,
-  onDeleteComment,
   onDeletePost,
-  savedLookIds = [],
-  onToggleSavedLook,
   language,
   t,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const isCurrentUserProfile = currentUser?.email && currentUser?.name;
-
-  // Upload form rendering removed
+  const userPosts = posts.filter(post => post.user_email === currentUser?.email);
 
   return (
     <div className="category-page">
-      <GlobalHeader
-        changePage={changePage}
-        cartCount={cartCount}
-        wishlistCount={wishlistCount}
-        theme={theme}
-        onToggleTheme={onToggleTheme}
-        language={language}
-        t={t}
-      />
-
+      <GlobalHeader {...{ changePage, cartCount, wishlistCount, theme, onToggleTheme, language, t, currentUser }} />
       <div className="social-layout">
-        <SocialSidebar 
-          isSidebarOpen={isSidebarOpen} 
-          setIsSidebarOpen={setIsSidebarOpen} 
-          changePage={changePage} 
-          t={t} 
-        />
+        <SocialSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} changePage={changePage} t={t} />
         <main className="user-profile-container">
-        {/* Cabecera con avatar, nombre, correo y bio. */}
-        <section className="profile-header">
-          <div className="profile-avatar">
-            {currentUser?.avatar ? (
-              <img src={currentUser.avatar} alt={currentUser.name} />
-            ) : (
-              <div className="avatar-placeholder">
-                {(currentUser?.name || "U").slice(0, 2).toUpperCase()}
-              </div>
-            )}
-          </div>
+          <section className="profile-header">
+            <div className="profile-avatar">
+              {currentUser?.avatar ? <img src={currentUser.avatar} alt="" /> : <div className="avatar-placeholder">{(currentUser?.name || "U")[0]}</div>}
+            </div>
+            <div className="profile-info">
+              <h1>{currentUser?.name || "El meu Perfil"}</h1>
+              <p className="profile-email">{currentUser?.email}</p>
+              {currentUser?.bio && <p className="profile-bio">{currentUser.bio}</p>}
+            </div>
+          </section>
 
-          <div className="profile-info">
-            <h1>{currentUser?.name || "Your Profile"}</h1>
-            <p className="profile-email">{currentUser?.email || ""}</p>
-            {currentUser?.bio && <p className="profile-bio">{currentUser.bio}</p>}
-          </div>
-
-          {/* Upload item button removed */}
-        </section>
-
-        <section className="profile-actions">
-           <button className="btn-secondary" onClick={() => changePage("shop")}>
-             {t("profile.backToShop", "BACK TO SHOP")}
-           </button>
-           <button className="btn-primary" onClick={() => changePage("socials")}>
-             {t("profile.viewFeed", "VIEW SOCIAL FEED")}
-           </button>
-        </section>
-
-        {/* Posts del usuario actual con opción de borrado. */}
-        <section className="user-posts-section">
-          <h2 className="section-title">{t("profile.yourPosts", "YOUR POSTS")}</h2>
-          
-          <div className="profile-posts-grid">
-            {posts.filter(post => post.user_email === currentUser.email).length === 0 ? (
-              <p className="empty-state">{t("profile.noPosts", "You haven't posted anything yet.")}</p>
-            ) : (
-              posts
-                .filter(post => post.user_email === currentUser.email)
-                .map(post => (
+          <section className="user-posts-section">
+            <h2 className="section-title">{t("profile.yourPosts", "LES MEVES PUBLICACIONS")} ({userPosts.length})</h2>
+            <div className="profile-posts-grid">
+              {userPosts.length === 0 ? (
+                <p className="empty-state">{t("profile.noPosts", "Encara no has publicat res.")}</p>
+              ) : (
+                userPosts.map(post => (
                   <div key={post.id} className="profile-post-card">
-                    <div className="post-media">
-                      {post.img ? (
-                        <img src={post.img} alt="" />
-                      ) : (
-                        <div className="post-text-placeholder">
-                          <p>{post.description}</p>
-                        </div>
-                      )}
-                    </div>
+                    <img src={post.img} alt="" />
                     <div className="post-overlay">
                       <div className="post-stats">
-                        <span><Heart size={16} fill="currentColor" /> {post.likes || 0}</span>
-                        <span><MessageCircle size={16} fill="currentColor" /> {post.comments?.length || 0}</span>
+                        <span><Heart size={14} fill="currentColor" /> {post.likes || 0}</span>
                       </div>
-                      <button 
-                        className="delete-post-btn"
-                        onClick={() => onDeletePost?.(post.id)}
-                        title={t("social.comments.delete", "DELETE")}
-                      >
+                      <button className="delete-post-btn" onClick={() => onDeletePost?.(post.id)}>
                         <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
                 ))
-            )}
-          </div>
-        </section>
-      </main>
+              )}
+            </div>
+          </section>
+        </main>
       </div>
-
       <GlobalFooter t={t} />
     </div>
   );

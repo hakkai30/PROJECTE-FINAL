@@ -1,6 +1,5 @@
 import { GlobalFooter, GlobalHeader } from "../../components/Layout";
 import { localizeProduct } from "../../data/i18n";
-import OptimizedImage from "../../components/OptimizedImage";
 
 const ProductDetailPage = ({
   changePage,
@@ -38,7 +37,12 @@ const ProductDetailPage = ({
         </button>
 
         <div className="product-detail-grid">
-          <OptimizedImage src={localizedProduct.img} alt={localizedProduct.name} className="product-detail-img" sizes="(max-width:800px) 100vw, 50vw" />
+          <img 
+            src={localizedProduct.img} 
+            alt={localizedProduct.name} 
+            className="product-detail-img" 
+            loading="lazy"
+          />
 
           <section className="product-detail-info">
             <p className="product-brand">{localizedProduct.brand}</p>

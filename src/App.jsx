@@ -1,145 +1,79 @@
-import React, { useEffect, useState, Suspense, lazy } from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
 import LandingPage from "./pages/shop/LandingPage";
 import CategoryPage from "./pages/shop/CategoryPage";
 import ProductsPage from "./pages/shop/ProductsPage";
-const MenPage = lazy(() => import("./pages/shop/MenPage"));
-const WomenPage = lazy(() => import("./pages/shop/WomenPage"));
-const KidsPage = lazy(() => import("./pages/shop/KidsPage"));
-const BagsPage = lazy(() => import("./pages/shop/BagsPage"));
-const AccessoriesPage = lazy(() => import("./pages/shop/AccessoriesPage"));
-const HomeDecorPage = lazy(() => import("./pages/shop/HomeDecorPage"));
-const CartPage = lazy(() => import("./pages/shop/CartPage"));
-const WishlistPage = lazy(() => import("./pages/shop/WishlistPage"));
-const ProductDetailPage = lazy(() => import("./pages/shop/ProductDetailPage"));
-const SettingsPage = lazy(() => import("./pages/shop/SettingsPage"));
-const SocialFeedPage = lazy(() => import("./pages/social/SocialFeedPage"));
-const SavedLooksPage = lazy(() => import("./pages/social/SavedLooksPage"));
-const MessagesPage = lazy(() => import("./pages/social/MessagesPage"));
-const AuthPage = lazy(() => import("./pages/shop/AuthPage"));
-const UserProfilePage = lazy(() => import("./pages/social/UserProfilePage"));
-const NewsPage = lazy(() => import("./pages/social/NewsPage"));
-import { ChatbotWidget } from "./components/Layout";
+import CartPage from "./pages/shop/CartPage";
+import WishlistPage from "./pages/shop/WishlistPage";
+import ProductDetailPage from "./pages/shop/ProductDetailPage";
+import SettingsPage from "./pages/shop/SettingsPage";
+import SocialFeedPage from "./pages/social/SocialFeedPage";
+import SavedLooksPage from "./pages/social/SavedLooksPage";
+import AuthPage from "./pages/shop/AuthPage";
+import UserProfilePage from "./pages/social/UserProfilePage";
+import NewsPage from "./pages/social/NewsPage";
+import Chatbot from "./components/Chatbot";
 import { MOCK_PRODUCTS } from "./data/mockData";
 import { authService } from "./services/authService";
 import { postService } from "./services/postService";
 import { socialService } from "./services/socialService";
-import { userProductService } from "./services/userProductService";
-import { notificationService } from "./services/notificationService";
-import { createTranslator, DEFAULT_LANGUAGE, localizePost } from "./data/i18n";
+import { productService } from "./services/productService";
+import { createTranslator, DEFAULT_LANGUAGE } from "./data/i18n";
 import { supabase } from "./config/supabase";
 
-const AVATAR_STYLES = [
-  { id: "midnight", label: "MIDNIGHT", from: "#111111", to: "#4a4a4a" },
-  { id: "ember", label: "EMBER", from: "#9f1d14", to: "#ff8a3d" },
-  { id: "ocean", label: "OCEAN", from: "#0c4a6e", to: "#38bdf8" },
-  { id: "forest", label: "FOREST", from: "#14532d", to: "#7ddc8c" },
-];
-
-const getInitials = (value) => {
-  const parts = String(value || "").trim().split(/\s+/).filter(Boolean);
-  if (!parts.length) return "RT";
-  return parts.slice(0, 2).map((part) => part[0]).join("").toUpperCase();
-};
-
-const buildAvatar = (seed, style) => {
-  const initials = getInitials(seed);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-hidden="true"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${style.from}" /><stop offset="100%" stop-color="${style.to}" /></linearGradient></defs><rect width="160" height="160" rx="80" fill="url(#g)" /><circle cx="80" cy="80" r="58" fill="rgba(255,255,255,0.08)" /><text x="80" y="94" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="700" letter-spacing="2" fill="#ffffff">${initials}</text></svg>`;
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
-};
-
-const detectAvatarStyleId = (seed, avatar) => {
-  const normalizedAvatar = String(avatar || "").trim();
-  if (!normalizedAvatar) return AVATAR_STYLES[0].id;
-  const matchedStyle = AVATAR_STYLES.find((style) => buildAvatar(seed, style) === normalizedAvatar);
-  return matchedStyle?.id || AVATAR_STYLES[0].id;
-};
-
-const PROTECTED_PAGES = new Set(["socials", "saved-looks", "messages", "user-profile"]);
+// Páginas que requieren inicio de sesión.
+const PROTECTED_PAGES = new Set(["socials", "saved-looks", "user-profile"]);
 const VALID_THEMES = new Set(["auto", "light", "dark"]);
-const VALID_LANGUAGES = new Set(["ca", "es", "en", "fr"]);
+const VALID_LANGUAGES = new Set(["ca", "es"]);
 
-// Mapa único de rutas para no repetir la relación "pantalla -> URL" en varios sitios.
+// Mapa de rutas: asocia cada pantalla lógica con su URL.
 const ROUTE_MAP = {
-  landing: "/",
-  shop: "/shop",
-  products: "/products",
-  men: "/shop/men",
-  women: "/shop/women",
-  kids: "/shop/kids",
-  bags: "/shop/bags",
-  accessories: "/shop/accessories",
-  home: "/shop/home",
-  cart: "/cart",
-  wishlist: "/wishlist",
-  settings: "/settings",
-  "product-detail": "/products",
-  auth: "/auth",
-  socials: "/social",
-  "saved-looks": "/social/saved",
-  messages: "/social/messages",
-  "user-profile": "/profile",
-  news: "/news",
+  landing: "/", shop: "/shop", products: "/products",
+  men: "/shop/men", women: "/shop/women", kids: "/shop/kids",
+  bags: "/shop/bags", accessories: "/shop/accessories", home: "/shop/home",
+  cart: "/cart", wishlist: "/wishlist", settings: "/settings",
+  "product-detail": "/products", auth: "/auth",
+  socials: "/social", "saved-looks": "/social/saved",
+  "user-profile": "/profile", news: "/news",
 };
 
-// Convierte una URL del navegador en la pantalla lógica que usa la app.
+// Convierte la URL del navegador en la pantalla lógica que usa la app.
 const resolvePageFromPath = (path) => {
   const segments = path.split("/").filter(Boolean);
-
   if (segments.length === 0) return "landing";
-  if (segments[0] === "shop") {
-    return segments[1] || "shop";
-  }
+  if (segments[0] === "shop") return segments[1] || "shop";
   if (segments[0] === "social") {
     if (segments[1] === "saved") return "saved-looks";
-    if (segments[1] === "messages") return "messages";
     return "socials";
   }
   if (segments[0] === "profile") return "user-profile";
   if (segments[0] === "product") return "product-detail";
-
   return segments[0];
-};
-
-const normalizeTheme = (value) => {
-  if (value === "editorial") return "light";
-  if (value === "contrast") return "dark";
-  return VALID_THEMES.has(value) ? value : "auto";
-};
-
-const normalizeLanguage = (value) => {
-  return VALID_LANGUAGES.has(value) ? value : DEFAULT_LANGUAGE;
 };
 
 const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
   const currentPage = resolvePageFromPath(location.pathname);
-
-  const clearPendingContact = () => setPendingContact(null);
 
   const setCurrentPage = (page) => {
     const target = ROUTE_MAP[page] || "/";
     navigate(target);
   };
 
-  // Estado principal de la app: se inicializa desde localStorage para que la sesión sobreviva al refresco.
+  // Estado principal: se guarda en localStorage para persistir entre recargas.
   const [isGuest, setIsGuest] = useState(() => {
     try { return localStorage.getItem("rtf_is_guest") === "true"; } catch { return false; }
   });
   const [cartItems, setCartItems] = useState(() => {
     try {
-      const savedCart = localStorage.getItem("rtf_cart_items");
-      const parsed = savedCart ? JSON.parse(savedCart) : [];
+      const saved = localStorage.getItem("rtf_cart_items");
+      const parsed = saved ? JSON.parse(saved) : [];
       return Array.isArray(parsed) ? parsed : [];
     } catch { return []; }
   });
   const [wishlistIds, setWishlistIds] = useState(() => {
-    try {
-      const saved = localStorage.getItem("rtf_wishlist_ids");
-      return saved ? JSON.parse(saved) : [];
-    } catch { return []; }
+    try { const saved = localStorage.getItem("rtf_wishlist_ids"); return saved ? JSON.parse(saved) : []; } catch { return []; }
   });
   const [savedLookIds, setSavedLookIds] = useState(() => {
     try {
@@ -154,16 +88,6 @@ const App = () => {
   const [socialFeedFilter, setSocialFeedFilter] = useState("all");
   const [socialFeedError, setSocialFeedError] = useState("");
   const [isCreatingSocialPost, setIsCreatingSocialPost] = useState(false);
-  const [notifications, setNotifications] = useState([]);
-  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
-  const [pendingContact, setPendingContact] = useState(null);
-  const [followedHandles, setFollowedHandles] = useState(() => {
-    try {
-      const saved = localStorage.getItem("rtf_followed_handles");
-      const parsed = saved ? JSON.parse(saved) : [];
-      return Array.isArray(parsed) ? parsed.map((h) => String(h).trim().toLowerCase()).filter(Boolean) : [];
-    } catch { return []; }
-  });
   const [likedPostIds, setLikedPostIds] = useState(() => {
     try {
       const saved = localStorage.getItem("rtf_liked_post_ids");
@@ -172,121 +96,82 @@ const App = () => {
     } catch { return []; }
   });
   const [selectedProductId, setSelectedProductId] = useState(() => {
-    try {
-      const saved = localStorage.getItem("rtf_selected_product_id");
-      return saved ? Number(saved) : null;
-    } catch { return null; }
+    try { const saved = localStorage.getItem("rtf_selected_product_id"); return saved ? Number(saved) : null; } catch { return null; }
   });
   const [theme, setTheme] = useState(() => {
     try {
-      const savedTheme = localStorage.getItem("rtf_theme");
-      return normalizeTheme(savedTheme);
+      const saved = localStorage.getItem("rtf_theme");
+      return VALID_THEMES.has(saved) ? saved : "auto";
     } catch { return "auto"; }
   });
   const [language, setLanguage] = useState(() => {
     try {
-      const savedLanguage = localStorage.getItem("rtf_language");
-      return normalizeLanguage(savedLanguage);
+      const saved = localStorage.getItem("rtf_language");
+      return VALID_LANGUAGES.has(saved) ? saved : DEFAULT_LANGUAGE;
     } catch { return DEFAULT_LANGUAGE; }
   });
 
-  // Mensaje temporal que se muestra cuando se añade un producto al carrito.
+  const [products, setProducts] = useState([]);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+
   const [cartToast, setCartToast] = useState("");
   const [currentUser, setCurrentUser] = useState(() => authService.loadCurrentUser());
-  const [pendingProtectedPage, setPendingProtectedPage] = useState("shop");
   const t = createTranslator(language);
 
+  // Aplicar tema visual (claro/oscuro/auto).
   useEffect(() => {
     const root = document.documentElement;
     const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)");
-
     const applyTheme = () => {
-      const resolvedTheme = theme === "auto" ? (systemPrefersDark.matches ? "dark" : "light") : theme;
-
-      if (resolvedTheme === "dark") {
-        root.setAttribute("data-theme", "dark");
-      } else {
-        root.removeAttribute("data-theme");
-      }
-
+      const resolved = theme === "auto" ? (systemPrefersDark.matches ? "dark" : "light") : theme;
+      if (resolved === "dark") { root.setAttribute("data-theme", "dark"); } else { root.removeAttribute("data-theme"); }
       localStorage.setItem("rtf_theme", theme);
     };
-
     applyTheme();
-
     if (theme !== "auto") return;
-
-    const handleSystemThemeChange = () => {
-      applyTheme();
-    };
-
-    systemPrefersDark.addEventListener("change", handleSystemThemeChange);
-    return () => systemPrefersDark.removeEventListener("change", handleSystemThemeChange);
+    systemPrefersDark.addEventListener("change", applyTheme);
+    return () => systemPrefersDark.removeEventListener("change", applyTheme);
   }, [theme]);
 
-  // Estado específico del editor de perfil.
-  const [selectedProfile, setSelectedProfile] = useState(null);
-  const [profileDraftBio, setProfileDraftBio] = useState("");
-  const [profileDraftAvatar, setProfileDraftAvatar] = useState("");
-  const [profileDraftAvatarFile, setProfileDraftAvatarFile] = useState(null);
-  const [profileAvatarStyle, setProfileAvatarStyle] = useState(AVATAR_STYLES[0].id);
-  const [profileEditError, setProfileEditError] = useState("");
-  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  // Persistir carrito y wishlist en localStorage.
+  useEffect(() => { localStorage.setItem("rtf_cart_items", JSON.stringify(cartItems)); }, [cartItems]);
+  useEffect(() => { localStorage.setItem("rtf_wishlist_ids", JSON.stringify(wishlistIds)); }, [wishlistIds]);
+  useEffect(() => { localStorage.setItem("rtf_saved_look_ids", JSON.stringify(savedLookIds)); }, [savedLookIds]);
+  useEffect(() => { localStorage.setItem("rtf_liked_post_ids", JSON.stringify(likedPostIds)); }, [likedPostIds]);
+  useEffect(() => { if (selectedProductId) localStorage.setItem("rtf_selected_product_id", selectedProductId); }, [selectedProductId]);
+  useEffect(() => { localStorage.setItem("rtf_language", language); }, [language]);
 
-  const syncUserAppData = async (updates) => {
-    if (!currentUser?.id) return;
-    try {
-      await supabase.from('users').update(updates).eq('id', currentUser.id);
-    } catch (e) { console.warn("Could not sync app data:", e); }
-  };
-
-  // Carrito y wishlist se actualizan primero en estado local y luego se sincronizan con Supabase si hay usuario.
+  // Carrito: añadir y eliminar productos.
   const addToCart = (product) => {
-    setCartItems((prev) => {
-      const next = [...prev, product];
-      if (currentUser?.id) syncUserAppData({ cart_items: next });
-      return next;
-    });
-    setCartToast(`${t("cart.toastAdded", "Added to cart:")} ${product.name}`);
+    setCartItems((prev) => [...prev, product]);
+    setCartToast(`${t("cart.toastAdded", "Añadido al carrito:")} ${product.name}`);
   };
-
   const removeFromCart = (indexToRemove) => {
-    setCartItems((prev) => {
-      const next = prev.filter((_, index) => index !== indexToRemove);
-      if (currentUser?.id) syncUserAppData({ cart_items: next });
-      return next;
-    });
+    setCartItems((prev) => prev.filter((_, index) => index !== indexToRemove));
   };
 
+  // Wishlist: alternar un producto como favorito.
   const toggleWishlist = (product) => {
-    const productId = typeof product === 'object' ? product.id : product;
-    setWishlistIds((prev) => {
-      const isWishlisted = prev.includes(productId);
-      const next = isWishlisted ? prev.filter((id) => id !== productId) : [...prev, productId];
-      if (currentUser?.id) syncUserAppData({ wishlist_ids: next });
-      return next;
-    });
+    const productId = typeof product === "object" ? product.id : product;
+    setWishlistIds((prev) =>
+      prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]
+    );
   };
 
+  // Guardar/quitar looks del feed social.
   const toggleSavedLook = async (postId) => {
     const normalizedId = String(postId);
     setSavedLookIds((prev) => prev.includes(normalizedId) ? prev.filter((id) => id !== normalizedId) : [...prev, normalizedId]);
-    try { await socialService.toggleSavedLook(normalizedId); } catch (err) { console.error("Error persisting saved look:", err); }
+    try { await socialService.toggleSavedLook(normalizedId); } catch (err) { console.error("Error guardando look:", err); }
   };
 
+  // Abrir detalle de un producto.
   const openProductDetail = (product) => {
     setSelectedProductId(product.id);
     navigate(`/product/${product.id}`);
   };
 
-  const toggleTheme = () => {
-    setTheme((prev) => {
-      if (prev === "auto") return "light";
-      if (prev === "light") return "dark";
-      return "auto";
-    });
-  };
-
+  // Autenticación: login, registro y logout.
   const handleLogin = async ({ email, password }) => {
     try {
       const { user, error } = await authService.login({ email, password });
@@ -294,9 +179,7 @@ const App = () => {
       setCurrentUser(user);
       navigate("/shop");
       return { ok: true };
-    } catch (e) {
-      return { ok: false, error: e.message };
-    }
+    } catch (e) { return { ok: false, error: e.message }; }
   };
 
   const handleRegister = async ({ name, email, password, bio, avatar }) => {
@@ -306,38 +189,33 @@ const App = () => {
       setCurrentUser(user);
       navigate("/shop");
       return { ok: true };
-    } catch (e) {
-      return { ok: false, error: e.message };
-    }
+    } catch (e) { return { ok: false, error: e.message }; }
   };
 
   const handleLogout = async () => {
-    // Redirigimos inmediatamente para una UX más fluida
     navigate("/auth");
-    
-    // Luego procesamos la limpieza de sesión
     await authService.logout();
     setCurrentUser(null);
     setIsGuest(false);
     localStorage.removeItem("rtf_is_guest");
   };
 
-  const markNotificationAsRead = async (notificationId) => {
-    try {
-      await notificationService.markAsRead(notificationId);
-      setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, read: true } : n));
-      setUnreadNotificationsCount(prev => Math.max(0, prev - 1));
-    } catch (e) { console.error("Could not mark as read", e); }
+  // Carga de productos desde Supabase.
+  const loadProducts = async () => {
+    setIsLoadingProducts(true);
+    const data = await productService.getProducts();
+    setProducts(data);
+    setIsLoadingProducts(false);
   };
 
-  // Posts sociales: carga inicial, paginación y creación de contenido.
+  // Posts sociales: carga, creación, likes y comentarios.
   const loadSocialPosts = async (isMore = false) => {
     if (isLoadingSocialPosts || (!hasMorePosts && isMore)) return;
     setIsLoadingSocialPosts(true);
     try {
       const offset = isMore ? socialPosts.length : 0;
       const newPosts = await postService.getFeedPosts({ limit: 10, offset });
-      setSocialPosts(prev => isMore ? [...prev, ...newPosts] : newPosts);
+      setSocialPosts((prev) => isMore ? [...prev, ...newPosts] : newPosts);
       setHasMorePosts(newPosts.length === 10);
     } catch (err) { setSocialFeedError(err.message); }
     finally { setIsLoadingSocialPosts(false); }
@@ -348,61 +226,58 @@ const App = () => {
     setIsCreatingSocialPost(true);
     try {
       const post = await postService.createPost({ text, imageFile, user: currentUser?.email || "USER" });
-      if (post) setSocialPosts(prev => [post, ...prev]);
+      if (post) setSocialPosts((prev) => [post, ...prev]);
     } catch (err) { setSocialFeedError(err.message); throw err; }
     finally { setIsCreatingSocialPost(false); }
   };
 
-  // Likes y comentarios se guardan en Supabase y luego se reflejan en el estado local.
   const toggleSocialLike = async (postId) => {
     const normalizedId = String(postId);
     const isLiked = likedPostIds.includes(normalizedId);
-    setLikedPostIds(prev => isLiked ? prev.filter(id => id !== normalizedId) : [...prev, normalizedId]);
-    try { await postService.toggleLikePost(normalizedId, { direction: isLiked ? "down" : "up" }); }
-    catch (err) { console.error(err); }
+    setLikedPostIds((prev) => isLiked ? prev.filter((id) => id !== normalizedId) : [...prev, normalizedId]);
+    try { await postService.toggleLikePost(normalizedId); } catch (err) { console.error(err); }
   };
 
   const addSocialComment = async (postId, text) => {
     try {
       const result = await postService.addCommentToPost(postId, { text, user: currentUser?.email || "USER" });
-      if (result?.post) setSocialPosts(prev => prev.map(p => String(p.id) === String(postId) ? result.post : p));
+      if (result?.post) setSocialPosts((prev) => prev.map((p) => String(p.id) === String(postId) ? result.post : p));
     } catch (err) { throw err; }
   };
 
-  // Perfil social: helpers para abrir perfiles, borrar contenido y normalizar handles.
-  const normalizeHandle = (value) => String(value || "").trim().replace(/^@/, "");
-
   const deleteSocialPost = async (postId) => {
-    if (!window.confirm(t("social.confirmDelete", "Are you sure you want to delete this post?"))) return;
+    if (!window.confirm(t("social.confirmDelete", "¿Estás seguro de que quieres eliminar esta publicación?"))) return;
     try {
       await postService.deletePost(postId);
-      setSocialPosts(prev => prev.filter(p => String(p.id) !== String(postId)));
-    } catch (err) { console.error("Error deleting post:", err); }
+      setSocialPosts((prev) => prev.filter((p) => String(p.id) !== String(postId)));
+    } catch (err) { console.error("Error eliminando post:", err); }
   };
 
   const deleteSocialComment = async (postId, commentId) => {
     try {
       const updatedPost = await postService.deleteCommentFromPost(postId, commentId);
-      if (updatedPost) setSocialPosts(prev => prev.map(p => String(p.id) === String(postId) ? updatedPost : p));
-    } catch (err) { console.error("Error deleting comment:", err); }
+      if (updatedPost) setSocialPosts((prev) => prev.map((p) => String(p.id) === String(postId) ? updatedPost : p));
+    } catch (err) { console.error("Error eliminando comentario:", err); }
   };
 
+  // Abrir el perfil de un usuario desde el feed social.
   const openProfile = (profile) => {
-    const handle = normalizeHandle(profile?.user || profile?.handle || "");
+    const handle = String(profile?.user || profile?.handle || "").trim().replace(/^@/, "");
     if (!handle) return;
-    setSelectedProfile({ handle, isCurrentUser: currentUser?.email === handle });
     setCurrentPage("user-profile");
   };
 
-  const selectedProduct = MOCK_PRODUCTS.find(p => p.id === selectedProductId);
-  const wishlistItems = MOCK_PRODUCTS.filter(p => wishlistIds.includes(p.id));
+  const selectedProduct = products.find((p) => String(p.id) === String(selectedProductId));
+  const wishlistItems = products.filter((p) => wishlistIds.includes(String(p.id)));
 
-  // Effects
+  // Restaurar sesión y pre-cargar posts al iniciar.
   useEffect(() => {
     authService.restoreSession().then((user) => { if (user) setCurrentUser(user); });
-    loadSocialPosts(); // Pre-carga los posts para que la transición a Social sea instantánea
+    loadSocialPosts();
+    loadProducts();
   }, []);
 
+  // Si se navega a /product/:id directamente, extraer el ID de la URL.
   useEffect(() => {
     if (location.pathname.startsWith("/product/") && !selectedProduct) {
       const idFromPath = Number(location.pathname.split("/")[2]);
@@ -410,25 +285,38 @@ const App = () => {
     }
   }, [location.pathname, selectedProduct]);
 
+  // Proteger páginas que requieren login.
   useEffect(() => {
     if (PROTECTED_PAGES.has(currentPage) && (!currentUser || isGuest)) {
-      setPendingProtectedPage(currentPage);
       navigate("/auth");
     }
   }, [currentPage, currentUser, isGuest]);
 
+  // Props comunes que se pasan a casi todas las páginas.
+  const commonProps = {
+    changePage: setCurrentPage,
+    cartCount: cartItems.length,
+    cartToast,
+    wishlistCount: wishlistIds.length,
+    theme,
+    language,
+    t,
+    currentUser,
+    onLogout: handleLogout,
+  };
+
   return (
-    <Suspense fallback={<div className="loading">Cargando...</div>}>
+    <>
       <div key={location.pathname} className="page-transition-wrapper">
         <Routes>
-          <Route path="/" element={<LandingPage changePage={setCurrentPage} currentUser={currentUser} onLogout={handleLogout} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} language={language} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} />} />
-          <Route path="/shop" element={<CategoryPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
-          <Route path="/products" element={<ProductsPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} addToCart={addToCart} wishlistCount={wishlistIds.length} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} onOpenProductDetail={openProductDetail} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
-          <Route path="/shop/:cat" element={<ProductsPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} addToCart={addToCart} wishlistCount={wishlistIds.length} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} onOpenProductDetail={openProductDetail} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
-          <Route path="/cart" element={<CartPage changePage={setCurrentPage} cartItems={cartItems} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} onOpenProductDetail={openProductDetail} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} onRemoveFromCart={removeFromCart} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
-          <Route path="/wishlist" element={<WishlistPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} wishlistItems={wishlistItems} onToggleWishlist={toggleWishlist} onAddToCart={addToCart} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} onOpenProductDetail={openProductDetail} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
-          <Route path="/settings" element={<SettingsPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} setTheme={setTheme} language={language} setLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
-          <Route path="/news" element={<NewsPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/" element={<LandingPage {...commonProps} />} />
+          <Route path="/shop" element={<CategoryPage {...commonProps} />} />
+          <Route path="/products" element={<ProductsPage {...commonProps} products={products} addToCart={addToCart} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} onOpenProductDetail={openProductDetail} />} />
+          <Route path="/shop/:cat" element={<ProductsPage {...commonProps} products={products} addToCart={addToCart} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} onOpenProductDetail={openProductDetail} />} />
+          <Route path="/cart" element={<CartPage {...commonProps} cartItems={cartItems} onOpenProductDetail={openProductDetail} onRemoveFromCart={removeFromCart} />} />
+          <Route path="/wishlist" element={<WishlistPage {...commonProps} wishlistItems={wishlistItems} onToggleWishlist={toggleWishlist} onAddToCart={addToCart} onOpenProductDetail={openProductDetail} />} />
+          <Route path="/settings" element={<SettingsPage {...commonProps} setTheme={setTheme} setLanguage={setLanguage} />} />
+          <Route path="/news" element={<NewsPage {...commonProps} />} />
           <Route path="/auth" element={
             <AuthPage
               onLogin={handleLogin}
@@ -441,40 +329,24 @@ const App = () => {
               t={t}
             />
           } />
-          <Route path="/product/:id" element={<ProductDetailPage changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} product={selectedProduct} addToCart={addToCart} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
-          <Route path="/social" element={<SocialFeedPage changePage={setCurrentPage} onOpenProductDetail={openProductDetail} posts={socialPosts} isLoadingPosts={isLoadingSocialPosts} feedError={socialFeedError} activeView={socialFeedFilter} onViewChange={setSocialFeedFilter} savedLookIds={savedLookIds} onToggleSavedLook={toggleSavedLook} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} onLikePost={toggleSocialLike} onAddComment={addSocialComment} loadMorePosts={() => loadSocialPosts(true)} refreshPosts={() => loadSocialPosts(false)} onCreatePost={createSocialPost} onOpenProfile={openProfile} />} />
-          <Route path="/social/saved" element={<SavedLooksPage changePage={setCurrentPage} posts={socialPosts} savedLookIds={savedLookIds} onToggleSavedLook={toggleSavedLook} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
-          <Route path="/social/messages" element={<MessagesPage changePage={setCurrentPage} pendingContact={pendingContact} onClearPendingContact={clearPendingContact} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} theme={theme} onToggleTheme={toggleTheme} language={language} onChangeLanguage={setLanguage} t={t} notifications={notifications} unreadNotificationsCount={unreadNotificationsCount} onMarkNotificationRead={markNotificationAsRead} currentUser={currentUser} onLogout={handleLogout} />} />
+          <Route path="/product/:id" element={<ProductDetailPage {...commonProps} product={selectedProduct} addToCart={addToCart} wishlistIds={wishlistIds} onToggleWishlist={toggleWishlist} />} />
+          <Route path="/social" element={
+            <SocialFeedPage {...commonProps} posts={socialPosts} isLoadingPosts={isLoadingSocialPosts} feedError={socialFeedError} activeView={socialFeedFilter} onViewChange={setSocialFeedFilter} savedLookIds={savedLookIds} onToggleSavedLook={toggleSavedLook} onLikePost={toggleSocialLike} onAddComment={addSocialComment} loadMorePosts={() => loadSocialPosts(true)} refreshPosts={() => loadSocialPosts(false)} onCreatePost={createSocialPost} onOpenProfile={openProfile} />
+          } />
+          <Route path="/social/saved" element={<SavedLooksPage {...commonProps} posts={socialPosts} savedLookIds={savedLookIds} onToggleSavedLook={toggleSavedLook} />} />
           <Route path="/profile" element={
-            <UserProfilePage
-              changePage={setCurrentPage}
-              cartCount={cartItems.length}
-              cartToast={cartToast}
-              wishlistCount={wishlistIds.length}
-              currentUser={currentUser} onLogout={handleLogout}
-              theme={theme}
-              onToggleTheme={toggleTheme}
-              language={language}
-              onChangeLanguage={setLanguage}
-              t={t}
-              posts={socialPosts}
-              notifications={notifications}
-              unreadNotificationsCount={unreadNotificationsCount}
-              onMarkNotificationRead={markNotificationAsRead}
-              onDeletePost={deleteSocialPost}
-              onDeleteComment={deleteSocialComment}
-            />
+            <UserProfilePage {...commonProps} posts={socialPosts} onDeletePost={deleteSocialPost} onDeleteComment={deleteSocialComment} />
           } />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
 
-        {currentPage !== "landing" && currentPage !== "socials" && currentPage !== "messages" && currentPage !== "auth" && (
-          <ChatbotWidget t={t} currentPage={currentPage} changePage={setCurrentPage} cartCount={cartItems.length} cartToast={cartToast} wishlistCount={wishlistIds.length} products={MOCK_PRODUCTS} socialPosts={socialPosts} savedLookCount={savedLookIds.length} isSocialLoading={isLoadingSocialPosts} isAuthenticated={Boolean(currentUser)} />
+        {!location.pathname.includes("/auth") && (
+          <Chatbot t={t} currentPage={currentPage} changePage={setCurrentPage} cartCount={cartItems.length} wishlistCount={wishlistIds.length} products={products} socialPosts={socialPosts} savedLookCount={savedLookIds.length} isAuthenticated={Boolean(currentUser)} />
         )}
 
         {cartToast && <div className="app-toast">{cartToast}</div>}
       </div>
-    </Suspense>
+    </>
   );
 };
 
