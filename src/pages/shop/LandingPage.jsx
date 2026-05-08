@@ -13,6 +13,7 @@ const LandingPage = ({
   notifications = [],
   unreadNotificationsCount = 0,
   onMarkNotificationRead,
+  setLanguage,
 }) => {
   const [news, setNews] = useState([]);
 

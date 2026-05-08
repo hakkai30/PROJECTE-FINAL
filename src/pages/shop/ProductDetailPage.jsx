@@ -14,6 +14,7 @@ const ProductDetailPage = ({
   onToggleTheme,
   language,
   t,
+  setLanguage,
 }) => {
   const isWishlisted = wishlistIds.includes(product.id);
   const localizedProduct = localizeProduct(product, language);

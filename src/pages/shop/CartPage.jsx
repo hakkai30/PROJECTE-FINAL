@@ -15,6 +15,7 @@ const CartPage = ({
   t,
   currentUser,
   onLogout,
+  setLanguage,
 }) => {
   const total = cartItems.reduce((sum, item) => sum + item.price, 0);
 

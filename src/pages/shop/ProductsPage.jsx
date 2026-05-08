@@ -25,6 +25,7 @@ const ProductsPage = ({
   userProducts = [],
   products = [],
   language,
+  setLanguage,
   t,
 }) => {
   const { cat } = useParams();
