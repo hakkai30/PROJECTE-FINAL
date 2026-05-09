@@ -87,7 +87,7 @@ const SocialFeedPage = ({
         
         <main className="social-feed">
           <header className="social-feed-header">
-            <h1 className="social-feed-title">SOCIAL FEED</h1>
+            <h1 className="social-feed-title">FEED SOCIAL</h1>
             
             <form className="social-create-post-form" onSubmit={handleCreatePost}>
               <div className="social-input-group">

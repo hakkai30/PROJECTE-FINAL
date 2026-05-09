@@ -121,14 +121,14 @@ const Chatbot = ({
 
     // Social
     if (hasAny(q, ["social", "feed", "publicaciones", "posts"])) {
-      return { text: `Hay ${socialPosts.length} publicaciones en el Social Feed. Tienes ${savedLookCount} looks guardados.`, suggestion: { label: "SOCIAL", page: "socials" } };
+      return { text: `Hay ${socialPosts.length} publicaciones en el feed social. Tienes ${savedLookCount} looks guardados.`, suggestion: { label: "SOCIAL", page: "socials" } };
     }
 
     // Login
     if (hasAny(q, ["login", "sesion", "cuenta", "registr"])) {
       const msg = isAuthenticated
-        ? "Ya tienes sesión activa. Puedes acceder a Social Feed y tu Perfil."
-        : "Necesitas iniciar sesión para acceder al Social Feed y tu Perfil.";
+        ? "Ya tienes sesión activa. Puedes acceder al feed social y a tu perfil."
+        : "Necesitas iniciar sesión para acceder al feed social y a tu perfil.";
       return { text: msg, suggestion: { label: "ENTRAR", page: "auth" } };
     }
 

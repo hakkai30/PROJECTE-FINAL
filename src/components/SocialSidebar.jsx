@@ -19,9 +19,9 @@ const SocialSidebar = ({ isSidebarOpen, setIsSidebarOpen, changePage, onGoToMyPr
           {isSidebarOpen && <span>TIENDA</span>}
         </button>
 
-        <button type="button" className="side-nav-item" onClick={() => changePage("socials")} title="SOCIAL FEED">
+        <button type="button" className="side-nav-item" onClick={() => changePage("socials")} title="FEED SOCIAL">
           <LayoutGrid size={20} />
-          {isSidebarOpen && <span>SOCIAL FEED</span>}
+          {isSidebarOpen && <span>FEED SOCIAL</span>}
         </button>
 
         <button type="button" className="side-nav-item" onClick={() => changePage("news")} title="NOTICIAS MODA">

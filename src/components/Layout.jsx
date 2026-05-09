@@ -19,11 +19,15 @@ export const WindowOverlay = ({ label, offsetClass, article }) => {
   if (!isVisible) return null;
 
   return (
-    <div className={`window-frame ${offsetClass}`} style={{ pointerEvents: "auto" }}>
+    <div
+      className={`window-frame ${offsetClass}`}
+      style={{ pointerEvents: "auto" }}
+      aria-hidden={article ? undefined : true}
+    >
       <div className="window-header">
-        <span className="window-label">{article ? "NEWS" : `LOOK ${label}`}</span>
+        <span className="window-label">{article ? "NOTICIAS" : `LOOK ${label}`}</span>
         <div className="window-actions">
-          <button type="button" className="window-action window-action-close" onClick={closeWindow} aria-label="Close window">
+          <button type="button" className="window-action window-action-close" onClick={closeWindow} aria-label="Cerrar ventana">
             ×
           </button>
         </div>

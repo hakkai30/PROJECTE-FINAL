@@ -68,7 +68,7 @@ const Header = ({
                 </div>
 
                 <div className="sidebar-nav-group">
-                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("socials"); }}>SOCIAL FEED</button>
+                  <button type="button" onClick={() => { setIsMenuOpen(false); changePage("socials"); }}>FEED SOCIAL</button>
                 </div>
 
                 <div className="sidebar-nav-group bottom-group">
@@ -97,7 +97,9 @@ const Header = ({
                       INICIAR SESIÓN / REGISTRO
                     </button>
                   )}
-                  <button type="button">ESPAÑA / EUR</button>
+                  <button type="button" disabled title="Próximamente">
+                    ESPAÑA / EUR
+                  </button>
                 </div>
               </div>
             </div>

@@ -1,14 +1,14 @@
-/*
-	CSS consolidated structure (Simplified for DAW):
-	00-foundations: Variables, dark theme, responsive, consistency.
-	01-layout: Header, Footer, Structure, Landing.
-	02-shop: Products, Detail, Cart, Wishlist, Brand direction.
-	03-social: Social Feed, Messages, Chatbot, Search.
-	04-auth: Auth pages, Profile, UI refinements.
-*/
-
 @import "./styles/00-foundations.css";
 @import "./styles/01-layout.css";
 @import "./styles/02-shop.css";
 @import "./styles/03-social.css";
 @import "./styles/04-auth.css";
+
+/*
+  Estructura CSS (DAW):
+  00-foundations: variables, tema, responsive.
+  01-layout: cabecera, pie, landing.
+  02-shop: catálogo, detalle, carrito, wishlist.
+  03-social: feed social, chatbot, búsqueda.
+  04-auth: login, registro, perfil.
+*/

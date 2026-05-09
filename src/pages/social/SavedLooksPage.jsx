@@ -124,7 +124,7 @@ const SavedLooksPage = ({
               className="social-feed-count-chip"
               onClick={() => changePage("socials")}
             >
-              SOCIAL FEED
+              FEED SOCIAL
             </button>
           </div>
           <p className="social-feed-subtitle">
@@ -155,13 +155,13 @@ const SavedLooksPage = ({
             return (
               <div className="saved-looks-empty">
                 <h2>AÚN NO HAS GUARDADO LOOKS</h2>
-                <p>Guarda looks desde Social Feed y aparecerán aquí.</p>
+                <p>Guarda looks desde el feed social y aparecerán aquí.</p>
                 <button
                   type="button"
                   className="shop-look-btn"
                   onClick={() => changePage("socials")}
                 >
-                  IR A SOCIAL FEED
+                  IR AL FEED SOCIAL
                 </button>
               </div>
             );

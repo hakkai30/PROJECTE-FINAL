@@ -190,6 +190,7 @@ const App = () => {
     setCurrentUser(null);
     setIsGuest(false);
     localStorage.removeItem("rtf_is_guest");
+    setSavedLookIds([]);
   };
 
   // Carga de productos desde Supabase.
@@ -293,7 +294,7 @@ const App = () => {
         setCurrentUser(user);
         // Cargar favoritos de la DB
         const savedIds = await socialService.getSavedLookIds(user.id);
-        if (savedIds.length > 0) setSavedLookIds(savedIds);
+        setSavedLookIds(savedIds);
       }
       loadSocialPosts();
       loadProducts();
@@ -312,7 +313,7 @@ const App = () => {
   // Proteger páginas que requieren login.
   useEffect(() => {
     // Si la página está protegida y NO hay un usuario real logueado, redirigir a Auth.
-    // Los invitados (isGuest) tampoco pueden ver el contenido protegido (Social Feed, etc.)
+    // Los invitados (isGuest) tampoco pueden ver el contenido protegido (feed social, etc.)
     if (PROTECTED_PAGES.has(currentPage) && !currentUser) {
       navigate("/auth");
     }

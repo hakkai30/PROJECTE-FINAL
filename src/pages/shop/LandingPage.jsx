@@ -44,7 +44,7 @@ const LandingPage = ({
         products={products}
       />
 
-      <div className="windows-absolute-wrapper" aria-hidden="true">
+      <div className="windows-absolute-wrapper">
         <WindowOverlay label="W" offsetClass="window-1" article={news[0]} />
         <WindowOverlay label="F" offsetClass="window-2" article={news[1]} />
         <WindowOverlay label="A" offsetClass="window-3" article={news[2]} />
