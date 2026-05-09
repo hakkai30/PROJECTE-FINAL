@@ -31,6 +31,8 @@ const UserProfilePage = ({
   const isOwnProfile = currentUser?.email === viewedUser?.email;
   const userPosts = posts.filter(post => post.user_email === viewedUser?.email);
 
+  const postImageUrl = (post) => post.img || post.image_url || post.image || "";
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -134,8 +136,10 @@ const UserProfilePage = ({
               ) : (
                 userPosts.map(post => (
                   <div key={post.id} className="profile-post-card">
-                    {post.img ? (
-                      <img src={post.img} alt="" />
+                    {postImageUrl(post) ? (
+                      <div className="post-media">
+                        <img src={postImageUrl(post)} alt="" loading="lazy" />
+                      </div>
                     ) : (
                       <div className="profile-post-text-fallback">
                         <p>{post.description}</p>

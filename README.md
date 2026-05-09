@@ -1,27 +1,20 @@
-# Proyecto Final: Plataforma de Moda y Red Social
+# Proyecto Final: Plataforma de Moda y Red Social (ROB THE FAB)
 
-Este repositorio contiene la documentación inicial del proyecto desarrollado por **Robin** y **Fabio**.
-
----
-
-## 1. Idea de proyecto
-**Descripción breve:**
-Nuestra plataforma es una aplicación web híbrida que fusiona un **e-commerce de moda** con una **red social interactiva**.
-
-**Problema que resuelve:** Elimina la fragmentación entre buscar inspiración y comprar productos, permitiendo a los usuarios ver "outfits" reales y adquirir las prendas en el mismo lugar sin salir de la web.
-* **Público objetivo:** Entusiastas de la moda, compradores digitales y creadores de contenido de estilo de vida.
-* **Propósito principal:** Unificar la experiencia de compra, la interacción social, la información de tendencias (noticias) y la asistencia personalizada mediante un chatbot en una sola interfaz.
+Repositorio del proyecto desarrollado por **Robin** y **Fabio**: aplicación web híbrida que combina **e-commerce de moda**, **feed social**, **noticias** y **asistente (chatbot)**.
 
 ---
 
-## 2. Requisitos funcionales
-A continuación se detallan las funcionalidades principales que tendrá la aplicación, indicando qué puede hacer el usuario y el sistema:
+## Funcionalitat
 
-* **Módulo de E-commerce:** El usuario podrá explorar un catálogo de prendas, gestionar su carrito y realizar el proceso de compra de forma integrada.
-* **Feed de Red Social:** El usuario podrá publicar fotos de sus vestimentas ("outfits") y compartir su estilo personal con la comunidad.
-* **Interacción Social:** El sistema permitirá a los usuarios interactuar con las publicaciones de otros perfiles mediante "me gusta" y comentarios.
-* **Muro de Noticias de Moda:** El sistema consumirá una API externa para mostrar noticias y tendencias actuales del sector.
-* **Chatbot de Asistencia:** El usuario podrá interactuar con un asistente inteligente para recibir ayuda durante la compra o recomendaciones de estilo.
+La plataforma resol la fragmentació entre inspiració i compra: l’usuari pot explorar el catàleg, desar el carret, veure publicacions amb text o imatge, fer *like*, comentar, guardar *looks*, veure perfils públics, llegir notícies de moda (API externa) i usar el xatbot d’ajuda. L’accés a la part social (feed, perfil, guardats) requereix sessió; la botiga i la landing poden explorar-se sense compte (segons configuració de rutes).
+
+**Mòduls principals**
+
+* **E-commerce:** catàleg per categories, detall de producte, carret i *wishlist* (persistència local al navegador).
+* **Red social:** creació de posts (text i/o imatge pujada a emmagatzematge), feed amb filtres, perfils, *likes*, comentaris i *looks* guardats a base de dades.
+* **Notícies:** consum de titulars via **GNews** (local amb clau o producció via funció serverless per evitar CORS).
+* **Passarel·la de pagament (opcional):** integració **Stripe** (sessió de *checkout*) des de ruta serverless.
+* **Chatbot:** respostes contextuals sobre pàgina actual, carret i comptadors.
 
 ---
 
@@ -78,170 +71,418 @@ A continuación se detallan las funcionalidades principales que tendrá la aplic
 
 ---
 
-## 4. Arquitectura y tecnología
-La aplicación se estructurará siguiendo un modelo de arquitectura cliente-servidor:
+## Diagrames UML (codi)
 
-* **Frontend (Interfaz):** Desarrollado con **React.js** para garantizar una experiencia de usuario fluida y reactiva.
-* **Backend (Lógica):** Utilizaremos **Node.js** con el framework **Express** para gestionar las rutas de la API y la lógica de negocio.
-* **Base de Datos:** **MongoDB** usando **Mongoose** (estructura ya preparada en el backend).
-* **Servicios Externos (APIs):** * **Moda News API:** Para el contenido de actualidad.
-    * **OpenAI API:** Para la inteligencia del chatbot de ayuda.
+Vista simplificada de capes i dependències del **frontend React**. Els serveis encapsulen la lògica d’accés a dades; `App.jsx` centralitza estat i rutes.
+
+```mermaid
+flowchart TB
+  subgraph ui["Interfície (React)"]
+    App["App.jsx + React Router"]
+    Pages["Pàgines: Landing, Products, Cart, Social, Profile, News, Auth..."]
+    Comp["Components: Header, Footer, SocialPost, Chatbot..."]
+    App --> Pages
+    Pages --> Comp
+  end
+  subgraph services["Serveis (src/services/)"]
+    authService
+    postService
+    productService
+    socialService
+    newsService
+    stripeService["stripe.js"]
+  end
+  subgraph external["Backends / APIs"]
+    Supabase[("Supabase\nAuth + Postgres + Storage")]
+    VercelAPI["/api/news\n/api/checkout"]
+    GNews["GNews API"]
+    StripeAPI["Stripe API"]
+  end
+  Pages --> authService
+  Pages --> postService
+  Pages --> productService
+  Pages --> socialService
+  Pages --> newsService
+  authService --> Supabase
+  postService --> Supabase
+  productService --> Supabase
+  socialService --> Supabase
+  newsService --> VercelAPI
+  newsService --> GNews
+  stripeService --> VercelAPI
+  VercelAPI --> GNews
+  VercelAPI --> StripeAPI
+```
 
 ---
 
+## Diagrames ER (bbdd)
+
+Esquema **real** del projecte Supabase (PostgreSQL, esquema `public`). El bloc SQL següent és **només documentació** (export de context; l’ordre de creació pot caldre ajustar-lo si es vol executar des de zero).
+
+### Relacions (diagrama ER)
+
+```mermaid
+erDiagram
+  users ||--o{ posts : "email"
+  users ||--o{ comments : "email"
+  users ||--o{ post_likes : "id"
+  users ||--o{ saved_looks : "id"
+  users ||--o{ notifications : "id"
+  posts ||--o{ comments : "id"
+  posts ||--o{ post_likes : "id"
+  posts ||--o{ saved_looks : "id"
+  users {
+    uuid id PK
+    text email UK
+    text name
+    text bio
+    text avatar
+    text image
+    jsonb cart_items
+    jsonb wishlist_ids
+  }
+  posts {
+    uuid id PK
+    text user_email FK
+    text description
+    text img
+    int likes
+    timestamptz created_at
+  }
+  comments {
+    uuid id PK
+    uuid post_id FK
+    text user_email FK
+    text text
+    timestamptz created_at
+  }
+  post_likes {
+    uuid id PK
+    uuid post_id FK
+    uuid user_id FK
+    timestamptz created_at
+  }
+  saved_looks {
+    uuid id PK
+    uuid user_id FK
+    uuid post_id FK
+    timestamptz created_at
+  }
+  notifications {
+    uuid id PK
+    uuid user_id FK
+    uuid actor_id FK
+    text type
+    text content
+    boolean read
+    timestamptz created_at
+  }
+  products {
+    uuid id PK
+    text category
+    text brand
+    text name
+    jsonb name_by_lang
+    numeric price
+    text color
+    text img
+    timestamptz created_at
+  }
+```
+
+*(Les notificacions tenen **dues** FK cap a `users`: `user_id` destinatari i `actor_id` qui genera l’esdeveniment; al diagrama es resumeix amb una sola aresta cap a `users`.)*
+
+### Llista de taules
+
+| Taula | Funció |
+|--------|--------|
+| **users** | Perfil públic vinculat a `auth.users` (`id` = mateix UUID). Camps addicionals al DDL: `image`, `follower_handles`, `following_handles`, `saved_post_ids`, `preferred_language`, `preferred_theme`, `cart_items`, `wishlist_ids`. El front també persisteix carret / wishlist a `localStorage`. |
+| **posts** | Publicacions del feed (`description`, `img`, `likes`, `user_email`). |
+| **comments** | Comentaris d’un post; `user_email` referencia `users(email)`. |
+| **post_likes** | Un registre per cada *like* (`post_id`, `user_id`). |
+| **saved_looks** | Looks guardats (`user_id` → `users`, `post_id` → `posts`). |
+| **notifications** | Notificacions entre usuaris (`type`, `content`, `read`); preparada per a futures funcions al client. |
+| **products** | Catàleg de la botiga: `category`, `brand`, `name`, `name_by_lang`, `price`, `color`, `sizes[]`, `img` (sense FK cap a `posts`). |
+
+La taula **products** no està relacionada per clau amb **posts**. Els camps legacy a **users** (`saved_post_ids`, etc.) poden coexistir amb **saved_looks** segons migracions; el codi actual del repo prioritza **`saved_looks`** per als guardats del feed.
+
+<details>
+<summary>DDL exportat (referència; no cal executar-lo tal qual)</summary>
+
+```sql
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
+
+CREATE TABLE public.comments (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  post_id uuid,
+  user_email text NOT NULL,
+  text text NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT comments_pkey PRIMARY KEY (id),
+  CONSTRAINT comments_user_email_fkey FOREIGN KEY (user_email) REFERENCES public.users(email),
+  CONSTRAINT comments_post_id_fkey FOREIGN KEY (post_id) REFERENCES public.posts(id)
+);
+CREATE TABLE public.notifications (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  user_id uuid,
+  actor_id uuid,
+  type text NOT NULL,
+  content text,
+  read boolean DEFAULT false,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT notifications_pkey PRIMARY KEY (id),
+  CONSTRAINT notifications_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id),
+  CONSTRAINT notifications_actor_id_fkey FOREIGN KEY (actor_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.post_likes (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  post_id uuid,
+  user_id uuid,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT post_likes_pkey PRIMARY KEY (id),
+  CONSTRAINT post_likes_post_id_fkey FOREIGN KEY (post_id) REFERENCES public.posts(id),
+  CONSTRAINT post_likes_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.posts (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  user_email text NOT NULL,
+  description text NOT NULL,
+  img text DEFAULT ''::text,
+  likes integer DEFAULT 0,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT posts_pkey PRIMARY KEY (id),
+  CONSTRAINT posts_user_email_fkey FOREIGN KEY (user_email) REFERENCES public.users(email)
+);
+CREATE TABLE public.products (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  category text NOT NULL,
+  brand text DEFAULT 'ROB THE FAB'::text,
+  name text NOT NULL,
+  name_by_lang jsonb NOT NULL DEFAULT '{}'::jsonb,
+  price numeric NOT NULL,
+  color text,
+  sizes ARRAY DEFAULT '{}'::text[],
+  img text,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT products_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.saved_looks (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  user_id uuid NOT NULL,
+  post_id uuid NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT saved_looks_pkey PRIMARY KEY (id),
+  CONSTRAINT saved_looks_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id),
+  CONSTRAINT saved_looks_post_id_fkey FOREIGN KEY (post_id) REFERENCES public.posts(id)
+);
+CREATE TABLE public.users (
+  id uuid NOT NULL,
+  email text NOT NULL UNIQUE,
+  name text NOT NULL,
+  bio text DEFAULT ''::text,
+  avatar text DEFAULT ''::text,
+  image text DEFAULT ''::text,
+  follower_handles ARRAY DEFAULT '{}'::text[],
+  following_handles ARRAY DEFAULT '{}'::text[],
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  saved_post_ids ARRAY DEFAULT '{}'::uuid[],
+  preferred_language text DEFAULT 'ca'::text,
+  preferred_theme text DEFAULT 'light'::text,
+  cart_items jsonb DEFAULT '[]'::jsonb,
+  wishlist_ids jsonb DEFAULT '[]'::jsonb,
+  CONSTRAINT users_pkey PRIMARY KEY (id),
+  CONSTRAINT users_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
+);
+```
+
+</details>
+
 ---
 
-## 1r Seguimiento del Proyecto
+## Seguretat: Row Level Security (RLS)
 
-### Estructura del Proyecto
-- El proyecto está organizado en carpetas como `src/` para el código fuente, `components/` para componentes reutilizables, `pages/` para las vistas principales, y `data/` para datos simulados (mock data).
-- El archivo `index.html` sirve como punto de entrada para la aplicación, donde el elemento `<div id="root"></div>` es el contenedor donde React renderiza la interfaz.
+La **RLS** es configura al panell de Supabase: **Database → Tables → [taula] → Policies** (o **Authentication** per fluxos d’usuari; les regles són SQL sobre files). El resum següent coincideix amb el projecte **`wdazdicwhgjnnkvqgxqm`** (polítiques visibles al dashboard).
 
-### Configuración del Proyecto
-- Se utilizó **Vite** como herramienta de construcción para configurar el entorno de desarrollo rápido y eficiente. Esto se define en el archivo `vite.config.js`.
-- En el archivo `package.json`, se configuraron scripts como `dev` para iniciar el servidor de desarrollo y `build` para generar una versión optimizada.
+### Resum per taula
 
-### Componentización
-- Se crearon componentes reutilizables como `GlobalHeader` y `GlobalFooter` para mantener consistencia en el diseño.
-- También se implementaron componentes específicos como `WindowOverlay` para efectos visuales.
+| Taula | RLS | Política | Rol | Comanda |
+|-------|-----|----------|-----|---------|
+| **comments** | Activada | `allow_all` | `public` | `ALL` |
+| **notifications** | Activada | `allow_all` | `public` | `ALL` |
+| **post_likes** | Activada | `allow_all` | `public` | `ALL` |
+| **posts** | Activada | `allow_all_posts` | `public` | `ALL` |
+| **posts** | Activada | `Enable insert for authenticated users only` | `authenticated` | `INSERT` |
+| **products** | Activada | `Allow public read access` | `public` | `SELECT` |
+| **saved_looks** | Activada | `Users can view their own saved looks` | `public` | `SELECT` |
+| **saved_looks** | Activada | `Users can insert their own saved looks` | `public` | `INSERT` |
+| **saved_looks** | Activada | `Users can delete their own saved looks` | `public` | `DELETE` |
+| **users** | Activada | `allow_all` | `public` | `ALL` |
+| **users** | Activada | `Users can update their own profile` | `public` | `UPDATE` |
 
-### Páginas Principales
-- **LandingPage:** Página de inicio con un diseño brutalista.
-- **CategoryPage:** Muestra categorías de productos.
-- **ProductsPage:** Lista productos con opciones de filtro y ordenamiento.
-- **CartPage:** Permite gestionar el carrito de compras.
-- **SocialFeedPage:** Una red social donde los usuarios pueden interactuar con publicaciones.
+### Notes
 
-### Estilos
-- Se definieron estilos personalizados en `style.css`, utilizando variables CSS para colores y sombras, y aplicando un diseño responsive con media queries.
+* Les polítiques **`allow_all`** (o **`allow_all_posts`**) sobre el rol **`public`** són **molt obertes** per a un entorn real: qualsevol petició amb la clau **anon** pot superar moltes restriccions si no hi ha comprovacions addicionals. Solen usar-se en **fase de desenvolupament**; en producció convé reemplaçar-les per condicions amb `auth.uid()`, rols, etc.
+* **`saved_looks`** és on el model és més restrictiu: SELECT / INSERT / DELETE només dels propis registres (segons la definició SQL de cada política al panell).
+* **`products`**: accés de lectura pública (`SELECT`), adequat a un catàleg visible sense iniciar sessió.
 
-### Datos Simulados
-- Se crearon datos simulados en `mockData.js` para productos y publicaciones sociales, lo que permite probar la funcionalidad sin depender de una base de datos.
+---
 
-### Funcionalidades
-- Se implementó navegación entre páginas usando un estado (`currentPage`) en el componente principal `App`.
-- Se añadieron funcionalidades como agregar y eliminar productos del carrito, y un sistema de "me gusta" en el feed social.
+## Emmagatzematge (Storage / buckets)
 
-## Autenticacion Frontend Lista Para Backend
+Els **buckets** es gestionen al panell de Supabase: **Storage → Buckets** (i les polítiques associades a **Storage → Policies** o des de cada bucket → *Policies*, segons la versió de la UI). Afecten la taula interna `storage.objects` (RLS específica de Storage, independent de les taules `public.*`).
 
-Actualmente el proyecto ya tiene registro/login para proteger la parte social.
+### Bucket usat per aquest repositori
 
-Modos disponibles:
-- Modo local (actual): guarda usuarios y sesion en localStorage.
-- Modo remoto (preparado): usa peticiones HTTP a backend con fetch.
+| Bucket | Ús al codi | Fitxers / prefixos |
+|--------|------------|---------------------|
+| **`post-images`** | Imatges de publicacions i avatars d’usuari (mateix bucket per simplicitat) | `posts/<fitxer>` (`postService.js`), `avatars/<fitxer>` (`authService.js`) |
 
-Configuracion:
-- Crear archivo `.env` basado en `.env.example`.
-- Variables:
-  - `VITE_USE_REMOTE_AUTH=true` para activar backend.
-  - `VITE_AUTH_API_URL=http://localhost:3000` (o URL real de tu API).
+**On es defineix al codi**
 
-Contrato de endpoints esperado:
-- `POST /api/auth/register`
-  - Body: `{ "name": "Robin", "email": "robin@mail.com", "password": "123456" }`
-  - Respuesta OK: `{ "user": { "name": "Robin", "email": "robin@mail.com" } }`
-- `POST /api/auth/login`
-  - Body: `{ "email": "robin@mail.com", "password": "123456" }`
-  - Respuesta OK: `{ "user": { "name": "Robin", "email": "robin@mail.com" } }`
-- `POST /api/auth/logout`
-  - Sin body obligatorio.
+* `src/services/postService.js` — `supabase.storage.from('post-images').upload('posts/...')` i `getPublicUrl`.
+* `src/services/authService.js` — pujada d’avatar a `post-images` sota la carpeta `avatars/...`.
 
-Si `VITE_USE_REMOTE_AUTH=false` o no hay `VITE_AUTH_API_URL`, el sistema usa modo local automaticamente.
+**URL pública**
 
-### Levantar Front + Backend Auth en local
+Després de la pujada, l’app obté l’URL amb `getPublicUrl` i la desa a `posts.img` o a `users.avatar` (segons el flux).
 
-1. Instalar dependencias
-  - `npm install`
-2. Ejecutar frontend y backend a la vez
-  - `npm run dev:full`
-3. O ejecutar por separado
-  - Terminal 1: `npm run dev`
-  - Terminal 2: `npm run dev:server`
+**Polítiques (RLS de Storage)**
 
-El backend se levanta en `http://localhost:3000` por defecto.
-La configuracion local del frontend esta en `.env.local` para usar autenticacion remota.
+Al dashboard, dins del bucket o a **Storage → Policies**, cal tenir permisos coherents amb l’app (p. ex. lectura pública si el bucket és públic, o `INSERT`/`UPDATE` només per usuaris autenticats per a `avatars/` i `posts/`). **Documenteu aquí** (o amb captures) les polítiques reals del vostre projecte si el tribunal ho demana: nom del bucket no implica seguretat sense regles a `storage.objects`.
 
-## Backend Actual (Modo Temporal Sin Mongo)
+---
 
-Estado actual:
-1. El backend ya esta estructurado en MVC dentro de `server/`:
-  - `server/models`
-  - `server/controllers`
-  - `server/routes`
-  - `server/middleware`
-2. Aunque los modelos de Mongoose estan creados, ahora mismo el feed usa datos temporales en memoria para avanzar sin base de datos.
+## Explicació de l’arquitectura
 
-Endpoints activos de posts (temporales):
-1. `GET /api/posts`: devuelve el feed desde un array en memoria.
-2. `POST /api/posts`: crea una publicacion y la inserta en ese array en memoria.
+* **Client SPA (Vite + React 18):** una sola pàgina amb **React Router** per URLs (`/shop`, `/social`, `/profile`, etc.). L’estat global del carret, *wishlist*, likes i guardats es gestiona a `App.jsx` i es persisteix en part a `localStorage`.
+* **Backend com a servei (BaaS):** **Supabase** (`https://wdazdicwhgjnnkvqgxqm.supabase.co`) ofereix autenticació, base de dades PostgreSQL i **Storage** (bucket `post-images`; vegeu **Emmagatzematge (Storage / buckets)**). El frontend usa el SDK `@supabase/supabase-js` amb URL i clau anon (variables d’entorn `VITE_*`).
+* **Funcions serverless (Vercel):** carpeta `api/` amb handlers Node per **proxy de notícies** (`api/news.js`) i **Stripe Checkout** (`api/checkout.js`), evitant exposar secrets al navegador i resolent CORS amb GNews en producció.
+* **Estils:** fulla d’estil principal `style.css` que importa mòduls sota `styles/` (`00-foundations.css` … `04-auth.css`).
 
-Importante:
-1. Si `MONGO_URI` no esta configurada, el servidor NO crashea.
-2. El servidor arranca igualmente y muestra un warning indicando que esta en modo temporal en memoria.
+```mermaid
+flowchart LR
+  Browser[Navegador]
+  Browser --> ViteApp[React SPA]
+  ViteApp --> Supabase
+  ViteApp --> VercelFn[Functions /api/*]
+  VercelFn --> GNews2[GNews]
+  VercelFn --> Stripe[Stripe]
+```
 
-## Preparado Para MongoDB (Siguiente Paso)
+---
 
-Cuando quieras activar persistencia real:
-1. Define en tu `.env`:
-  - `MONGO_URI`
-  - `MONGO_DB_NAME` (opcional)
-  - `JWT_SECRET`
-2. Mantienes el mismo comando de backend: `npm run dev:server`.
-3. Cambias los controladores temporales de posts a consultas con Mongoose (la estructura ya esta preparada).
+## Detalls de codi rellevants
 
-## Guia Rapida de Estilos (CSS Modular)
+* **`src/App.jsx`:** rutes protegides per a la part social, càrrega de productes i posts, handlers de carret, *login/register/logout*, sincronització de `saved_looks` amb la base de dades i navegació al perfil (`viewedUser`).
+* **`src/services/postService.js`:** CRUD social (feed, crear post amb pujada a Storage, likes, comentaris, eliminar post).
+* **`src/services/authService.js`:** sessió Supabase, `users` pública sincronitzada amb el perfil.
+* **`src/services/socialService.js`:** perfils, `saved_looks`, seguir (camp `following_handles` a `users`).
+* **`src/services/productService.js`:** lectura de `products` i mapeig de camps (`name_by_lang` → `nameByLang`).
+* **`src/services/newsService.js`:** en local crida GNews amb `VITE_GNEWS_API_KEY`; en producció usa `/api/news`.
+* **`src/components/SocialPost.jsx` / `UserProfilePage.jsx`:** renderitzat de posts (imatge + descripció); el perfil reutilitza les mateixes dades del feed filtrades per `user_email`.
 
-Ahora los estilos globales se cargan desde [style.css](style.css) como indice de modulos en [styles/modules](styles/modules).
+---
 
-Orden y responsabilidad principal:
+## Dependències
 
-1. [styles/modules/00-foundations.css](styles/modules/00-foundations.css): reset, variables base y tokens.
-2. [styles/modules/01-layout-atmosphere.css](styles/modules/01-layout-atmosphere.css): estructuras comunes y atmósfera general.
-3. [styles/modules/02-brand-art-direction.css](styles/modules/02-brand-art-direction.css): dirección visual de marca.
-4. [styles/modules/03-landing.css](styles/modules/03-landing.css): landing + ventanas emergentes.
-5. [styles/modules/04-structure.css](styles/modules/04-structure.css): estructura global heredada.
-6. [styles/modules/05-shop-social.css](styles/modules/05-shop-social.css): shop, product cards y social feed.
-7. [styles/modules/06-ui-refinements.css](styles/modules/06-ui-refinements.css): refinados de UI (detalles de interacción).
-8. [styles/modules/07-dark-theme.css](styles/modules/07-dark-theme.css): overrides de modo oscuro.
-9. [styles/modules/08-responsive-accessibility.css](styles/modules/08-responsive-accessibility.css): responsive y accesibilidad.
-10. [styles/modules/09-messages.css](styles/modules/09-messages.css): experiencia de mensajes/chat.
-11. [styles/modules/10-auth.css](styles/modules/10-auth.css): login/registro.
-12. [styles/modules/11-search.css](styles/modules/11-search.css): buscador global.
-13. [styles/modules/12-chatbot.css](styles/modules/12-chatbot.css): widget de chatbot.
-14. [styles/modules/13-brand-polish.css](styles/modules/13-brand-polish.css): pase de pulido visual de marca.
-15. [styles/modules/14-global-polish.css](styles/modules/14-global-polish.css): pulido global transversal.
-16. [styles/modules/15-global-consistency.css](styles/modules/15-global-consistency.css): sistema final de consistencia (botones, inputs, chips).
+Definides a `package.json` (versions concretes al repositori):
 
-Nota:
-1. Mantener el orden de imports en [style.css](style.css), porque define la cascada final.
-2. Convencion de prefijos de clases: [styles/STYLE_CONVENTIONS.md](styles/STYLE_CONVENTIONS.md).
+| Paquet | Ús |
+|--------|-----|
+| `react`, `react-dom` | Interfície i Virtual DOM |
+| `react-router-dom` | Rutes declaratives |
+| `vite`, `@vitejs/plugin-react` | Empaquetat i dev server |
+| `@supabase/supabase-js` | Client Auth, Postgres i Storage |
+| `lucide-react` | Icones |
+| `@stripe/stripe-js`, `@stripe/react-stripe-js`, `stripe` | Pagaments (sessió *checkout* des del servidor) |
 
-## Convencion de Nombres CSS
+Instal·lació i scripts:
 
-Para escalar sin conflictos, aplica prefijos por dominio cuando crees clases nuevas:
+```bash
+npm install
+npm run dev    # desenvolupament
+npm run build
+npm run preview
+```
 
-1. `landing-`: portada.
-2. `shop-` y `product-`: catalogo y detalle.
-3. `social-`: feed social.
-4. `messages-` y `thread-`: chat/mensajeria.
-5. `auth-`: login/registro.
-6. `settings-`: ajustes.
-7. `search-`: buscador global.
-8. `chatbot-`: widget de asistente.
-9. `is-` y `has-`: estados de UI.
+---
 
-Guia completa y ejemplos: [styles/STYLE_CONVENTIONS.md](styles/STYLE_CONVENTIONS.md).
+## Endpoints del backend i format de les dades intercanviades
 
-### Contenido del archivo `index.html`
+### 1. Supabase (API REST auto-generada + Auth + Storage)
+
+**Projecte d’aquest repositori**
+
+| Concepte | URL |
+|----------|-----|
+| URL base del projecte (la que va a `VITE_SUPABASE_URL` al `.env`) | `https://wdazdicwhgjnnkvqgxqm.supabase.co` |
+| API REST PostgREST (taules, filtres, `select`) | `https://wdazdicwhgjnnkvqgxqm.supabase.co/rest/v1/` |
+
+El client **Supabase JS** usa la URL base i construeix sol les rutes (`/rest/v1/...`, `/auth/v1/...`, `/storage/v1/...`). Les peticions porten capçaleres `apikey` (clau **anon**) i, si cal, `Authorization: Bearer <access_token>`.
+
+**Exemples d’operacions (concepte d’endpoint + payload):**
+
+| Operació | Mètode / ruta lògica | Cos / resposta (JSON) |
+|----------|----------------------|------------------------|
+| Iniciar sessió | `POST /auth/v1/token?grant_type=password` | Body: `{ "email", "password" }` → resposta amb `access_token`, `user` |
+| Registrar | `POST /auth/v1/signup` | Metadades d’usuari + inserció a taula `users` des del codi |
+| Llistar posts | `GET /rest/v1/posts?select=*,comments(...)` | Array d’objectes post amb `id`, `description`, `img`, `user_email`, `likes`, `comments[]` |
+| Crear post | `POST /rest/v1/posts` | Body: `{ "description", "img", "user_email" }` → retorna la fila creada |
+| Pujar imatge | `POST /storage/v1/object/post-images/...` | Fitxer binari; resposta amb path; URL pública construïda amb `getPublicUrl` |
+
+Les polítiques **RLS** del projecte estan resumides a la secció **Seguretat: Row Level Security (RLS)**. Els **buckets** de Storage es descriuen a **Emmagatzematge (Storage / buckets)**.
+
+### 2. Funció serverless: notícies
+
+* **`GET /api/news?lang=es`** (producció, veure `api/news.js`)
+  * **Resposta:** mateix format que GNews, p. ex. `{ "articles": [ { "title", "url", "image", "source": { "name" }, ... } ] }`
+  * **Errors:** possible `{ "error": "...", "articles": [] }` amb HTTP 500
+
+### 3. Funció serverless: Stripe Checkout
+
+* **`POST /api/checkout`** (veure `api/checkout.js`)
+  * **Cos (JSON):** `{ "items": [ { "name", "price", "quantity", "image" } ], "success_url?", "cancel_url?" }`
+  * **Resposta OK:** `{ "url": "<session_url_de_Stripe>" }` per redirigir el navegador
+  * **Error:** cos amb missatge d’error i codi HTTP adequat
+
+### 4. GNews (extern, des del servidor o en local)
+
+* **URL:** `https://gnews.io/api/v4/search?q=...&lang=...&apikey=...`
+* **Resposta:** JSON amb propietat `articles` (array d’objectes de notícia).
+
+---
+
+## Fitxers d’entorn
+
+Cal un `.env` o `.env.local` (no versionat) amb variables com:
+
+* `VITE_SUPABASE_URL` — ha de ser `https://wdazdicwhgjnnkvqgxqm.supabase.co` (sense `/rest/v1/` al final)
+* `VITE_SUPABASE_ANON_KEY` — clau **anon** del panell *Project Settings → API*
+* `VITE_GNEWS_API_KEY` — proves locals de notícies
+* A Vercel: `GNEWS_API_KEY` o `VITE_GNEWS_API_KEY`, `STRIPE_SECRET_KEY` per les funcions `api/`
+
+---
+
+## Desplegament
+
+El projecte està pensat per **Vercel** (`vercel.json` amb *rewrites* cap a `index.html` per SPA i rutes `/api/*`).
+
+---
+
+## Contingut del `index.html` (entrada Vite)
+
+El fitxer inclou estils crítics en línia, *preload* de `style.css` i el muntatge de React a `#root`. Resum:
+
 ```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ROB THE FAB - Aplicacion web construida con React.">
-  <meta name="theme-color" content="#111111">
   <title>ROB THE FAB</title>
+  <!-- + estils crítics + link preload a /style.css -->
 </head>
 <body>
   <div id="root"></div>
@@ -249,3 +490,4 @@ Guia completa y ejemplos: [styles/STYLE_CONVENTIONS.md](styles/STYLE_CONVENTIONS
   <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
+```
