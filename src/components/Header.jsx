@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X, Search, Menu, ShoppingBag, Heart } from "lucide-react";
-import SearchOverlay from "./SearchOverlay";
+import SearchOverlay from "./BarraBusqueda";
 
 // Cabecera global: menú lateral, buscador, y accesos rápidos a carrito y wishlist.
 const Header = ({

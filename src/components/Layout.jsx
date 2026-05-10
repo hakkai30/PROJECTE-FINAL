@@ -74,5 +74,3 @@ export const WindowOverlay = ({ label, offsetClass, article }) => {
     </div>
   );
 };
-
-// Selector de idioma eliminado. Todo es español ahora.
