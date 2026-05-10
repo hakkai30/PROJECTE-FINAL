@@ -308,7 +308,7 @@ const ProductsPage = ({
 
       {activeSheet === "filter" && (
         <div
-          className="filter-overlay bottom-sheet-overlay"
+          className="bottom-sheet-overlay shop-bottom-sheet-overlay"
           role="presentation"
           onClick={() => setActiveSheet(null)}
         >
@@ -354,7 +354,7 @@ const ProductsPage = ({
 
       {activeSheet === "sort" && (
         <div
-          className="filter-overlay bottom-sheet-overlay"
+          className="bottom-sheet-overlay shop-bottom-sheet-overlay"
           role="presentation"
           onClick={() => setActiveSheet(null)}
         >
