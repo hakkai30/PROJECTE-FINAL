@@ -5,6 +5,7 @@ import { authService } from "../../services/authService";
 
 const UserProfilePage = ({
   changePage,
+  onGoToMyProfile,
   cartCount,
   wishlistCount,
   currentUser,
@@ -66,7 +67,7 @@ const UserProfilePage = ({
     <div className="category-page">
       <GlobalHeader {...{ changePage, cartCount, wishlistCount, theme, currentUser, products }} />
       <div className="social-layout">
-        <SocialSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} changePage={changePage} />
+        <SocialSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} changePage={changePage} onGoToMyProfile={onGoToMyProfile} />
         <main className="user-profile-container">
           <section className="profile-header">
             <div className="profile-avatar-container">

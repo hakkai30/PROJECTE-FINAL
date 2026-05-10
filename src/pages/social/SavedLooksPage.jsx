@@ -4,6 +4,7 @@ import { GlobalFooter, GlobalHeader, SocialSidebar } from "../../components/Layo
 
 const SavedLooksPage = ({
   changePage,
+  onGoToMyProfile,
   currentUser,
   onLogout,
   savedLooks = [],
@@ -113,7 +114,8 @@ const SavedLooksPage = ({
         <SocialSidebar 
           isSidebarOpen={isSidebarOpen} 
           setIsSidebarOpen={setIsSidebarOpen} 
-          changePage={changePage} 
+          changePage={changePage}
+          onGoToMyProfile={onGoToMyProfile}
         />
         <div className="social-feed">
         <div className="social-feed-header">

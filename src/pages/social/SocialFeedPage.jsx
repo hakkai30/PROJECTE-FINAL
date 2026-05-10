@@ -5,6 +5,7 @@ import SocialPost from "../../components/SocialPost";
 
 const SocialFeedPage = ({
   changePage,
+  onGoToMyProfile,
   currentUser,
   onLogout,
   posts = [],
@@ -83,7 +84,12 @@ const SocialFeedPage = ({
       <GlobalHeader {...{ changePage, cartCount, wishlistCount, currentUser, onLogout, theme, products }} />
       
       <div className="social-layout">
-        <SocialSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} changePage={changePage} />
+        <SocialSidebar
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+          changePage={changePage}
+          onGoToMyProfile={onGoToMyProfile}
+        />
         
         <main className="social-feed">
           <header className="social-feed-header">

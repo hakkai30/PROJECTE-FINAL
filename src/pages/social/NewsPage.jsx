@@ -3,7 +3,8 @@ import { getFashionNews } from "../../services/newsService";
 import { GlobalHeader, GlobalFooter, SocialSidebar } from "../../components/Layout";
 
 const NewsPage = ({ 
-  changePage, 
+  changePage,
+  onGoToMyProfile,
   cartCount, 
   wishlistCount, 
   theme, 
@@ -51,7 +52,8 @@ const NewsPage = ({
         <SocialSidebar 
           isSidebarOpen={isSidebarOpen} 
           setIsSidebarOpen={setIsSidebarOpen} 
-          changePage={changePage} 
+          changePage={changePage}
+          onGoToMyProfile={onGoToMyProfile}
         />
         <main className="social-feed" style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
         <div style={{ flex: 1 }}>
