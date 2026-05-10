@@ -26,8 +26,8 @@ const ProductsPage = ({
   const { cat } = useParams();
   const activeCategory = cat || categoryKey;
 
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [isSortOpen, setIsSortOpen] = useState(false);
+  /** Un sol panel inferior: filtres o ordenació (mai els dos alhora). */
+  const [activeSheet, setActiveSheet] = useState(null);
   const [sortBy, setSortBy] = useState("featured");
   const [selectedBrand, setSelectedBrand] = useState("all");
   const [selectedColor, setSelectedColor] = useState("all");
@@ -90,7 +90,7 @@ const ProductsPage = ({
 
   const handleSortSelect = (value) => {
     setSortBy(value);
-    setIsSortOpen(false);
+    setActiveSheet(null);
   };
 
   const handleResetFilters = () => {
@@ -99,10 +99,6 @@ const ProductsPage = ({
     setSelectedSize("all");
     setMaxPrice(categoryMaxPrice);
   };
-
-  // Si el padre no define títulos, usamos textos por defecto traducibles.
-  const resolvedCollectionKicker = collectionKicker || t("products.collection.newSeason", "NEW SEASON");
-  const resolvedCollectionTitle = collectionTitle || t("products.collection.readyToWear", "READY TO WEAR");
 
   // Chips que resumen los filtros activos para poder quitarlos rápido.
   const activeFilterChips = [
@@ -293,14 +289,16 @@ const ProductsPage = ({
       <div className="filter-bottom-wrap">
         <div className="bottom-actions-bar">
           <button
+            type="button"
             className="filter-bottom-btn is-filter"
-            onClick={() => setIsFilterOpen(true)}
+            onClick={() => setActiveSheet((prev) => (prev === "filter" ? null : "filter"))}
           >
             FILTROS
           </button>
           <button
+            type="button"
             className="filter-bottom-btn is-sort"
-            onClick={() => setIsSortOpen(true)}
+            onClick={() => setActiveSheet((prev) => (prev === "sort" ? null : "sort"))}
           >
             ORDENAR
           </button>
@@ -308,12 +306,16 @@ const ProductsPage = ({
       </div>
       <GlobalFooter />
 
-      {isFilterOpen && (
-        <div className="filter-overlay bottom-sheet-overlay">
-          <div className="bottom-sheet-panel">
+      {activeSheet === "filter" && (
+        <div
+          className="filter-overlay bottom-sheet-overlay"
+          role="presentation"
+          onClick={() => setActiveSheet(null)}
+        >
+          <div className="bottom-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="filter-sheet-title" onClick={(e) => e.stopPropagation()}>
             <div className="bottom-sheet-grid">
               <div className="bottom-col" style={{ gridColumn: "1 / -1", textAlign: "center" }}>
-                <h3 style={{ fontSize: "0.68rem", letterSpacing: "0.14em", marginBottom: "1rem" }}>FILTRAR POR TALLA</h3>
+                <h3 id="filter-sheet-title" style={{ fontSize: "0.68rem", letterSpacing: "0.14em", marginBottom: "1rem" }}>FILTRAR POR TALLA</h3>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
                   <button
                     className={`sort-option-btn ${selectedSize === "all" ? "active" : ""}`}
@@ -335,12 +337,13 @@ const ProductsPage = ({
             </div>
 
             <div className="bottom-sheet-actions">
-              <button className="bottom-action-btn" onClick={handleResetFilters}>
+              <button type="button" className="bottom-action-btn" onClick={handleResetFilters}>
                 REINICIAR
               </button>
               <button
+                type="button"
                 className="bottom-action-btn is-close"
-                onClick={() => setIsFilterOpen(false)}
+                onClick={() => setActiveSheet(null)}
               >
                 CERRAR
               </button>
@@ -349,12 +352,16 @@ const ProductsPage = ({
         </div>
       )}
 
-      {isSortOpen && (
-        <div className="filter-overlay bottom-sheet-overlay">
-          <div className="bottom-sheet-panel">
+      {activeSheet === "sort" && (
+        <div
+          className="filter-overlay bottom-sheet-overlay"
+          role="presentation"
+          onClick={() => setActiveSheet(null)}
+        >
+          <div className="bottom-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sort-sheet-title" onClick={(e) => e.stopPropagation()}>
             <div className="bottom-sheet-grid sort-grid">
               <div className="bottom-col">
-                <h3>ORDENAR</h3>
+                <h3 id="sort-sheet-title">ORDENAR</h3>
                 <button
                   className={`sort-option-btn ${sortBy === "featured" ? "active" : ""}`}
                   onClick={() => handleSortSelect("featured")}
@@ -382,12 +389,13 @@ const ProductsPage = ({
               </div>
             </div>
             <div className="bottom-sheet-actions">
-              <button className="bottom-action-btn" onClick={() => setSortBy("featured") }>
+              <button type="button" className="bottom-action-btn" onClick={() => setSortBy("featured")}>
                 REINICIAR
               </button>
               <button
+                type="button"
                 className="bottom-action-btn is-close"
-                onClick={() => setIsSortOpen(false)}
+                onClick={() => setActiveSheet(null)}
               >
                 CERRAR
               </button>
