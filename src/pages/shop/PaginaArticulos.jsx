@@ -138,8 +138,8 @@ const ProductsPage = ({
         products={products}
       />
 
-      <div className="shop-toolbar">
-      </div>
+      {/* <div className="shop-toolbar"> */}
+      {/* </div> */}
 
       {/* Introducción de la colección y contador de resultados. */}
       <section className="collection-intro">
@@ -187,7 +187,7 @@ const ProductsPage = ({
               }}
             >
               <Heart
-                size={16}
+                size={24}
                 fill={wishlistIds.includes(product.id) ? "currentColor" : "none"}
                 strokeWidth={2.2}
                 aria-hidden="true"

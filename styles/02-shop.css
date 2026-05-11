@@ -14,6 +14,7 @@ body {
 
 .main-header {
   padding: 1rem 2.2rem;
+  margin-bottom: 50px;
   border-bottom: 1px solid #d8d8d8;
   box-shadow: none;
   backdrop-filter: blur(6px);
@@ -249,6 +250,7 @@ body {
   right: 0.7rem;
   top: 0.7rem;
   border: 1px solid #111;
+  border-radius: 999px;
   background: rgba(255, 255, 255, 0.95);
   width: 30px;
   height: 30px;
@@ -265,8 +267,8 @@ body {
 }
 
 .wishlist-card-btn.active {
-  background: #fff;
-  color: #111;
+  /* background: #fff; */
+  color: red;
   border-color: #111;
 }
 
@@ -1094,7 +1096,7 @@ body {
 }
 
 .social-post-caption {
-  padding: 0 1.5rem 1.5rem;
+  padding: 1.5rem 1.5rem 1.5rem;
   font-size: 1.05rem;
   line-height: 1.45;
 }

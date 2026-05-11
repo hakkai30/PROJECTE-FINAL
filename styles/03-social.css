@@ -509,7 +509,7 @@
 .chat-bubble.user {
   align-self: flex-end;
   background: #121212;
-  color: #f8f8f8;
+  color: #000;
   border-radius: 10px 0 10px 10px;
   border-color: #121212;
 }
