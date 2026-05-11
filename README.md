@@ -333,31 +333,32 @@ La **RLS** es configura al panell de Supabase: **Database → Tables → [taula]
 
 Els **buckets** es gestionen al panell de Supabase: **Storage → Buckets** (i les polítiques associades a **Storage → Policies** o des de cada bucket → *Policies*, segons la versió de la UI). Afecten la taula interna `storage.objects` (RLS específica de Storage, independent de les taules `public.*`).
 
-### Bucket usat per aquest repositori
+### Buckets utilitzats al projecte
 
-| Bucket | Ús al codi | Fitxers / prefixos |
-|--------|------------|---------------------|
-| **`post-images`** | Imatges de publicacions i avatars d’usuari (mateix bucket per simplicitat) | `posts/<fitxer>` (`postService.js`), `avatars/<fitxer>` (`authService.js`) |
+| Bucket | Rol | Fitxers / com s’usa a l’app |
+|--------|-----|-----------------------------|
+| **`post-images`** | Red social i perfils | Imatges de publicacions (`posts/`) i avatars (`avatars/`): pujada des del client amb `supabase.storage` → URL a `posts.img` / `users.avatar`. Vegeu `postService.js` i `authService.js`. |
+| **`productos`** | **Catàleg de la botiga** | Bucket **públic** on s’han pujat les **imatges dels productes a la venda**. Les URLs obtingudes (p. ex. amb *Get public URL* al panell o després d’una pujada) es guarden a la columna **`products.img`** de PostgreSQL; el frontend (`productService`) només **llegeix** aquestes URLs — no puja fotos del catàleg des del codi actual. |
 
-**On es defineix al codi**
+**On es defineix al codi (upload programàtic)**
 
 * `src/services/postService.js` — `supabase.storage.from('post-images').upload('posts/...')` i `getPublicUrl`.
-* `src/services/authService.js` — pujada d’avatar a `post-images` sota la carpeta `avatars/...`.
+* `src/services/authService.js` — pujada d’avatar a `post-images`, carpeta `avatars/...`.
 
-**URL pública**
+**Productes (`productos`)**
 
-Després de la pujada, l’app obté l’URL amb `getPublicUrl` i la desa a `posts.img` o a `users.avatar` (segons el flux).
+Les imatges del catàleg es gestionen al bucket **`productos`** de Supabase; la relació amb la tienda és la URL emmagatzemada a **`public.products.img`**. Si es canvien paths o es reubiquen fitxers al bucket, cal actualitzar també les URLs a la taula **`products`** perquè el catàleg continuï mostrant les imatges correctes.
 
 **Polítiques (RLS de Storage)**
 
-Al dashboard, dins del bucket o a **Storage → Policies**, cal tenir permisos coherents amb l’app (p. ex. lectura pública si el bucket és públic, o `INSERT`/`UPDATE` només per usuaris autenticats per a `avatars/` i `posts/`). **Documenteu aquí** (o amb captures) les polítiques reals del vostre projecte si el tribunal ho demana: nom del bucket no implica seguretat sense regles a `storage.objects`.
+Al dashboard, per cada bucket (**`post-images`**, **`productos`**, etc.): polítiques sobre `storage.objects` coherents amb l’ús (p. ex. **`productos` públic** = lectura pública per veure fotos del catàleg sense sessió). **Documenteu** les polítiques reals si el tribunal ho demana.
 
 ---
 
 ## Explicació de l’arquitectura
 
 * **Client SPA (Vite + React 18):** una sola pàgina amb **React Router** per URLs (`/shop`, `/social`, `/profile`, etc.). L’estat global del carret, *wishlist*, likes i guardats es gestiona a `App.jsx` i es persisteix en part a `localStorage`.
-* **Backend com a servei (BaaS):** **Supabase** (`https://wdazdicwhgjnnkvqgxqm.supabase.co`) ofereix autenticació, base de dades PostgreSQL i **Storage** (bucket `post-images`; vegeu **Emmagatzematge (Storage / buckets)**). El frontend usa el SDK `@supabase/supabase-js` amb URL i clau anon (variables d’entorn `VITE_*`).
+* **Backend com a servei (BaaS):** **Supabase** (`https://wdazdicwhgjnnkvqgxqm.supabase.co`) ofereix autenticació, PostgreSQL i **Storage**: **`post-images`** (posts i avatars) i **`productos`** (imatges del catàleg vinculades a `products.img`; vegeu **Emmagatzematge (Storage / buckets)**). El frontend usa el SDK `@supabase/supabase-js` amb URL i clau anon (`VITE_*`).
 * **Funcions serverless (Vercel):** carpeta `api/` amb handlers Node per **proxy de notícies** (`api/news.js`) i **Stripe Checkout** (`api/checkout.js`), evitant exposar secrets al navegador i resolent CORS amb GNews en producció.
 * **Estils:** fulla d’estil principal `style.css` que importa mòduls sota `styles/` (`00-foundations.css` … `04-auth.css`).
 
@@ -379,7 +380,7 @@ flowchart LR
 * **`src/services/postService.js`:** CRUD social (feed, crear post amb pujada a Storage, likes, comentaris, eliminar post).
 * **`src/services/authService.js`:** sessió Supabase, `users` pública sincronitzada amb el perfil.
 * **`src/services/socialService.js`:** perfils, `saved_looks`, seguir (camp `following_handles` a `users`).
-* **`src/services/productService.js`:** lectura de `products` i mapeig de camps (`name_by_lang` → `nameByLang`).
+* **`src/services/productService.js`:** lectura de la taula `products`; el camp **`img`** conté URLs d’imatges servides des del bucket Supabase **`productos`** (o qualsevol URL vàlida).
 * **`src/services/newsService.js`:** en local crida GNews amb `VITE_GNEWS_API_KEY`; en producció usa `/api/news`.
 * **`src/components/SocialPost.jsx` / `UserProfilePage.jsx`:** renderitzat de posts (imatge + descripció); el perfil reutilitza les mateixes dades del feed filtrades per `user_email`.
 
@@ -430,7 +431,8 @@ El client **Supabase JS** usa la URL base i construeix sol les rutes (`/rest/v1/
 | Registrar | `POST /auth/v1/signup` | Metadades d’usuari + inserció a taula `users` des del codi |
 | Llistar posts | `GET /rest/v1/posts?select=*,comments(...)` | Array d’objectes post amb `id`, `description`, `img`, `user_email`, `likes`, `comments[]` |
 | Crear post | `POST /rest/v1/posts` | Body: `{ "description", "img", "user_email" }` → retorna la fila creada |
-| Pujar imatge | `POST /storage/v1/object/post-images/...` | Fitxer binari; resposta amb path; URL pública construïda amb `getPublicUrl` |
+| Pujar imatge (social / avatar) | `POST /storage/v1/object/post-images/...` | Fitxer binari; `getPublicUrl` → desa URL a post o usuari |
+| Objet catàleg (opcional API) | `POST /storage/v1/object/productos/...` | Les imatges de productes es poden pujar al bucket **`productos`** i la URL resultant es guarda manualment (o amb script/admin) a **`products.img`** |
 
 Les polítiques **RLS** del projecte estan resumides a la secció **Seguretat: Row Level Security (RLS)**. Els **buckets** de Storage es descriuen a **Emmagatzematge (Storage / buckets)**.
 
