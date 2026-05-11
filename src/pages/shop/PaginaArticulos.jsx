@@ -257,7 +257,7 @@ const ProductsPage = ({
                 <h3>{quickViewProduct.name}</h3>
                 <p className="quick-view-price">{quickViewProduct.price.toFixed(2)}€</p>
                 <p>Color: {quickViewProduct.color.toUpperCase()}</p>
-                <p>Tallas: {(quickViewProduct.sizes || []).join(", ")}</p>
+                <p>Talla: {(quickViewProduct.sizes || []).join(", ")}</p>
                 <div className="quick-view-actions">
                   <button className="add-btn" onClick={() => addToCart(quickViewProduct)}>
                     + AÑADIR A LA BOLSA
