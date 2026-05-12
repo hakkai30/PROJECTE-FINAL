@@ -67,11 +67,11 @@ const AuthPage = ({
 
         <div className="auth-options-divider">
           <button className="auth-toggle-btn" onClick={() => setIsLogin(!isLogin)}>
-            {isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Entra"}
+            {isLogin ? "¿No tienes cuenta? Regístrate aquí." : "¿Ya tienes cuenta? Entra"}
           </button>
           
           <button className="auth-guest-btn" onClick={onContinueAsGuest}>
-            <ShoppingBag size={18} /> CONTINUAR COMO INVITADO
+            Continuar como invitado <ShoppingBag size={14}/> 
           </button>
         </div>
       </div>

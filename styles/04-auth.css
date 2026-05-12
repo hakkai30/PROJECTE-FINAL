@@ -416,10 +416,25 @@
   text-decoration: underline;
   text-underline-offset: 2px;
   margin-left: 0.4rem;
+  text-decoration: none;
 }
 
 .auth-toggle-btn:hover {
   color: #0a0fb8;
+}
+
+.auth-guest-btn {
+  margin-top: 20px;
+  margin-left: 20px;
+  /* border: 2px solid #111; */
+  background: #fff;
+  /* padding: 1.4rem 1.2rem; */
+  /* display: flex; */
+  /* align-items: center; */
+  /* gap: 1.2rem; */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  /* text-align: left; */
 }
 
 @media (max-width: 768px) {
